@@ -110,14 +110,6 @@ public abstract class BowLikeItem extends BowItem {
 		return DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).maxUseTicks();
 	}
 	
-	/**
-	 * 物品的远程武器组件
-	 *
-	 * @return 远程武器组件
-	 */
-	public RangedWeaponComponent rangedWeapon() {
-		return RangedWeaponComponent.BOW;
-	}
 	
 	/**
 	 * 获取使用进度
@@ -131,6 +123,13 @@ public abstract class BowLikeItem extends BowItem {
 		float progress = (float) useTicks / component.maxPullTicks();
 		return Math.min(1, (progress * (progress + 2)) / 3);
 	}
+	
+	/**
+	 * 物品的远程武器组件
+	 *
+	 * @return 远程武器组件
+	 */
+	public abstract RangedWeaponComponent rangedWeapon();
 	
 	/**
 	 * 触发进度条件

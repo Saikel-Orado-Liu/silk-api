@@ -164,16 +164,12 @@ public abstract class FullyAutomaticFirearmItem extends CrossbowLikeItem {
 	 *
 	 * @return 发射物容器组件
 	 */
-	public ProjectileContainerComponent projectileContainer() {
-		return ProjectileContainerComponent.DEFAULT;
-	}
+	public abstract ProjectileContainerComponent projectileContainer();
 	
 	/**
 	 * 物品的射击发射物组件
 	 *
 	 * @return 射击发射物组件
 	 */
-	public ShootProjectilesComponent shootProjectiles() {
-		return ShootProjectilesComponent.DEFAULT;
-	}
+	public abstract ShootProjectilesComponent shootProjectiles();
 }

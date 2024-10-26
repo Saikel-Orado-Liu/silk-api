@@ -242,15 +242,6 @@ public abstract class CrossbowLikeItem extends CrossbowItem {
 	}
 	
 	/**
-	 * 物品的远程武器组件
-	 *
-	 * @return 远程武器组件
-	 */
-	public RangedWeaponComponent rangedWeapon() {
-		return RangedWeaponComponent.CROSSBOW;
-	}
-	
-	/**
 	 * 获取使用进度
 	 *
 	 * @param useTicks 使用刻数
@@ -261,6 +252,13 @@ public abstract class CrossbowLikeItem extends CrossbowItem {
 		RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
 		return Math.min(1, useTicks / (float) component.getMaxPullTicks(stack));
 	}
+	
+	/**
+	 * 物品的远程武器组件
+	 *
+	 * @return 远程武器组件
+	 */
+	public abstract RangedWeaponComponent rangedWeapon();
 	
 	/**
 	 * 触发进度条件
