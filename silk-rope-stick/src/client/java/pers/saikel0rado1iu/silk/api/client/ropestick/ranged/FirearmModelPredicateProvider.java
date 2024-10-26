@@ -12,14 +12,15 @@
 package pers.saikel0rado1iu.silk.api.client.ropestick.ranged;
 
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.ProjectileContainerComponent;
 
-import static net.minecraft.item.CrossbowItem.CHARGED_PROJECTILES_KEY;
+import static net.minecraft.component.DataComponentTypes.CHARGED_PROJECTILES;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">枪械模型谓词提供器</h2>
@@ -35,31 +36,31 @@ public interface FirearmModelPredicateProvider {
 	 * @param firearm 枪械
 	 * @param <T>     枪械类型
 	 */
-	static <T extends CrossbowLikeItem & ProjectileContainerComponent & ShootExpansion> void register(T firearm) {
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.PULLING_KEY), (stack, world, entity, seed) -> {
+	static <T extends CrossbowLikeItem> void register(T firearm) {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return entity.isUsingItem() && isActive(entity.getActiveItem(), stack) ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.PULL_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return !isActive(entity.getActiveItem(), stack) ? 0 : ((CrossbowLikeItem) stack.getItem()).getUsingProgress(stack.getMaxUseTime() - entity.getItemUseTimeLeft() - 1, stack);
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.CHARGED_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.CHARGED_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return CrossbowItem.isCharged(stack) ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return ((CrossbowLikeItem) stack.getItem()).getProjectileIndex(stack);
+			return stack.getOrDefault(RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(stack);
 		});
-		ShootExpansionModelPredicateProvider.register(firearm);
+		ShootProjectilesModelPredicateProvider.register(firearm);
 	}
 	
 	private static boolean isActive(ItemStack active, ItemStack stack) {
-		NbtCompound nbt0 = active.getOrCreateNbt().copy();
-		NbtCompound nbt1 = stack.getOrCreateNbt().copy();
-		nbt0.remove(CHARGED_PROJECTILES_KEY);
-		nbt1.remove(CHARGED_PROJECTILES_KEY);
-		return active.isOf(stack.getItem()) && active.getCount() == stack.getCount() && nbt0.equals(nbt1);
+		ComponentMap componentMap0 = ComponentMap.of(active.getComponents(), ComponentMap.EMPTY);
+		ComponentMap componentMap1 = ComponentMap.of(stack.getComponents(), ComponentMap.EMPTY);
+		componentMap0 = componentMap0.filtered(dataComponentType -> !dataComponentType.equals(CHARGED_PROJECTILES));
+		componentMap1 = componentMap1.filtered(dataComponentType -> !dataComponentType.equals(CHARGED_PROJECTILES));
+		return active.isOf(stack.getItem()) && active.getCount() == stack.getCount() && componentMap0.equals(componentMap1);
 	}
 }

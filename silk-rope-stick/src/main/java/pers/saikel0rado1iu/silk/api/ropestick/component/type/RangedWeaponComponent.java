@@ -55,6 +55,22 @@ public record RangedWeaponComponent(float maxSpeed,
                                     ItemStack defaultProjectile,
                                     List<ItemStack> launchableProjectiles) {
 	/**
+	 * 用于模型谓词，拉弓中状态键
+	 */
+	public static final String PULLING_KEY = "pulling";
+	/**
+	 * 用于模型谓词，拉弓状态键
+	 */
+	public static final String PULL_KEY = "pull";
+	/**
+	 * 用于模型谓词，弹药状态键
+	 */
+	public static final String PROJECTILE_INDEX_KEY = "projectile";
+	/**
+	 * 用于模型谓词，已装填状态键
+	 */
+	public static final String CHARGED_KEY = "charged";
+	/**
 	 * 弓最大发射物速度
 	 */
 	public static final float BOW_MAX_PROJECTILE_SPEED = 3;

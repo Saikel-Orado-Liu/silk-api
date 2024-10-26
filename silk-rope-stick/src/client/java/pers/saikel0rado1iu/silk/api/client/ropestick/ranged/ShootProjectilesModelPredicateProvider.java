@@ -14,25 +14,26 @@ package pers.saikel0rado1iu.silk.api.client.ropestick.ranged;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.ShootProjectilesComponent;
 
 /**
- * <h2 style="color:FFC800">射击拓展物品模型谓词提供器</h2>
- * 用于射击拓展物品的模型谓词提供器
+ * <h2 style="color:FFC800">射击发射物物品模型谓词提供器</h2>
+ * 用于射击发射物物品的模型谓词提供器
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
- * @since 0.1.0
+ * @since 1.1.2
  */
-public interface ShootExpansionModelPredicateProvider {
+public interface ShootProjectilesModelPredicateProvider {
 	/**
 	 * 注册模型谓词
 	 *
 	 * @param shootExpansion 射击拓展物品
 	 * @param <T>            射击拓展物品类型
 	 */
-	static <T extends Item & ShootExpansion> void register(T shootExpansion) {
-		ModelPredicateProviderRegistry.register(shootExpansion, new Identifier(ShootExpansion.SHOT_KEY), (stack, world, entity, seed) -> {
+	static <T extends Item> void register(T shootExpansion) {
+		ModelPredicateProviderRegistry.register(shootExpansion, new Identifier(ShootProjectilesComponent.SHOT_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return ShootExpansion.isShot(stack) ? 1 : 0;
+			return ShootProjectilesComponent.isShot(stack) ? 1 : 0;
 		});
 	}
 }

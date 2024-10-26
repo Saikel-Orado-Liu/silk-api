@@ -28,6 +28,10 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
  * @since 1.1.2
  */
 public record ShootProjectilesComponent(boolean shot, int interval, State state) {
+	/**
+	 * 已射击 NBT 谓词
+	 */
+	public static final String SHOT_KEY = "shot";
 	public static final int DEFAULT_SHOOTING_INTERVAL = TickUtil.getTick(0.25F);
 	public static final ShootProjectilesComponent DEFAULT = new ShootProjectilesComponent(false, DEFAULT_SHOOTING_INTERVAL, State.EVERY);
 	public static final Codec<ShootProjectilesComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
@@ -36,6 +40,17 @@ public record ShootProjectilesComponent(boolean shot, int interval, State state)
 					Codec.STRING.optionalFieldOf("state", State.EVERY.name()).forGetter(component -> component.state.name()))
 			.apply(builder, (shot, interval, state) -> new ShootProjectilesComponent(shot, interval, State.valueOf(state))));
 	public static final PacketCodec<RegistryByteBuf, ShootProjectilesComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 获取物品的射击状态
+	 *
+	 * @param stack 物品堆栈
+	 * @return 是否已射击
+	 */
+	public static boolean isShot(ItemStack stack) {
+		ShootProjectilesComponent shot = stack.get(DataComponentTypes.SHOOT_PROJECTILES);
+		return shot != null && shot.shot;
+	}
 	
 	/**
 	 * 设置物品已射击
