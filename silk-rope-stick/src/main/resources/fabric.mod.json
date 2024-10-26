@@ -39,6 +39,9 @@
 	"entrypoints": {
 		"fabric-datagen": [
 			"pers.saikel0rado1iu.silk.entrypoint.RopeStickDataGen"
+		],
+		"main": [
+			"pers.saikel0rado1iu.silk.entrypoint.RopeStickMain"
 		]
 	},
 	"mixins": [
@@ -57,6 +60,7 @@
 		"fabricloader": ">=0.16.7",
 		"fabric-api": ">=0.97.8",
 		"silk-api-base": "*",
-		"silk-mod-pass": "*"
+		"silk-mod-pass": "*",
+		"silk-spinning-jenny": "*"
 	}
 }
