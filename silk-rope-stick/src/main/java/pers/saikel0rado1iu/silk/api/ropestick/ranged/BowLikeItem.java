@@ -22,11 +22,17 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentUtil;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileUseComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileUseComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -36,14 +42,17 @@ import java.util.function.Predicate;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public abstract class BowLikeItem extends BowItem implements BowExpansion {
+public abstract class BowLikeItem extends BowItem {
 	protected ItemStack tempStack;
 	
 	/**
 	 * @param settings 物品设置
 	 */
 	public BowLikeItem(Settings settings) {
-		super(settings);
+		super(settings
+				.component(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW)
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_USE, new AdjustFovWhileUseComponent(new AdjustFovComponent(false, Optional.empty(), false, AdjustFovComponent.BOW_FOV_SCALING)))
+				.component(DataComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.DEFAULT));
 	}
 	
 	/**
@@ -55,7 +64,7 @@ public abstract class BowLikeItem extends BowItem implements BowExpansion {
 		// 检查用户使用者是否为玩家
 		if (!(user instanceof PlayerEntity player)) return;
 		// 获取弹丸
-		ItemStack projectile = getProjectileType(user, stack);
+		ItemStack projectile = RangedWeaponComponent.getProjectileType(user, stack);
 		if (projectile.isEmpty()) return;
 		// 获取弓已使用游戏刻
 		int usedTicks = getMaxUseTime(stack) - remainingUseTicks;
@@ -66,7 +75,8 @@ public abstract class BowLikeItem extends BowItem implements BowExpansion {
 		List<ItemStack> list = load(stack, projectile, player);
 		if (!world.isClient() && !list.isEmpty()) {
 			// 设置箭矢速度与设计误差
-			shootAll(world, player, player.getActiveHand(), tempStack = stack, list, progress * maxProjectileSpeed(), firingError(), progress == 1, null);
+			RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon());
+			shootAll(world, player, player.getActiveHand(), tempStack = stack, list, progress * component.maxSpeed(), component.firingError(), progress == 1, null);
 		}
 		world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1, 1 / (world.getRandom().nextFloat() * 0.4F + 1.2F) + progress * 0.5F);
 		player.incrementStat(Stats.USED.getOrCreateStat(this));
@@ -82,7 +92,8 @@ public abstract class BowLikeItem extends BowItem implements BowExpansion {
 		if (projectile instanceof PersistentProjectileEntity persistentProjectile) {
 			persistentProjectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0, speed, divergence);
 			// 设置基础伤害增加
-			persistentProjectile.setDamage(adjustedProjectileDamage());
+			RangedWeaponComponent component = DataComponentUtil.setOrGetValue(tempStack, DataComponentTypes.RANGED_WEAPON, rangedWeapon());
+			persistentProjectile.setDamage(component.adjustedProjectileDamage());
 		} else {
 			super.shoot(shooter, projectile, index, speed, divergence, yaw, target);
 		}
@@ -90,24 +101,43 @@ public abstract class BowLikeItem extends BowItem implements BowExpansion {
 	}
 	
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack stack = user.getStackInHand(hand);
-		setProjectileIndex(stack, getProjectileType(user, stack));
-		return super.use(world, user, hand);
-	}
-	
-	@Override
 	public Predicate<ItemStack> getProjectiles() {
-		return stack -> launchableProjectiles().stream().anyMatch(stack::isOf);
+		return stack -> DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::equals);
 	}
 	
 	@Override
 	public int getMaxUseTime(ItemStack stack) {
-		return maxUseTicks();
+		return DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).maxUseTicks();
 	}
 	
-	@Override
-	public boolean canStretchHud() {
-		return false;
+	/**
+	 * 物品的远程武器组件
+	 *
+	 * @return 远程武器组件
+	 */
+	public RangedWeaponComponent rangedWeapon() {
+		return RangedWeaponComponent.BOW;
 	}
+	
+	/**
+	 * 获取使用进度
+	 *
+	 * @param useTicks 使用刻数
+	 * @param stack    物品堆栈
+	 * @return 使用进度
+	 */
+	public float getUsingProgress(int useTicks, ItemStack stack) {
+		RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon());
+		float progress = (float) useTicks / component.maxPullTicks();
+		return Math.min(1, (progress * (progress + 2)) / 3);
+	}
+	
+	/**
+	 * 触发进度条件
+	 *
+	 * @param serverPlayer 服务端玩家
+	 * @param ranged       远程武器物品堆栈
+	 * @param projectile   发射物
+	 */
+	public abstract void triggerCriteria(ServerPlayerEntity serverPlayer, ItemStack ranged, ProjectileEntity projectile);
 }

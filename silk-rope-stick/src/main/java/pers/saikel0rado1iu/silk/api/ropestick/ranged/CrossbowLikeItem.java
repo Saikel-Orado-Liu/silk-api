@@ -33,9 +33,13 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentUtil;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 
 import java.util.List;
 import java.util.function.Predicate;
+
+import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">类弩物品</h2>
@@ -44,14 +48,14 @@ import java.util.function.Predicate;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public abstract class CrossbowLikeItem extends CrossbowItem implements CrossbowExpansion {
+public abstract class CrossbowLikeItem extends CrossbowItem {
 	protected ItemStack tempStack;
 	
 	/**
 	 * @param settings 物品设置
 	 */
 	public CrossbowLikeItem(Settings settings) {
-		super(settings);
+		super(settings.component(RANGED_WEAPON, RangedWeaponComponent.CROSSBOW));
 	}
 	
 	@Override
@@ -73,7 +77,8 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements CrossbowE
 	 */
 	@Override
 	protected void shoot(LivingEntity shooter, ProjectileEntity projectile, int index, float speed, float divergence, float yaw, @Nullable LivingEntity target) {
-		if (projectile instanceof PersistentProjectileEntity persistentProjectile) persistentProjectile.setDamage(adjustedProjectileDamage());
+		RangedWeaponComponent component = DataComponentUtil.setOrGetValue(tempStack, RANGED_WEAPON, rangedWeapon());
+		if (projectile instanceof PersistentProjectileEntity persistentProjectile) persistentProjectile.setDamage(component.adjustedProjectileDamage());
 		Vector3f vector3f;
 		if (target != null) {
 			double d = target.getX() - shooter.getX();
@@ -111,7 +116,7 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements CrossbowE
 	 * @return 是否成功装填
 	 */
 	protected boolean load(LivingEntity shooter, ItemStack crossbow) {
-		List<ItemStack> list = loadProjectile(crossbow, getProjectileType(shooter, crossbow), shooter);
+		List<ItemStack> list = loadProjectile(crossbow, RangedWeaponComponent.getProjectileType(shooter, crossbow), shooter);
 		if (list.isEmpty()) return false;
 		crossbow.set(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.of(list));
 		return true;
@@ -150,14 +155,14 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements CrossbowE
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack stack = user.getStackInHand(hand);
-		setProjectileIndex(stack, getProjectileType(user, stack));
-		ChargedProjectilesComponent component = stack.get(DataComponentTypes.CHARGED_PROJECTILES);
+		ChargedProjectilesComponent chargedProjectiles = stack.get(DataComponentTypes.CHARGED_PROJECTILES);
 		// 如果已装填
-		if (component != null && !component.isEmpty()) {
+		if (chargedProjectiles != null && !chargedProjectiles.isEmpty()) {
 			// 发射所有
-			shootAll(world, user, hand, tempStack = stack, getMaxProjectileSpeed(stack), firingError(), null);
+			RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
+			shootAll(world, user, hand, tempStack = stack, component.getMaxProjectileSpeed(stack), component.firingError(), null);
 			return TypedActionResult.consume(stack);
-		} else if (!getProjectileType(user, stack).isEmpty()) {
+		} else if (!RangedWeaponComponent.getProjectileType(user, stack).isEmpty()) {
 			charged = false;
 			loaded = false;
 			// 虽然方法名称为设置当前手, 但实际上这个方法是表明此物品可以进入使用状态
@@ -180,7 +185,8 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements CrossbowE
 		SoundEvent soundEvent = getQuickChargeSound(quickChargeLevel);
 		SoundEvent soundEvent2 = quickChargeLevel == 0 ? loadingSound() : null;
 		// 获取张弩进度
-		float pullProgress = (float) (stack.getMaxUseTime() - remainingUseTicks) / getMaxPullTicks(stack);
+		RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
+		float pullProgress = (float) (stack.getMaxUseTime() - remainingUseTicks) / component.getMaxPullTicks(stack);
 		if (pullProgress < 0.2) {
 			charged = false;
 			loaded = false;
@@ -222,36 +228,46 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements CrossbowE
 	
 	@Override
 	public Predicate<ItemStack> getHeldProjectiles() {
-		return stack -> launchableProjectiles().stream().anyMatch(stack::isOf);
+		return stack -> DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::equals);
 	}
 	
 	@Override
 	public Predicate<ItemStack> getProjectiles() {
-		return stack -> launchableProjectiles().stream().anyMatch(stack::isOf);
+		return stack -> DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::equals);
 	}
 	
 	@Override
 	public int getMaxUseTime(ItemStack stack) {
-		return getMaxPullTicks(stack);
+		return DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon()).maxUseTicks();
 	}
 	
-	@Override
-	public int getEnchantability() {
-		return 10;
+	/**
+	 * 物品的远程武器组件
+	 *
+	 * @return 远程武器组件
+	 */
+	public RangedWeaponComponent rangedWeapon() {
+		return RangedWeaponComponent.CROSSBOW;
 	}
 	
-	@Override
-	public boolean canStretchHud() {
-		return false;
+	/**
+	 * 获取使用进度
+	 *
+	 * @param useTicks 使用刻数
+	 * @param stack    物品堆栈
+	 * @return 使用进度
+	 */
+	public float getUsingProgress(int useTicks, ItemStack stack) {
+		RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
+		return Math.min(1, useTicks / (float) component.getMaxPullTicks(stack));
 	}
 	
-	@Override
-	public boolean canAdjustFov(ItemStack stack) {
-		return isCharged(stack);
-	}
-	
-	@Override
-	public boolean canModifyMove(ItemStack stack) {
-		return isCharged(stack);
-	}
+	/**
+	 * 触发进度条件
+	 *
+	 * @param serverPlayer 服务端玩家
+	 * @param ranged       远程武器物品堆栈
+	 * @param projectile   发射物
+	 */
+	public abstract void triggerCriteria(ServerPlayerEntity serverPlayer, ItemStack ranged, ProjectileEntity projectile);
 }
