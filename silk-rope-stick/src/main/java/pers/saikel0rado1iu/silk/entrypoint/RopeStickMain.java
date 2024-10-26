@@ -9,26 +9,37 @@
  * You should have received a copy of the GNU General Public License along with Silk API. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package pers.saikel0rado1iu.silk.api.ropestick.property;
+package pers.saikel0rado1iu.silk.entrypoint;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.enchantment.Enchantment;
+import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModMain;
+import pers.saikel0rado1iu.silk.api.modpass.ModPass;
+import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 
 import java.util.Set;
 
 /**
- * <h2 style="color:FFC800">自定义魔咒</h2>
- * 用于需要完全自定义物品的附魔
+ * <h2 style="color:FFC800">主类</h2>
+ * Silk API: Rope& Stick 的主类
  *
- * @param enchantments 物品魔咒集合
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
- * @since 0.1.0
+ * @since 1.1.2
  */
-public record CustomEnchantment(Set<Enchantment> enchantments) implements ItemProperty {
-	/**
-	 * @param enchantments 魔咒列表
-	 */
-	public CustomEnchantment(Enchantment... enchantments) {
-		this(ImmutableSet.copyOf(enchantments));
+public final class RopeStickMain implements ModMain {
+	@Override
+	public void main(ModPass mod) {
+	}
+	
+	@Override
+	public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
+		return ImmutableSet.of(DataComponentTypes.class);
+	}
+	
+	@Override
+	public ModData modData() {
+		return SilkRopeStick.getInstance();
 	}
 }

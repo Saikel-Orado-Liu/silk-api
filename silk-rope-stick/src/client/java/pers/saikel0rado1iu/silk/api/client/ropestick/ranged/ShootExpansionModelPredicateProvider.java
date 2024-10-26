@@ -14,7 +14,6 @@ package pers.saikel0rado1iu.silk.api.client.ropestick.ranged;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
-import pers.saikel0rado1iu.silk.api.ropestick.ranged.ShootExpansion;
 
 /**
  * <h2 style="color:FFC800">射击拓展物品模型谓词提供器</h2>

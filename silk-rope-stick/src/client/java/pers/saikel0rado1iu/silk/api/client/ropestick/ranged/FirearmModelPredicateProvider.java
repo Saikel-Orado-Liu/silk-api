@@ -16,9 +16,8 @@ import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
-import pers.saikel0rado1iu.silk.api.ropestick.ranged.Crossbow;
-import pers.saikel0rado1iu.silk.api.ropestick.ranged.ProjectileContainer;
-import pers.saikel0rado1iu.silk.api.ropestick.ranged.ShootExpansion;
+import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.ProjectileContainerComponent;
 
 import static net.minecraft.item.CrossbowItem.CHARGED_PROJECTILES_KEY;
 
@@ -36,22 +35,22 @@ public interface FirearmModelPredicateProvider {
 	 * @param firearm 枪械
 	 * @param <T>     枪械类型
 	 */
-	static <T extends Crossbow & ProjectileContainer & ShootExpansion> void register(T firearm) {
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(Crossbow.PULLING_KEY), (stack, world, entity, seed) -> {
+	static <T extends CrossbowLikeItem & ProjectileContainerComponent & ShootExpansion> void register(T firearm) {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.PULLING_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return entity.isUsingItem() && isActive(entity.getActiveItem(), stack) ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(Crossbow.PULL_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.PULL_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return !isActive(entity.getActiveItem(), stack) ? 0 : ((Crossbow) stack.getItem()).getUsingProgress(stack.getMaxUseTime() - entity.getItemUseTimeLeft() - 1, stack);
+			return !isActive(entity.getActiveItem(), stack) ? 0 : ((CrossbowLikeItem) stack.getItem()).getUsingProgress(stack.getMaxUseTime() - entity.getItemUseTimeLeft() - 1, stack);
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(Crossbow.CHARGED_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.CHARGED_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return CrossbowItem.isCharged(stack) ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(Crossbow.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, new Identifier(CrossbowLikeItem.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return ((Crossbow) stack.getItem()).getProjectileIndex(stack);
+			return ((CrossbowLikeItem) stack.getItem()).getProjectileIndex(stack);
 		});
 		ShootExpansionModelPredicateProvider.register(firearm);
 	}
