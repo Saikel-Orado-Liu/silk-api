@@ -20,7 +20,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import pers.saikel0rado1iu.silk.api.ropestick.armor.Armor;
+import pers.saikel0rado1iu.silk.api.ropestick.armor.ArmorHelper;
 import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 
 import java.util.EnumMap;
@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Test {@link Armor}
+ * Test {@link ArmorHelper}
  */
-public enum ArmorTest implements Armor {
+public enum ArmorHelperTest implements ArmorHelper {
 	MATERIAL("test", Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
 		map.put(ArmorItem.Type.BOOTS, 2);
 		map.put(ArmorItem.Type.LEGGINGS, 5);
@@ -48,7 +48,7 @@ public enum ArmorTest implements Armor {
 	private final Supplier<Ingredient> ingredient;
 	private final Supplier<RegistryEntry<ArmorMaterial>> material;
 	
-	ArmorTest(String name, Map<ArmorItem.Type, Integer> defense, int enchantability, RegistryEntry<SoundEvent> equipSound, float toughness, float knockbackResistance, Supplier<Ingredient> ingredient) {
+	ArmorHelperTest(String name, Map<ArmorItem.Type, Integer> defense, int enchantability, RegistryEntry<SoundEvent> equipSound, float toughness, float knockbackResistance, Supplier<Ingredient> ingredient) {
 		this.name = name;
 		this.defense = defense;
 		this.enchantability = enchantability;
@@ -56,7 +56,7 @@ public enum ArmorTest implements Armor {
 		this.toughness = toughness;
 		this.knockbackResistance = knockbackResistance;
 		this.ingredient = Suppliers.memoize(ingredient::get);
-		this.material = Suppliers.memoize(() -> Armor.registerMaterial(this));
+		this.material = Suppliers.memoize(() -> ArmorHelper.registerMaterial(this));
 	}
 	
 	@Override

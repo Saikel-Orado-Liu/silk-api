@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 0.1.0
  */
-public interface Armor {
+public interface ArmorHelper {
 	/**
 	 * 击退抗性比例
 	 */
@@ -41,21 +41,21 @@ public interface Armor {
 	/**
 	 * 注册盔甲材料
 	 *
-	 * @param armor 盔甲接口
+	 * @param armorHelper 盔甲接口
 	 * @return 盔甲材料注册项
 	 */
-	static RegistryEntry<ArmorMaterial> registerMaterial(Armor armor) {
+	static RegistryEntry<ArmorMaterial> registerMaterial(ArmorHelper armorHelper) {
 		return RegistryEntry.of(Registry.register(
 				Registries.ARMOR_MATERIAL,
-				armor.id(),
+				armorHelper.id(),
 				new ArmorMaterial(
-						armor.defense(),
-						armor.enchantability(),
-						armor.equipSound(),
-						armor.repairIngredient(),
-						armor.layers(),
-						armor.toughness(),
-						armor.knockbackResistance() / KR_RATIO)));
+						armorHelper.defense(),
+						armorHelper.enchantability(),
+						armorHelper.equipSound(),
+						armorHelper.repairIngredient(),
+						armorHelper.layers(),
+						armorHelper.toughness(),
+						armorHelper.knockbackResistance() / KR_RATIO)));
 	}
 	
 	/**
