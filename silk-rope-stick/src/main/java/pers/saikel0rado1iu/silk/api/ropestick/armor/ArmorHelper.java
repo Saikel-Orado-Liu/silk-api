@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * <h2 style="color:FFC800">盔甲</h2>
+ * <h2 style="color:FFC800">盔甲助手</h2>
  * 辅助盔甲的创建的数据直观和清晰
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
