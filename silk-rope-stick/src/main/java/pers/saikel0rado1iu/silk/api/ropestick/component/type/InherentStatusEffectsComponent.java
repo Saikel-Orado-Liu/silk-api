@@ -11,28 +11,36 @@
 
 package pers.saikel0rado1iu.silk.api.ropestick.component.type;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
+import java.util.List;
+
 /**
- * <h2 style="color:FFC800">修改移动组件</h2>
- * 物品的移动速度修改通用数据组件
+ * <h2 style="color:FFC800">自带多个状态效果组件</h2>
+ * 用于说明自带状态效果的物品的状态效果属性
  *
- * @param moveSpeedMultiple 相较于行走时的移动速度倍率
+ * @param inherentStatusEffects 自带状态效果列表
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record ModifyMoveComponent(float moveSpeedMultiple) {
+public record InherentStatusEffectsComponent(List<InherentStatusEffectComponent> inherentStatusEffects) {
+	public static final Codec<InherentStatusEffectsComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+					InherentStatusEffectComponent.CODEC.listOf().fieldOf("inherent_status_effect").forGetter(InherentStatusEffectsComponent::inherentStatusEffects))
+			.apply(builder, InherentStatusEffectsComponent::new));
+	public static final PacketCodec<RegistryByteBuf, InherentStatusEffectsComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
 	/**
-	 * 默认移动速度倍速
+	 * 自带多个状态效果组件创建方法
+	 *
+	 * @param inherentStatusEffects 自带状态效果列表
+	 * @return 自带多个状态效果组件
 	 */
-	public static final float DEFAULT_SPEED_MULTIPLE = 0.2F;
-	public static final ModifyMoveComponent DEFAULT = new ModifyMoveComponent(DEFAULT_SPEED_MULTIPLE);
-	public static final Codec<ModifyMoveComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					Codec.FLOAT.optionalFieldOf("move_speed_multiple", DEFAULT_SPEED_MULTIPLE).forGetter(ModifyMoveComponent::moveSpeedMultiple))
-			.apply(builder, ModifyMoveComponent::new));
-	public static final PacketCodec<RegistryByteBuf, ModifyMoveComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	public static InherentStatusEffectsComponent of(InherentStatusEffectComponent... inherentStatusEffects) {
+		return new InherentStatusEffectsComponent(ImmutableList.copyOf(inherentStatusEffects));
+	}
 }

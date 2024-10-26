@@ -51,4 +51,16 @@ public interface DataComponentTypes extends DataComponentTypeRegistry {
 	DataComponentType<RangedWeaponComponent> RANGED_WEAPON = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<RangedWeaponComponent>builder().codec(RangedWeaponComponent.CODEC).packetCodec(RangedWeaponComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("ranged_weapon"));
+	DataComponentType<EffectiveItemSlotComponent> EFFECTIVE_ITEM_SLOT = DataComponentTypeRegistry.registrar(() ->
+					DataComponentType.<EffectiveItemSlotComponent>builder().codec(EffectiveItemSlotComponent.CODEC).packetCodec(EffectiveItemSlotComponent.PACKET_CODEC).build())
+			.register(SilkApi.getInternal().ofId("effective_item_slot"));
+	DataComponentType<InherentStatusEffectComponent> INHERENT_STATUS_EFFECT = DataComponentTypeRegistry.registrar(() ->
+					DataComponentType.<InherentStatusEffectComponent>builder().codec(InherentStatusEffectComponent.CODEC).packetCodec(InherentStatusEffectComponent.PACKET_CODEC).build())
+			.register(SilkApi.getInternal().ofId("inherent_status_effect"));
+	DataComponentType<InherentStatusEffectsComponent> INHERENT_STATUS_EFFECTS = DataComponentTypeRegistry.registrar(() ->
+					DataComponentType.<InherentStatusEffectsComponent>builder().codec(InherentStatusEffectsComponent.CODEC).packetCodec(InherentStatusEffectsComponent.PACKET_CODEC).build())
+			.register(SilkApi.getInternal().ofId("inherent_status_effects"));
+	DataComponentType<CustomEntityHurtComponent> CUSTOM_ENTITY_HURT = DataComponentTypeRegistry.registrar(() ->
+					DataComponentType.<CustomEntityHurtComponent>builder().codec(CustomEntityHurtComponent.CODEC).packetCodec(CustomEntityHurtComponent.PACKET_CODEC).build())
+			.register(SilkApi.getInternal().ofId("custom_entity_hurt"));
 }

@@ -9,7 +9,7 @@
  * You should have received a copy of the GNU General Public License along with Silk API. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package pers.saikel0rado1iu.silk.mixin.ropestick.property;
+package pers.saikel0rado1iu.silk.mixin.ropestick.component.type;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -25,6 +25,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,9 +34,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import pers.saikel0rado1iu.silk.api.ropestick.property.EffectiveItemSlot;
-import pers.saikel0rado1iu.silk.api.ropestick.property.InherentStatusEffect;
-import pers.saikel0rado1iu.silk.api.ropestick.property.ItemProperty;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectsComponent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,30 +47,30 @@ import java.util.Set;
 import static net.minecraft.entity.effect.StatusEffectInstance.INFINITE;
 
 /**
- * <h2 style="color:FFC800">{@link InherentStatusEffect} 混入</h2>
+ * <h2 style="color:FFC800">{@link InherentStatusEffectsComponent} 混入</h2>
  * 设置自带状态效果的物品
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"><se>
- * @since 1.0.0
+ * @since 1.1.2
  */
 @Mixin(LivingEntity.class)
-abstract class InherentStatusEffectMixin extends Entity implements Attackable {
+abstract class InherentStatusEffectsComponentMixin extends Entity implements Attackable {
 	@Unique
 	private final Set<StatusEffectInstance> instances = Sets.newHashSetWithExpectedSize(5);
 	
-	public InherentStatusEffectMixin(EntityType<?> type, World world) {
+	public InherentStatusEffectsComponentMixin(EntityType<?> type, World world) {
 		super(type, world);
 	}
 	
 	@Shadow
-	public abstract boolean removeStatusEffect(StatusEffect type);
+	@Nullable
+	public abstract StatusEffectInstance getStatusEffect(RegistryEntry<StatusEffect> effect);
 	
-	@Override
 	@Shadow
 	public abstract Iterable<ItemStack> getArmorItems();
 	
 	@Shadow
-	public abstract @Nullable StatusEffectInstance getStatusEffect(StatusEffect effect);
+	public abstract boolean removeStatusEffect(RegistryEntry<StatusEffect> effect);
 	
 	@Inject(method = "tick", at = @At("RETURN"))
 	private void setStatusEffects(CallbackInfo ci) {
@@ -93,23 +95,23 @@ abstract class InherentStatusEffectMixin extends Entity implements Attackable {
 			itemsBuilder.put(item, itemsBuilder.getOrDefault(item, 0) + count);
 		}
 		ImmutableMap<Item, Integer> items = ImmutableMap.copyOf(itemsBuilder);
-		// 获取物品中所有的自带状态效果
-		HashMap<InherentStatusEffect.Property, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
-		for (Item item : items.keySet()) {
-			Optional<InherentStatusEffect> property = ItemProperty.get(item, InherentStatusEffect.class);
-			property.ifPresent(p -> p.inherentStatusEffects().forEach(effect -> effectItemsBuilder.put(effect, item)));
+		// 获取物品中所有的自带状态效果组件
+		HashMap<InherentStatusEffectComponent, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
+		for (ItemStack stack : stacks) {
+			Optional<InherentStatusEffectsComponent> component = Optional.ofNullable(stack.get(DataComponentTypes.INHERENT_STATUS_EFFECTS));
+			component.ifPresent(p -> p.inherentStatusEffects().forEach(effect -> effectItemsBuilder.put(effect, stack.getItem())));
 		}
-		ImmutableMap<InherentStatusEffect.Property, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
+		ImmutableMap<InherentStatusEffectComponent, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
 		if (effectItems.isEmpty()) return;
 		// 设置自带状态效果
-		for (InherentStatusEffect.Property property : effectItems.keySet()) {
-			StatusEffect effect = property.statusEffect();
+		for (InherentStatusEffectComponent property : effectItems.keySet()) {
+			RegistryEntry<StatusEffect> effect = property.effect();
 			int baseLevel = Math.max(1, property.baseLevel());
 			int maxLevel = Math.max(1, property.maxLevel());
 			float stackingLevel = property.stackingLevel();
-			Set<Item> kit = property.statusEffectKit().get();
+			List<Item> kit = property.statusEffectKit().get();
 			int threshold = Math.max(1, property.kitTriggerThreshold());
-			EffectiveItemSlot slot = property.effectiveItemSlot();
+			EffectiveItemSlotComponent slot = property.effectiveItemSlot();
 			Integer itemCount = 0;
 			if (kit.isEmpty()) {
 				Item item = Optional.ofNullable(effectItems.get(property)).orElse(Items.AIR);

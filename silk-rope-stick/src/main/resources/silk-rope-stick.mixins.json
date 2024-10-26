@@ -3,8 +3,8 @@
 	"package": "pers.saikel0rado1iu.silk.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ropestick.property.CustomEntityHurtMixin",
-		"ropestick.property.InherentStatusEffectMixin",
+		"ropestick.component.type.CustomEntityHurtComponentMixin",
+		"ropestick.component.type.InherentStatusEffectsComponentMixin",
 		"ropestick.weapon.BreakingShieldMixin"
 	],
 	"injectors": {
