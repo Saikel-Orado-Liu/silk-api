@@ -12,12 +12,10 @@
 package pers.saikel0rado1iu.silk.test.ropestick;
 
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.entity.EquipmentSlot;
 import pers.saikel0rado1iu.silk.api.modpass.ModData;
 import pers.saikel0rado1iu.silk.api.modpass.ModMain;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
 import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 
 import java.util.Set;
@@ -33,7 +31,6 @@ public final class Test implements ModMain {
 	 */
 	@Override
 	public void main(ModPass mod) {
-		SilkRopeStick.getInstance().logger().error(EffectiveItemSlotData.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST).toString());
 	}
 	
 	/**
