@@ -104,7 +104,7 @@ public record ProjectileContainerComponent(int maxCapacity) {
 	 */
 	public int getLoadableAmount(ItemStack stack, Optional<LivingEntity> user) {
 		return (user.isPresent() && user.get() instanceof PlayerEntity player && !player.isCreative())
-				? Math.min(maxCapacity(), player.getInventory().count(player.getProjectileType(stack).getItem()))
-				: maxCapacity() - getChargedAmount(stack);
+				? Math.min(maxCapacity, player.getInventory().count(RangedWeaponComponent.getProjectileType(player, stack).getItem()))
+				: maxCapacity - getChargedAmount(stack);
 	}
 }
