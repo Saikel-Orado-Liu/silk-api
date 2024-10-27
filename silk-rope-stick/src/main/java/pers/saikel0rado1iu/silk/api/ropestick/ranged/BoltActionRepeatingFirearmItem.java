@@ -48,6 +48,7 @@ import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentType
  * @since 1.1.2
  */
 public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
+	protected boolean isCharged = false;
 	protected int maxUseTicks = 0;
 	protected int loadableAmount = 0;
 	
@@ -67,10 +68,8 @@ public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
 	
 	@Override
 	public float getUsingProgress(int useTicks, ItemStack stack) {
-		if (useTicks >= getMaxUseTime(stack) && isCharged(stack)) return -1;
-		if (loadableAmount != DataComponentUtil.setOrGetValue(stack, PROJECTILE_CONTAINER, projectileContainer()).maxCapacity() && !isCharged(stack)) {
-			return -1;
-		}
+		if (useTicks >= getMaxUseTime(stack) && isCharged) return -1;
+		if (loadableAmount != DataComponentUtil.setOrGetValue(stack, PROJECTILE_CONTAINER, projectileContainer()).maxCapacity() && !isCharged) return -1;
 		return useTicks >= getMaxUseTime(stack) ? 1 : (Math.min(1, useTicks / (float) getMaxUseTime(stack)) * loadableAmount) % 1;
 	}
 	
@@ -101,18 +100,18 @@ public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
 		RangedWeaponComponent rangedWeapon = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
 		ShootProjectilesComponent shootProjectiles = DataComponentUtil.setOrGetValue(stack, SHOOT_PROJECTILES, shootProjectiles());
 		if (ProjectileContainerComponent.getChargedAmount(stack) > 0) shootProjectiles.resetShot(stack);
-		if (!isCharged(stack) && maxUseTicks == Math.round((float) rangedWeapon.maxUseTicks() * loadableAmount)) {
+		if (!isCharged && maxUseTicks == Math.round((float) rangedWeapon.maxUseTicks() * loadableAmount)) {
 			int level = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
 			int useTicks = getMaxUseTime(stack) - remainingUseTicks;
-			double pullProgress = getUsingProgress(useTicks, stack);
-			if (useTicks != 0 && (pullProgress == 0 || pullProgress == 1)) load(user, stack);
-			if (pullProgress < 0.2) {
+			double progress = getUsingProgress(useTicks, stack);
+			if (useTicks != 0 && (progress == 0 || progress == 1)) load(user, stack);
+			if (progress < 0.2) {
 				charged = false;
 				loaded = false;
-			} else if (pullProgress > 0.3 && !charged) {
+			} else if (progress > 0.3 && !charged) {
 				charged = true;
 				world.playSound(null, user.getX(), user.getY(), user.getZ(), getQuickChargeSound(level), SoundCategory.PLAYERS, 1, 1);
-			} else if (pullProgress > 0.9 && level == 0 && !loaded) {
+			} else if (progress > 0.9 && level == 0 && !loaded) {
 				loaded = true;
 				world.playSound(null, user.getX(), user.getY(), user.getZ(), loadingSound(), SoundCategory.PLAYERS, 1, 1);
 			}
@@ -125,11 +124,14 @@ public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
 	
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-		if (ProjectileContainerComponent.getChargedAmount(stack) <= 0 || isCharged(stack)) return;
-		// 获取声音类别
-		SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
-		// 播放弩装填结束音效
-		world.playSound(null, user.getX(), user.getY(), user.getZ(), loadedSound(), soundCategory, 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F);
+		if (ProjectileContainerComponent.getChargedAmount(stack) > 0 && !isCharged(stack)) {
+			// 设置已装填
+			isCharged = true;
+			// 播放弩装填结束音效
+			world.playSound(null, user.getX(), user.getY(), user.getZ(), loadedSound(), user.getSoundCategory(), 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F);
+		} else if (ProjectileContainerComponent.getChargedAmount(stack) == 0) {
+			isCharged = false;
+		}
 	}
 	
 	@Override
@@ -148,6 +150,7 @@ public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
 	@Override
 	protected boolean load(LivingEntity shooter, ItemStack crossbow) {
 		List<ItemStack> list = Lists.newCopyOnWriteArrayList(crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles());
+		crossbow.set(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT);
 		ItemStack projectile = RangedWeaponComponent.getProjectileType(shooter, crossbow);
 		if (projectile.isEmpty()) {
 			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
