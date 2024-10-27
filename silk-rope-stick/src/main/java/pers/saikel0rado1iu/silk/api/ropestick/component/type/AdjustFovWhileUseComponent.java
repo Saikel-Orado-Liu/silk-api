@@ -13,9 +13,13 @@ package pers.saikel0rado1iu.silk.api.ropestick.component.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import pers.saikel0rado1iu.silk.api.ropestick.ranged.BowLikeItem;
+import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
 
 /**
  * <h2 style="color:FFC800">在使用时调整视场角组件</h2>
@@ -30,4 +34,18 @@ public record AdjustFovWhileUseComponent(AdjustFovComponent adjustFov) {
 					AdjustFovComponent.CODEC.optionalFieldOf("adjust_fov", AdjustFovComponent.DEFAULT).forGetter(AdjustFovWhileUseComponent::adjustFov))
 			.apply(builder, AdjustFovWhileUseComponent::new));
 	public static final PacketCodec<RegistryByteBuf, AdjustFovWhileUseComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 获取使用进度
+	 *
+	 * @param useTicks 使用刻数
+	 * @param stack    物品堆栈
+	 * @return 使用进度，在 0 和 1 之间的浮点数
+	 */
+	public static float getUsingProgress(int useTicks, ItemStack stack) {
+		Item item = stack.getItem();
+		if (item instanceof BowLikeItem bow) return bow.getUsingProgress(useTicks, stack);
+		else if (item instanceof CrossbowLikeItem crossbow) return crossbow.getUsingProgress(useTicks, stack);
+		return Math.min(1, (float) useTicks / stack.getMaxUseTime());
+	}
 }
