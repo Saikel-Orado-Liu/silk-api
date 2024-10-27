@@ -82,7 +82,7 @@ public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
 		// 如果没有弹药同时未装填则不使用物品
 		RangedWeaponComponent rangedWeapon = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
 		if (!isCharged(stack) && RangedWeaponComponent.getProjectileType(user, stack).isEmpty()) return TypedActionResult.fail(stack);
-		loadableAmount = DataComponentUtil.setOrGetValue(stack, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(stack, Optional.of(user));
+		loadableAmount = DataComponentUtil.setOrGetValue(stack, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(stack, user);
 		if (isCharged(stack)) {
 			maxUseTicks = ProjectileContainerComponent.getChargedAmount(stack) * shootProjectiles.interval();
 			user.setCurrentHand(hand);
@@ -150,11 +150,11 @@ public abstract class BoltActionRepeatingFirearmItem extends CrossbowLikeItem {
 		List<ItemStack> list = Lists.newCopyOnWriteArrayList(crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles());
 		ItemStack projectile = RangedWeaponComponent.getProjectileType(shooter, crossbow);
 		if (projectile.isEmpty()) {
-			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list);
+			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
 			return false;
 		}
 		list.add(getProjectile(crossbow, projectile, shooter, false));
-		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list);
+		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
 		return true;
 	}
 	

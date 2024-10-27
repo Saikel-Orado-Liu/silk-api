@@ -34,6 +34,7 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentUtil;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ProjectileContainerComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ShootProjectilesComponent;
+import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +78,7 @@ public abstract class BoltActionFirearmItem extends CrossbowLikeItem {
 		ItemStack stack = user.getStackInHand(hand);
 		RangedWeaponComponent rangedWeapon = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
 		DataComponentUtil.setOrGetValue(stack, SHOOT_PROJECTILES, shootProjectiles()).resetShot(stack);
-		loadableAmount = DataComponentUtil.setOrGetValue(stack, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(stack, Optional.of(user));
+		loadableAmount = DataComponentUtil.setOrGetValue(stack, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(stack, user);
 		maxUseTicks = Math.round((float) rangedWeapon.maxUseTicks() * loadableAmount);
 		ChargedProjectilesComponent component = stack.get(DataComponentTypes.CHARGED_PROJECTILES);
 		// 如果已装填
@@ -106,7 +107,10 @@ public abstract class BoltActionFirearmItem extends CrossbowLikeItem {
 		int level = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
 		int useTicks = getMaxUseTime(stack) - remainingUseTicks;
 		double progress = getUsingProgress(useTicks, stack);
-		if (useTicks != 0 && (progress == 0 || progress == 1)) load(user, stack);
+		if (useTicks != 0 && (progress == 0 || progress == 1)) {
+			SilkRopeStick.getInstance().logger().error(useTicks + " " + progress);
+			load(user, stack);
+		}
 		if (progress < 0.2) {
 			charged = false;
 			loaded = false;
@@ -145,11 +149,11 @@ public abstract class BoltActionFirearmItem extends CrossbowLikeItem {
 		List<ItemStack> list = Lists.newCopyOnWriteArrayList(crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles());
 		ItemStack projectile = RangedWeaponComponent.getProjectileType(shooter, crossbow);
 		if (projectile.isEmpty()) {
-			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list);
+			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
 			return false;
 		}
 		list.add(getProjectile(crossbow, projectile, shooter, false));
-		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list);
+		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
 		return true;
 	}
 	

@@ -104,12 +104,12 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 		List<ItemStack> list = Lists.newCopyOnWriteArrayList(crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles());
 		ItemStack projectile = RangedWeaponComponent.getProjectileType(shooter, crossbow);
 		if (projectile.isEmpty()) {
-			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list);
+			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
 			return false;
 		}
-		int size = DataComponentUtil.setOrGetValue(crossbow, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(crossbow, Optional.of(shooter));
+		int size = DataComponentUtil.setOrGetValue(crossbow, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(crossbow, shooter);
 		for (int count = 0; count < size; count++) list.add(getProjectile(crossbow, projectile, shooter, false));
-		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list);
+		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
 		return true;
 	}
 	

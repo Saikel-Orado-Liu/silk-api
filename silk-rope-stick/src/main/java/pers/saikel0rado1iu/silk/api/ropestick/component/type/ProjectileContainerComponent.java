@@ -26,7 +26,6 @@ import net.minecraft.network.codec.PacketCodecs;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * <h2 style="color:FFC800">发射物容器组件</h2>
@@ -87,9 +86,9 @@ public record ProjectileContainerComponent(int maxCapacity) {
 	 * @param stack       装填发射物的物品堆栈
 	 * @param projectiles 需装填发射物堆栈列表
 	 */
-	public void putChargedProjectiles(ItemStack stack, List<ItemStack> projectiles) {
+	public void putChargedProjectiles(ItemStack stack, List<ItemStack> projectiles, LivingEntity shooter) {
 		List<ItemStack> projectileList = new ArrayList<>();
-		for (int count = 0; count < Math.min(projectiles.size(), getLoadableAmount(stack, Optional.empty())); count++) {
+		for (int count = 0; count < Math.min(projectiles.size(), getLoadableAmount(stack, shooter)); count++) {
 			projectileList.add(projectiles.get(count));
 		}
 		stack.set(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.of(projectileList));
@@ -102,8 +101,8 @@ public record ProjectileContainerComponent(int maxCapacity) {
 	 * @param user  装填的玩家实体，用于判断是否为创造
 	 * @return 能装填发射物数量
 	 */
-	public int getLoadableAmount(ItemStack stack, Optional<LivingEntity> user) {
-		return (user.isPresent() && user.get() instanceof PlayerEntity player && !player.isCreative())
+	public int getLoadableAmount(ItemStack stack, LivingEntity user) {
+		return (user instanceof PlayerEntity player && !player.isCreative())
 				? Math.min(maxCapacity, player.getInventory().count(RangedWeaponComponent.getProjectileType(player, stack).getItem()))
 				: maxCapacity - getChargedAmount(stack);
 	}
