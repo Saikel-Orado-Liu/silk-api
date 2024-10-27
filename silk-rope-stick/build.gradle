@@ -7,6 +7,8 @@ loom {
 }
 
 dependencies {
+	api "net.objecthunter:exp4j:0.4.8"
+	include "net.objecthunter:exp4j:0.4.8"
 	api project(path: ":silk-api-base", configuration: "namedElements")
 	api project(path: ":silk-mod-pass", configuration: "namedElements")
 	api project(path: ":silk-spinning-jenny", configuration: "namedElements")
