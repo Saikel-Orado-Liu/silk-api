@@ -67,7 +67,7 @@ abstract class BreakingShieldMixin {
 		damageShield(breakingShield.shieldDamage(amount));
 		if (breakingShield.canCooling()) {
 			takeShieldHit((LivingEntity) damageSource.getAttacker());
-			if (((LivingEntity) (Object) this) instanceof PlayerEntity player) player.disableShield(true);
+			if (((LivingEntity) (Object) this) instanceof PlayerEntity player) player.disableShield();
 		}
 		
 		return breakingShield.entityDamage(amount);
