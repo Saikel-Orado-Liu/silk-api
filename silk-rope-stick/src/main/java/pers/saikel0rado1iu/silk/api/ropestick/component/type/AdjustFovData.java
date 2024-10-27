@@ -21,8 +21,8 @@ import net.minecraft.util.Identifier;
 import java.util.Optional;
 
 /**
- * <h2 style="color:FFC800">调整视场角组件</h2>
- * 物品的视场角缩放通用数据组件
+ * <h2 style="color:FFC800">调整视场角数据</h2>
+ * 物品的视场角缩放通用组件数据
  *
  * @param onlyFirstPerson 是否只在第一人称进行缩放
  * @param hudOverlay      抬头显示叠加层，如果为 {@link Optional#empty()} 则不显示叠加层
@@ -31,7 +31,7 @@ import java.util.Optional;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record AdjustFovComponent(boolean onlyFirstPerson, Optional<Identifier> hudOverlay, boolean canStretchHud, float fovScaling) {
+public record AdjustFovData(boolean onlyFirstPerson, Optional<Identifier> hudOverlay, boolean canStretchHud, float fovScaling) {
 	/**
 	 * 弓的视场角缩放值
 	 */
@@ -56,14 +56,27 @@ public record AdjustFovComponent(boolean onlyFirstPerson, Optional<Identifier> h
 	 * 细雪轮廓纹理
 	 */
 	public static final Identifier POWDER_SNOW_OUTLINE = new Identifier("textures/misc/powder_snow_outline.png");
-	public static final AdjustFovComponent DEFAULT = new AdjustFovComponent(false, Optional.empty(), false, DEFAULT_FOV_SCALING);
-	public static final Codec<AdjustFovComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					Codec.BOOL.optionalFieldOf("only_first_person", false).forGetter(AdjustFovComponent::onlyFirstPerson),
-					Identifier.CODEC.optionalFieldOf("hud_overlay").forGetter(AdjustFovComponent::hudOverlay),
-					Codec.BOOL.optionalFieldOf("can_stretch_hud", false).forGetter(AdjustFovComponent::canStretchHud),
-					Codec.FLOAT.optionalFieldOf("fov_scaling", DEFAULT_FOV_SCALING).forGetter(AdjustFovComponent::fovScaling))
-			.apply(builder, AdjustFovComponent::new));
-	public static final PacketCodec<RegistryByteBuf, AdjustFovComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	public static final AdjustFovData DEFAULT = AdjustFovData.create(false, Optional.empty(), false, DEFAULT_FOV_SCALING);
+	public static final Codec<AdjustFovData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+					Codec.BOOL.optionalFieldOf("only_first_person", false).forGetter(AdjustFovData::onlyFirstPerson),
+					Identifier.CODEC.optionalFieldOf("hud_overlay").forGetter(AdjustFovData::hudOverlay),
+					Codec.BOOL.optionalFieldOf("can_stretch_hud", false).forGetter(AdjustFovData::canStretchHud),
+					Codec.FLOAT.optionalFieldOf("fov_scaling", DEFAULT_FOV_SCALING).forGetter(AdjustFovData::fovScaling))
+			.apply(builder, AdjustFovData::new));
+	public static final PacketCodec<RegistryByteBuf, AdjustFovData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 调整视场角数据创建方法
+	 *
+	 * @param onlyFirstPerson 是否只在第一人称进行缩放
+	 * @param hudOverlay      抬头显示叠加层，如果为 {@link Optional#empty()} 则不显示叠加层
+	 * @param canStretchHud   是否可以拉伸抬头显示
+	 * @param fovScaling      视场角缩放倍数，视场角缩放倍数，&gt; 1 则为放大，0 &lt; x &lt; 1 则为缩小
+	 * @return 调整视场角数据
+	 */
+	public static AdjustFovData create(boolean onlyFirstPerson, Optional<Identifier> hudOverlay, boolean canStretchHud, float fovScaling) {
+		return new AdjustFovData(onlyFirstPerson, hudOverlay, canStretchHud, fovScaling);
+	}
 	
 	/**
 	 * 视场角缩放倍数

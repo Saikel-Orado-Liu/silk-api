@@ -24,39 +24,39 @@ import net.minecraft.network.codec.PacketCodecs;
 import java.util.List;
 
 /**
- * <h2 style="color:FFC800">有效物品槽组件</h2>
+ * <h2 style="color:FFC800">有效物品槽数据</h2>
  * 用于有特殊属性的物品能够生效的物品槽
  *
  * @param slots 有效的物品槽集合，如果列表为空 {@link List#isEmpty()}，则意味着能在任意物品栏内生效
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record EffectiveItemSlotComponent(List<EquipmentSlot> slots) {
+public record EffectiveItemSlotData(List<EquipmentSlot> slots) {
 	/**
 	 * 盔甲物品槽
 	 */
-	public final static EffectiveItemSlotComponent ARMOR = EffectiveItemSlotComponent.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
+	public final static EffectiveItemSlotData ARMOR = EffectiveItemSlotData.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
 	/**
 	 * 手部物品槽
 	 */
-	public final static EffectiveItemSlotComponent HAND = EffectiveItemSlotComponent.of(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND);
+	public final static EffectiveItemSlotData HAND = EffectiveItemSlotData.of(EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND);
 	/**
 	 * 所有物品槽
 	 */
-	public final static EffectiveItemSlotComponent ALL = EffectiveItemSlotComponent.of();
-	public static final Codec<EffectiveItemSlotComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					EquipmentSlot.CODEC.listOf().fieldOf("slots").forGetter(EffectiveItemSlotComponent::slots))
-			.apply(builder, EffectiveItemSlotComponent::new));
-	public static final PacketCodec<RegistryByteBuf, EffectiveItemSlotComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	public final static EffectiveItemSlotData ALL = EffectiveItemSlotData.of();
+	public static final Codec<EffectiveItemSlotData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+					EquipmentSlot.CODEC.listOf().fieldOf("slots").forGetter(EffectiveItemSlotData::slots))
+			.apply(builder, EffectiveItemSlotData::new));
+	public static final PacketCodec<RegistryByteBuf, EffectiveItemSlotData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
 	/**
-	 * 有效物品槽组件创建方法
+	 * 有效物品槽数据创建方法
 	 *
 	 * @param slots 装备槽列表
-	 * @return 有效物品槽组件
+	 * @return 有效物品槽数据
 	 */
-	public static EffectiveItemSlotComponent of(EquipmentSlot... slots) {
-		return new EffectiveItemSlotComponent(ImmutableList.copyOf(slots));
+	public static EffectiveItemSlotData of(EquipmentSlot... slots) {
+		return new EffectiveItemSlotData(ImmutableList.copyOf(slots));
 	}
 	
 	/**

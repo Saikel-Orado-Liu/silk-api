@@ -18,8 +18,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.Identifier;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.BowLikeItem;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
+
+import java.util.Optional;
 
 /**
  * <h2 style="color:FFC800">在使用时调整视场角组件</h2>
@@ -28,12 +31,25 @@ import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record AdjustFovWhileUseComponent(AdjustFovComponent adjustFov) {
-	public static final AdjustFovWhileUseComponent DEFAULT = new AdjustFovWhileUseComponent(AdjustFovComponent.DEFAULT);
+public record AdjustFovWhileUseComponent(AdjustFovData adjustFov) {
+	public static final AdjustFovWhileUseComponent DEFAULT = new AdjustFovWhileUseComponent(AdjustFovData.DEFAULT);
 	public static final Codec<AdjustFovWhileUseComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					AdjustFovComponent.CODEC.optionalFieldOf("adjust_fov", AdjustFovComponent.DEFAULT).forGetter(AdjustFovWhileUseComponent::adjustFov))
+					AdjustFovData.CODEC.optionalFieldOf("adjust_fov", AdjustFovData.DEFAULT).forGetter(AdjustFovWhileUseComponent::adjustFov))
 			.apply(builder, AdjustFovWhileUseComponent::new));
 	public static final PacketCodec<RegistryByteBuf, AdjustFovWhileUseComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 在使用时调整视场角组件创建方法
+	 *
+	 * @param onlyFirstPerson 是否只在第一人称进行缩放
+	 * @param hudOverlay      抬头显示叠加层，如果为 {@link Optional#empty()} 则不显示叠加层
+	 * @param canStretchHud   是否可以拉伸抬头显示
+	 * @param fovScaling      视场角缩放倍数，视场角缩放倍数，&gt; 1 则为放大，0 &lt; x &lt; 1 则为缩小
+	 * @return 在使用时调整视场角组件
+	 */
+	public static AdjustFovWhileUseComponent create(boolean onlyFirstPerson, Optional<Identifier> hudOverlay, boolean canStretchHud, float fovScaling) {
+		return new AdjustFovWhileUseComponent(AdjustFovData.create(onlyFirstPerson, hudOverlay, canStretchHud, fovScaling));
+	}
 	
 	/**
 	 * 获取使用进度

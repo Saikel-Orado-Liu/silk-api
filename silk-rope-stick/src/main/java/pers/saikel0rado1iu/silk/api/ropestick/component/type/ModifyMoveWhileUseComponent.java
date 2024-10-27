@@ -25,10 +25,20 @@ import net.minecraft.network.codec.PacketCodecs;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record ModifyMoveWhileUseComponent(ModifyMoveComponent modifyMove) {
-	public static final ModifyMoveWhileUseComponent DEFAULT = new ModifyMoveWhileUseComponent(ModifyMoveComponent.DEFAULT);
+public record ModifyMoveWhileUseComponent(ModifyMoveData modifyMove) {
+	public static final ModifyMoveWhileUseComponent DEFAULT = new ModifyMoveWhileUseComponent(ModifyMoveData.DEFAULT);
 	public static final Codec<ModifyMoveWhileUseComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					ModifyMoveComponent.CODEC.optionalFieldOf("modify_move", ModifyMoveComponent.DEFAULT).forGetter(ModifyMoveWhileUseComponent::modifyMove))
+					ModifyMoveData.CODEC.optionalFieldOf("modify_move", ModifyMoveData.DEFAULT).forGetter(ModifyMoveWhileUseComponent::modifyMove))
 			.apply(builder, ModifyMoveWhileUseComponent::new));
 	public static final PacketCodec<RegistryByteBuf, ModifyMoveWhileUseComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 在使用时修改移动组件创建方法
+	 *
+	 * @param moveSpeedMultiple 相较于行走时的移动速度倍率
+	 * @return 在使用时修改移动组件
+	 */
+	public static ModifyMoveWhileUseComponent create(float moveSpeedMultiple) {
+		return new ModifyMoveWhileUseComponent(ModifyMoveData.of(moveSpeedMultiple));
+	}
 }

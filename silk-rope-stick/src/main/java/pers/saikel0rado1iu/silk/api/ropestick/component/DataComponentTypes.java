@@ -24,18 +24,12 @@ import pers.saikel0rado1iu.silk.impl.SilkApi;
  * @since 1.1.2
  */
 public interface DataComponentTypes extends DataComponentTypeRegistry {
-	DataComponentType<AdjustFovComponent> ADJUST_FOV = DataComponentTypeRegistry.registrar(() ->
-					DataComponentType.<AdjustFovComponent>builder().codec(AdjustFovComponent.CODEC).packetCodec(AdjustFovComponent.PACKET_CODEC).build())
-			.register(SilkApi.getInternal().ofId("adjust_fov"));
 	DataComponentType<AdjustFovWhileHoldComponent> ADJUST_FOV_WHILE_HOLD = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<AdjustFovWhileHoldComponent>builder().codec(AdjustFovWhileHoldComponent.CODEC).packetCodec(AdjustFovWhileHoldComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("adjust_fov_while_hold"));
 	DataComponentType<AdjustFovWhileUseComponent> ADJUST_FOV_WHILE_USE = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<AdjustFovWhileUseComponent>builder().codec(AdjustFovWhileUseComponent.CODEC).packetCodec(AdjustFovWhileUseComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("adjust_fov_while_use"));
-	DataComponentType<ModifyMoveComponent> MODIFY_MOVE = DataComponentTypeRegistry.registrar(() ->
-					DataComponentType.<ModifyMoveComponent>builder().codec(ModifyMoveComponent.CODEC).packetCodec(ModifyMoveComponent.PACKET_CODEC).build())
-			.register(SilkApi.getInternal().ofId("modify_move"));
 	DataComponentType<ModifyMoveWhileHoldComponent> MODIFY_MOVE_WHILE_HOLD = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<ModifyMoveWhileHoldComponent>builder().codec(ModifyMoveWhileHoldComponent.CODEC).packetCodec(ModifyMoveWhileHoldComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("modify_move_while_hold"));
@@ -51,12 +45,6 @@ public interface DataComponentTypes extends DataComponentTypeRegistry {
 	DataComponentType<RangedWeaponComponent> RANGED_WEAPON = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<RangedWeaponComponent>builder().codec(RangedWeaponComponent.CODEC).packetCodec(RangedWeaponComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("ranged_weapon"));
-	DataComponentType<EffectiveItemSlotComponent> EFFECTIVE_ITEM_SLOT = DataComponentTypeRegistry.registrar(() ->
-					DataComponentType.<EffectiveItemSlotComponent>builder().codec(EffectiveItemSlotComponent.CODEC).packetCodec(EffectiveItemSlotComponent.PACKET_CODEC).build())
-			.register(SilkApi.getInternal().ofId("effective_item_slot"));
-	DataComponentType<InherentStatusEffectComponent> INHERENT_STATUS_EFFECT = DataComponentTypeRegistry.registrar(() ->
-					DataComponentType.<InherentStatusEffectComponent>builder().codec(InherentStatusEffectComponent.CODEC).packetCodec(InherentStatusEffectComponent.PACKET_CODEC).build())
-			.register(SilkApi.getInternal().ofId("inherent_status_effect"));
 	DataComponentType<InherentStatusEffectsComponent> INHERENT_STATUS_EFFECTS = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<InherentStatusEffectsComponent>builder().codec(InherentStatusEffectsComponent.CODEC).packetCodec(InherentStatusEffectsComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("inherent_status_effects"));

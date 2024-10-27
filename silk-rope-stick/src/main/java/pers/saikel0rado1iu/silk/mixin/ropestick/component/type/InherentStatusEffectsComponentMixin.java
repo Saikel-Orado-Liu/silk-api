@@ -35,8 +35,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotComponent;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectsComponent;
 
 import java.util.HashMap;
@@ -96,22 +96,22 @@ abstract class InherentStatusEffectsComponentMixin extends Entity implements Att
 		}
 		ImmutableMap<Item, Integer> items = ImmutableMap.copyOf(itemsBuilder);
 		// 获取物品中所有的自带状态效果组件
-		HashMap<InherentStatusEffectComponent, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
+		HashMap<InherentStatusEffectData, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
 		for (ItemStack stack : stacks) {
 			Optional<InherentStatusEffectsComponent> component = Optional.ofNullable(stack.get(DataComponentTypes.INHERENT_STATUS_EFFECTS));
 			component.ifPresent(p -> p.inherentStatusEffects().forEach(effect -> effectItemsBuilder.put(effect, stack.getItem())));
 		}
-		ImmutableMap<InherentStatusEffectComponent, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
+		ImmutableMap<InherentStatusEffectData, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
 		if (effectItems.isEmpty()) return;
 		// 设置自带状态效果
-		for (InherentStatusEffectComponent property : effectItems.keySet()) {
+		for (InherentStatusEffectData property : effectItems.keySet()) {
 			RegistryEntry<StatusEffect> effect = property.effect();
 			int baseLevel = Math.max(1, property.baseLevel());
 			int maxLevel = Math.max(1, property.maxLevel());
 			float stackingLevel = property.stackingLevel();
 			List<Item> kit = property.statusEffectKit().get();
 			int threshold = Math.max(1, property.kitTriggerThreshold());
-			EffectiveItemSlotComponent slot = property.effectiveItemSlot();
+			EffectiveItemSlotData slot = property.effectiveItemSlot();
 			Integer itemCount = 0;
 			if (kit.isEmpty()) {
 				Item item = Optional.ofNullable(effectItems.get(property)).orElse(Items.AIR);

@@ -28,13 +28,24 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record ModifyMoveWhileHoldComponent(ModifyMoveComponent modifyMove, boolean canModifyMove) {
-	public static final ModifyMoveWhileHoldComponent DEFAULT = new ModifyMoveWhileHoldComponent(ModifyMoveComponent.DEFAULT, true);
+public record ModifyMoveWhileHoldComponent(ModifyMoveData modifyMove, boolean canModifyMove) {
+	public static final ModifyMoveWhileHoldComponent DEFAULT = new ModifyMoveWhileHoldComponent(ModifyMoveData.DEFAULT, true);
 	public static final Codec<ModifyMoveWhileHoldComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					ModifyMoveComponent.CODEC.optionalFieldOf("modify_move", ModifyMoveComponent.DEFAULT).forGetter(ModifyMoveWhileHoldComponent::modifyMove),
+					ModifyMoveData.CODEC.optionalFieldOf("modify_move", ModifyMoveData.DEFAULT).forGetter(ModifyMoveWhileHoldComponent::modifyMove),
 					Codec.BOOL.optionalFieldOf("can_modify_move", true).forGetter(ModifyMoveWhileHoldComponent::canModifyMove))
 			.apply(builder, ModifyMoveWhileHoldComponent::new));
 	public static final PacketCodec<RegistryByteBuf, ModifyMoveWhileHoldComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 在持有时修改移动组件创建方法
+	 *
+	 * @param moveSpeedMultiple 相较于行走时的移动速度倍率
+	 * @param canModifyMove     是否能够修改移动速度
+	 * @return 在持有时修改移动组件
+	 */
+	public static ModifyMoveWhileHoldComponent create(float moveSpeedMultiple, boolean canModifyMove) {
+		return new ModifyMoveWhileHoldComponent(ModifyMoveData.of(moveSpeedMultiple), canModifyMove);
+	}
 	
 	/**
 	 * 判断是否为冲突物品

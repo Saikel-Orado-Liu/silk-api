@@ -18,21 +18,31 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 
 /**
- * <h2 style="color:FFC800">修改移动组件</h2>
- * 物品的移动速度修改通用数据组件
+ * <h2 style="color:FFC800">修改移动数据</h2>
+ * 物品的移动速度修改通用组件数据
  *
  * @param moveSpeedMultiple 相较于行走时的移动速度倍率
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record ModifyMoveComponent(float moveSpeedMultiple) {
+public record ModifyMoveData(float moveSpeedMultiple) {
 	/**
 	 * 默认移动速度倍速
 	 */
 	public static final float DEFAULT_SPEED_MULTIPLE = 0.2F;
-	public static final ModifyMoveComponent DEFAULT = new ModifyMoveComponent(DEFAULT_SPEED_MULTIPLE);
-	public static final Codec<ModifyMoveComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					Codec.FLOAT.optionalFieldOf("move_speed_multiple", DEFAULT_SPEED_MULTIPLE).forGetter(ModifyMoveComponent::moveSpeedMultiple))
-			.apply(builder, ModifyMoveComponent::new));
-	public static final PacketCodec<RegistryByteBuf, ModifyMoveComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	public static final ModifyMoveData DEFAULT = ModifyMoveData.of(DEFAULT_SPEED_MULTIPLE);
+	public static final Codec<ModifyMoveData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+					Codec.FLOAT.optionalFieldOf("move_speed_multiple", DEFAULT_SPEED_MULTIPLE).forGetter(ModifyMoveData::moveSpeedMultiple))
+			.apply(builder, ModifyMoveData::new));
+	public static final PacketCodec<RegistryByteBuf, ModifyMoveData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 修改移动数据创建方法
+	 *
+	 * @param moveSpeedMultiple 相较于行走时的移动速度倍率
+	 * @return 修改移动数据
+	 */
+	public static ModifyMoveData of(float moveSpeedMultiple) {
+		return new ModifyMoveData(moveSpeedMultiple);
+	}
 }

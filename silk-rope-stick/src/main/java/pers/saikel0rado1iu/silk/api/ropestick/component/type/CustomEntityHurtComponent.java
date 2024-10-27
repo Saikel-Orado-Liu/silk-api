@@ -18,10 +18,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.script.*;
 import java.util.List;
 
 /**
@@ -46,27 +49,23 @@ import java.util.List;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record CustomEntityHurtComponent(List<DamageType> damageTypes, String expression) {
+public record CustomEntityHurtComponent(List<RegistryKey<DamageType>> damageTypes, String expression) {
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomEntityHurtComponent.class);
 	public static final Codec<CustomEntityHurtComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					DamageType.CODEC.listOf().fieldOf("damage_types").forGetter(CustomEntityHurtComponent::damageTypes),
+					RegistryKey.createCodec(RegistryKeys.DAMAGE_TYPE).listOf().fieldOf("damage_types").forGetter(CustomEntityHurtComponent::damageTypes),
 					Codec.STRING.fieldOf("expression").forGetter(CustomEntityHurtComponent::expression))
 			.apply(builder, CustomEntityHurtComponent::new));
 	public static final PacketCodec<RegistryByteBuf, CustomEntityHurtComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
 	public float evaluateExpression(ItemStack stack, float amount) {
-		ScriptEngineManager manager = new ScriptEngineManager();
-		ScriptEngine engine = manager.getEngineByName("JavaScript");
-		
-		// 创建 Bindings 并设置参数
-		Bindings bindings = engine.createBindings();
-		bindings.put("count", stack.getCount());
-		bindings.put("amount", amount);
-		engine.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-		
 		try {
-			return Math.max(0, (float) engine.eval(expression));
-		} catch (ScriptException e) {
+			Expression exp = new ExpressionBuilder(expression)
+					.variables("count", "amount")
+					.build()
+					.setVariable("count", stack.getCount())
+					.setVariable("amount", amount);
+			return (float) exp.evaluate();
+		} catch (Exception e) {
 			String msg = "Expression parsing error: Unable to parse the expression \" " + expression + " \". Please reset to a correct expression.";
 			LOGGER.warn(msg, e);
 			return amount;

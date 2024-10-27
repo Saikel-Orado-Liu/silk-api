@@ -28,9 +28,9 @@ import java.util.List;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record InherentStatusEffectsComponent(List<InherentStatusEffectComponent> inherentStatusEffects) {
+public record InherentStatusEffectsComponent(List<InherentStatusEffectData> inherentStatusEffects) {
 	public static final Codec<InherentStatusEffectsComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					InherentStatusEffectComponent.CODEC.listOf().fieldOf("inherent_status_effect").forGetter(InherentStatusEffectsComponent::inherentStatusEffects))
+					InherentStatusEffectData.CODEC.listOf().fieldOf("inherent_status_effect").forGetter(InherentStatusEffectsComponent::inherentStatusEffects))
 			.apply(builder, InherentStatusEffectsComponent::new));
 	public static final PacketCodec<RegistryByteBuf, InherentStatusEffectsComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
@@ -40,7 +40,7 @@ public record InherentStatusEffectsComponent(List<InherentStatusEffectComponent>
 	 * @param inherentStatusEffects 自带状态效果列表
 	 * @return 自带多个状态效果组件
 	 */
-	public static InherentStatusEffectsComponent of(InherentStatusEffectComponent... inherentStatusEffects) {
+	public static InherentStatusEffectsComponent of(InherentStatusEffectData... inherentStatusEffects) {
 		return new InherentStatusEffectsComponent(ImmutableList.copyOf(inherentStatusEffects));
 	}
 }

@@ -52,7 +52,7 @@ abstract class CustomEntityHurtComponentMixin {
 			ItemStack stack = getEquippedStack(slot);
 			CustomEntityHurtComponent component = stack.get(DataComponentTypes.CUSTOM_ENTITY_HURT);
 			if (component == null) continue;
-			if (!component.damageTypes().contains(damageSource.getType())) continue;
+			if (!component.damageTypes().contains(damageSource.getTypeRegistryEntry().getKey().orElseThrow())) continue;
 			return component.evaluateExpression(stack, amount);
 		}
 		return amount;

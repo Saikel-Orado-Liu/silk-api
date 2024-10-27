@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentUtil;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileUseComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileUseComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
@@ -51,7 +51,7 @@ public abstract class BowLikeItem extends BowItem {
 	public BowLikeItem(Settings settings) {
 		super(settings
 				.component(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW)
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_USE, new AdjustFovWhileUseComponent(new AdjustFovComponent(false, Optional.empty(), false, AdjustFovComponent.BOW_FOV_SCALING)))
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_USE, AdjustFovWhileUseComponent.create(false, Optional.empty(), false, AdjustFovData.BOW_FOV_SCALING))
 				.component(DataComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.DEFAULT));
 	}
 	
