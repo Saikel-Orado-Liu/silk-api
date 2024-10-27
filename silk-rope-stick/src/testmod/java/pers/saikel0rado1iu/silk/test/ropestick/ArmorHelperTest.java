@@ -12,8 +12,12 @@
 package pers.saikel0rado1iu.silk.test.ropestick;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
@@ -21,6 +25,11 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import pers.saikel0rado1iu.silk.api.ropestick.armor.ArmorHelper;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.CustomEntityHurtComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectData;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectsComponent;
 import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 
 import java.util.EnumMap;
@@ -57,6 +66,30 @@ public enum ArmorHelperTest implements ArmorHelper {
 		this.knockbackResistance = knockbackResistance;
 		this.ingredient = Suppliers.memoize(ingredient::get);
 		this.material = Suppliers.memoize(() -> ArmorHelper.registerMaterial(this));
+	}
+	
+	public static Item.Settings createArmorSettings() {
+		return new Item.Settings()
+				.component(DataComponentTypes.INHERENT_STATUS_EFFECTS, InherentStatusEffectsComponent.of(
+						InherentStatusEffectData.create(
+								StatusEffects.LUCK,
+								0,
+								5,
+								1,
+								() -> ImmutableList.of(Items.TEST_HELMET, Items.TEST_CHESTPLATE, Items.TEST_LEGGINGS, Items.TEST_BOOTS),
+								0,
+								EffectiveItemSlotData.ARMOR),
+						InherentStatusEffectData.create(
+								StatusEffects.UNLUCK,
+								1,
+								2,
+								0.5F,
+								() -> ImmutableList.of(Items.TEST_HELMET, Items.TEST_CHESTPLATE, Items.TEST_LEGGINGS, Items.TEST_BOOTS),
+								2,
+								EffectiveItemSlotData.ALL)))
+				.component(DataComponentTypes.CUSTOM_ENTITY_HURT, new CustomEntityHurtComponent(
+						ImmutableList.of(DamageTypes.MOB_ATTACK),
+						"amount * 3"));
 	}
 	
 	@Override

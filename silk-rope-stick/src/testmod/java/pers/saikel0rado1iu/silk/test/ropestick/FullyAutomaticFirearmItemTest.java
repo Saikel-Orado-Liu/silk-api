@@ -16,25 +16,23 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
+import pers.saikel0rado1iu.silk.api.base.common.util.TickUtil;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovData;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileHoldComponent;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileHoldComponent;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
-import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.*;
+import pers.saikel0rado1iu.silk.api.ropestick.ranged.FullyAutomaticFirearmItem;
 
 import java.util.Optional;
 
 /**
- * Test {@link CrossbowLikeItem}
+ * Test {@link FullyAutomaticFirearmItem}
  */
-public final class CrossbowLikeItemTest extends CrossbowLikeItem {
+public final class FullyAutomaticFirearmItemTest extends FullyAutomaticFirearmItem {
 	/**
 	 * @param settings 物品设置
 	 */
-	public CrossbowLikeItemTest(Settings settings) {
+	public FullyAutomaticFirearmItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(true, Optional.of(AdjustFovData.VIGNETTE_TEXTURE), false, 0.8F, true))
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), true, 0.8F, true))
 				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.create(10, true)));
 	}
 	
@@ -42,15 +40,25 @@ public final class CrossbowLikeItemTest extends CrossbowLikeItem {
 	public RangedWeaponComponent rangedWeapon() {
 		return RangedWeaponComponent.builder()
 				.maxSpeed(RangedWeaponComponent.CROSSBOW_MAX_PROJECTILE_SPEED)
-				.maxDamage(50)
-				.maxUseTicks(RangedWeaponComponent.CROSSBOW_MAX_USE_TICKS)
-				.maxPullTicks(RangedWeaponComponent.CROSSBOW_MAX_USE_TICKS)
+				.maxDamage(1)
+				.maxUseTicks(TickUtil.getTick(5))
+				.maxPullTicks(TickUtil.getTick(5))
 				.firingError(RangedWeaponComponent.DEFAULT_FIRING_ERROR)
 				.defaultProjectile(Items.ARROW.getDefaultStack())
 				.launchableProjectiles(ImmutableList.of(
 						Items.ARROW,
 						Items.FIREWORK_ROCKET))
 				.build();
+	}
+	
+	@Override
+	public ProjectileContainerComponent projectileContainer() {
+		return new ProjectileContainerComponent(100);
+	}
+	
+	@Override
+	public ShootProjectilesComponent shootProjectiles() {
+		return new ShootProjectilesComponent(false, 1, ShootProjectilesComponent.State.EVERY);
 	}
 	
 	/**

@@ -32,25 +32,25 @@ public interface Items extends ItemRegistry {
 	/**
 	 * test_bolt_action_firearm
 	 */
-	BoltActionFirearmTest TEST_BOLT_ACTION_FIREARM = ItemRegistry.registrar(() -> new BoltActionFirearmTest(new Item.Settings()))
+	BoltActionFirearmItemTest TEST_BOLT_ACTION_FIREARM = ItemRegistry.registrar(() -> new BoltActionFirearmItemTest(new Item.Settings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_bolt_action_firearm"));
 	/**
 	 * test_bolt_action_repeating_firearm
 	 */
-	BoltActionRepeatingFirearmTest TEST_BOLT_ACTION_REPEATING_FIREARM = ItemRegistry.registrar(() -> new BoltActionRepeatingFirearmTest(new Item.Settings()))
+	BoltActionRepeatingFirearmItemTest TEST_BOLT_ACTION_REPEATING_FIREARM = ItemRegistry.registrar(() -> new BoltActionRepeatingFirearmItemTest(new Item.Settings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_bolt_action_repeating_firearm"));
 	/**
 	 * test_semi_automatic_firearm
 	 */
-	SemiAutomaticFirearmTest TEST_SEMI_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new SemiAutomaticFirearmTest(new Item.Settings()))
+	SemiAutomaticFirearmItemTest TEST_SEMI_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new SemiAutomaticFirearmItemTest(new Item.Settings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_semi_automatic_firearm"));
 	/**
 	 * test_fully_automatic_firearm
 	 */
-	FullyAutomaticFirearmTest TEST_FULLY_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new FullyAutomaticFirearmTest(new Item.Settings()))
+	FullyAutomaticFirearmItemTest TEST_FULLY_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new FullyAutomaticFirearmItemTest(new Item.Settings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_fully_automatic_firearm"));
 	/**
@@ -68,55 +68,55 @@ public interface Items extends ItemRegistry {
 	/**
 	 * test_shovel
 	 */
-	ShovelItem TEST_SHOVEL = ItemRegistry.registrar(() -> ToolTest.MATERIAL.createShovel(4, new Item.Settings()))
+	ShovelItem TEST_SHOVEL = ItemRegistry.registrar(() -> ToolHelperTest.MATERIAL.createShovel(4, ToolHelperTest.createToolSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_shovel"));
 	/**
 	 * test_pickaxe
 	 */
-	PickaxeItem TEST_PICKAXE = ItemRegistry.registrar(() -> ToolTest.MATERIAL.createPickaxe(4, new Item.Settings()))
+	PickaxeItem TEST_PICKAXE = ItemRegistry.registrar(() -> ToolHelperTest.MATERIAL.createPickaxe(4, ToolHelperTest.createToolSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_pickaxe"));
 	/**
 	 * test_axe
 	 */
-	AxeItem TEST_AXE = ItemRegistry.registrar(() -> ToolTest.MATERIAL.createAxe(12, 1.2F, new Item.Settings()))
+	AxeItem TEST_AXE = ItemRegistry.registrar(() -> ToolHelperTest.MATERIAL.createAxe(12, 1.2F, ToolHelperTest.createToolSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_axe"));
 	/**
 	 * test_hoe
 	 */
-	HoeItem TEST_HOE = ItemRegistry.registrar(() -> ToolTest.MATERIAL.createHoe(4, new Item.Settings()))
+	HoeItem TEST_HOE = ItemRegistry.registrar(() -> ToolHelperTest.MATERIAL.createHoe(4, ToolHelperTest.createToolSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_hoe"));
 	/**
 	 * test_sword
 	 */
-	SwordItem TEST_SWORD = ItemRegistry.registrar(() -> ToolTest.MATERIAL.createSword(8, new Item.Settings()))
+	SwordItem TEST_SWORD = ItemRegistry.registrar(() -> ToolHelperTest.MATERIAL.createSword(8, ToolHelperTest.createToolSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_sword"));
 	/**
 	 * test_helmet
 	 */
-	ArmorItem TEST_HELMET = ItemRegistry.registrar(() -> ArmorTest.MATERIAL.createHelmet(new Item.Settings()))
+	ArmorItem TEST_HELMET = ItemRegistry.registrar(() -> ArmorHelperTest.MATERIAL.createHelmet(ArmorHelperTest.createArmorSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_helmet"));
 	/**
 	 * test_chestplate
 	 */
-	ArmorItem TEST_CHESTPLATE = ItemRegistry.registrar(() -> ArmorTest.MATERIAL.createChestplate(new Item.Settings()))
+	ArmorItem TEST_CHESTPLATE = ItemRegistry.registrar(() -> ArmorHelperTest.MATERIAL.createChestplate(ArmorHelperTest.createArmorSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_chestplate"));
 	/**
 	 * test_leggings
 	 */
-	ArmorItem TEST_LEGGINGS = ItemRegistry.registrar(() -> ArmorTest.MATERIAL.createLeggings(new Item.Settings().component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(ColorHelper.Argb.fullAlpha(0xFFFFB3), true))))
+	ArmorItem TEST_LEGGINGS = ItemRegistry.registrar(() -> ArmorHelperTest.MATERIAL.createLeggings(ArmorHelperTest.createArmorSettings().component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(ColorHelper.Argb.fullAlpha(0xFFFFB3), true))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_leggings"));
 	/**
 	 * test_boots
 	 */
-	ArmorItem TEST_BOOTS = ItemRegistry.registrar(() -> ArmorTest.MATERIAL.createBoots(new Item.Settings()))
+	ArmorItem TEST_BOOTS = ItemRegistry.registrar(() -> ArmorHelperTest.MATERIAL.createBoots(ArmorHelperTest.createArmorSettings()))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_boots"));
 }
