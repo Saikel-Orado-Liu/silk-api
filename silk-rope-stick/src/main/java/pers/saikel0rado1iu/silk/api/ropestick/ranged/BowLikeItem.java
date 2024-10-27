@@ -102,14 +102,13 @@ public abstract class BowLikeItem extends BowItem {
 	
 	@Override
 	public Predicate<ItemStack> getProjectiles() {
-		return stack -> DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::equals);
+		return stack -> DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::isOf);
 	}
 	
 	@Override
 	public int getMaxUseTime(ItemStack stack) {
 		return DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).maxUseTicks();
 	}
-	
 	
 	/**
 	 * 获取使用进度

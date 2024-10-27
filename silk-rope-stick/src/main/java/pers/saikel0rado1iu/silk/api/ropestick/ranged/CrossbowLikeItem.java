@@ -228,12 +228,12 @@ public abstract class CrossbowLikeItem extends CrossbowItem {
 	
 	@Override
 	public Predicate<ItemStack> getHeldProjectiles() {
-		return stack -> DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::equals);
+		return getProjectiles();
 	}
 	
 	@Override
 	public Predicate<ItemStack> getProjectiles() {
-		return stack -> DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::equals);
+		return stack -> DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::isOf);
 	}
 	
 	@Override

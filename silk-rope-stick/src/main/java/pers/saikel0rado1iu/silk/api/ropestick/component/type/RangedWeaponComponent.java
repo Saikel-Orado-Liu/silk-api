@@ -20,12 +20,14 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.registry.Registries;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -53,7 +55,7 @@ public record RangedWeaponComponent(float maxSpeed,
                                     int maxPullTicks,
                                     float firingError,
                                     ItemStack defaultProjectile,
-                                    List<ItemStack> launchableProjectiles) {
+                                    List<Item> launchableProjectiles) {
 	/**
 	 * 用于模型谓词，拉弓中状态键
 	 */
@@ -110,9 +112,9 @@ public record RangedWeaponComponent(float maxSpeed,
 			.firingError(DEFAULT_FIRING_ERROR)
 			.defaultProjectile(Items.ARROW.getDefaultStack())
 			.launchableProjectiles(ImmutableList.of(
-					Items.ARROW.getDefaultStack(),
-					Items.SPECTRAL_ARROW.getDefaultStack(),
-					Items.TIPPED_ARROW.getDefaultStack()))
+					Items.ARROW,
+					Items.SPECTRAL_ARROW,
+					Items.TIPPED_ARROW))
 			.build();
 	public static final RangedWeaponComponent CROSSBOW = builder()
 			.maxSpeed(CROSSBOW_MAX_PROJECTILE_SPEED)
@@ -122,10 +124,10 @@ public record RangedWeaponComponent(float maxSpeed,
 			.firingError(DEFAULT_FIRING_ERROR)
 			.defaultProjectile(Items.ARROW.getDefaultStack())
 			.launchableProjectiles(ImmutableList.of(
-					Items.ARROW.getDefaultStack(),
-					Items.SPECTRAL_ARROW.getDefaultStack(),
-					Items.TIPPED_ARROW.getDefaultStack(),
-					Items.FIREWORK_ROCKET.getDefaultStack()))
+					Items.ARROW,
+					Items.SPECTRAL_ARROW,
+					Items.TIPPED_ARROW,
+					Items.FIREWORK_ROCKET))
 			.build();
 	public static final Codec<RangedWeaponComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 					Codec.FLOAT.fieldOf("max_speed").forGetter(RangedWeaponComponent::maxSpeed),
@@ -134,7 +136,7 @@ public record RangedWeaponComponent(float maxSpeed,
 					Codec.INT.fieldOf("max_pull_ticks").forGetter(RangedWeaponComponent::maxPullTicks),
 					Codec.FLOAT.fieldOf("firing_error").forGetter(RangedWeaponComponent::firingError),
 					ItemStack.CODEC.fieldOf("default_projectile").forGetter(RangedWeaponComponent::defaultProjectile),
-					ItemStack.CODEC.listOf().fieldOf("launchable_projectiles").forGetter(RangedWeaponComponent::launchableProjectiles))
+					Registries.ITEM.getCodec().listOf().fieldOf("launchable_projectiles").forGetter(RangedWeaponComponent::launchableProjectiles))
 			.apply(builder, RangedWeaponComponent::new));
 	public static final PacketCodec<RegistryByteBuf, RangedWeaponComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
@@ -200,7 +202,7 @@ public record RangedWeaponComponent(float maxSpeed,
 	 * @return 索引
 	 */
 	public float getProjectileIndex(ItemStack projectile) {
-		return Float.parseFloat("0." + Math.max(0, launchableProjectiles.indexOf(projectile)));
+		return Float.parseFloat("0." + Math.max(0, launchableProjectiles.indexOf(projectile.getItem())));
 	}
 	
 	/**
@@ -245,10 +247,10 @@ public record RangedWeaponComponent(float maxSpeed,
 		private int maxPullTicks = BOW_MAX_PULL_TICKS;
 		private float firingError = DEFAULT_FIRING_ERROR;
 		private ItemStack defaultProjectile = Items.ARROW.getDefaultStack();
-		private List<ItemStack> launchableProjectiles = ImmutableList.of(
-				Items.ARROW.getDefaultStack(),
-				Items.SPECTRAL_ARROW.getDefaultStack(),
-				Items.TIPPED_ARROW.getDefaultStack());
+		private List<Item> launchableProjectiles = ImmutableList.of(
+				Items.ARROW,
+				Items.SPECTRAL_ARROW,
+				Items.TIPPED_ARROW);
 		
 		private Builder() {
 		}
@@ -283,7 +285,7 @@ public record RangedWeaponComponent(float maxSpeed,
 			return this;
 		}
 		
-		public Builder launchableProjectiles(List<ItemStack> launchableProjectiles) {
+		public Builder launchableProjectiles(List<Item> launchableProjectiles) {
 			this.launchableProjectiles = launchableProjectiles;
 			return this;
 		}
