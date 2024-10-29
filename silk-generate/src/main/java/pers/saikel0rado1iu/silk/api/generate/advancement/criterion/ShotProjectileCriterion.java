@@ -25,9 +25,9 @@ import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import pers.saikel0rado1iu.silk.impl.SilkApi;
@@ -85,10 +85,10 @@ public class ShotProjectileCriterion extends AbstractCriterion<ShotProjectileCri
 		 * 解编码器
 		 */
 		public static final Codec<ShotProjectileCriterion.Conditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-						Codecs.createStrictOptionalFieldCodec(EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC, "player").forGetter(ShotProjectileCriterion.Conditions::player),
-						Codecs.createStrictOptionalFieldCodec(ItemPredicate.CODEC, "stack").forGetter(ShotProjectileCriterion.Conditions::ranged),
-						Codecs.createStrictOptionalFieldCodec(EntityPredicate.CODEC, "entity").forGetter(ShotProjectileCriterion.Conditions::projectile),
-						Codecs.createStrictOptionalFieldCodec(NumberRange.IntRange.CODEC, "amount", NumberRange.IntRange.ANY).forGetter(ShotProjectileCriterion.Conditions::amount))
+						LootContextPredicate.CODEC.optionalFieldOf("player").forGetter(ShotProjectileCriterion.Conditions::player),
+						ItemPredicate.CODEC.optionalFieldOf("stack").forGetter(ShotProjectileCriterion.Conditions::ranged),
+						EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(ShotProjectileCriterion.Conditions::projectile),
+						NumberRange.IntRange.CODEC.optionalFieldOf("amount", NumberRange.IntRange.ANY).forGetter(ShotProjectileCriterion.Conditions::amount))
 				.apply(instance, ShotProjectileCriterion.Conditions::new));
 		
 		/**
@@ -199,7 +199,7 @@ public class ShotProjectileCriterion extends AbstractCriterion<ShotProjectileCri
 		private static final Type<CountState> TYPE = new Type<>(CountState::new, CountState::createFromNbt, DataFixTypes.PLAYER);
 		private final HashMap<UUID, Data> players = new HashMap<>();
 		
-		private static CountState createFromNbt(NbtCompound nbt) {
+		private static CountState createFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 			CountState state = new CountState();
 			NbtCompound playersNbt = nbt.getCompound(STATE_ID);
 			playersNbt.getKeys().forEach(key -> {
@@ -225,7 +225,7 @@ public class ShotProjectileCriterion extends AbstractCriterion<ShotProjectileCri
 		}
 		
 		@Override
-		public NbtCompound writeNbt(NbtCompound nbt) {
+		public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 			NbtCompound playersNbt = new NbtCompound();
 			players.forEach((uuid, data) -> {
 				NbtCompound playerNbt = new NbtCompound();

@@ -30,11 +30,11 @@ import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import pers.saikel0rado1iu.silk.impl.SilkApi;
@@ -106,11 +106,11 @@ public class RangedKilledEntityCriterion extends AbstractCriterion<RangedKilledE
 		 * 解编码器
 		 */
 		public static final Codec<RangedKilledEntityCriterion.Conditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-						Codecs.createStrictOptionalFieldCodec(EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC, "player").forGetter(RangedKilledEntityCriterion.Conditions::player),
-						Codecs.createStrictOptionalFieldCodec(ItemPredicate.CODEC, "ranged").forGetter(RangedKilledEntityCriterion.Conditions::ranged),
-						Codecs.createStrictOptionalFieldCodec(EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC, "target").forGetter(RangedKilledEntityCriterion.Conditions::target),
-						Codecs.createStrictOptionalFieldCodec(EntityPredicate.CODEC, "entity").forGetter(RangedKilledEntityCriterion.Conditions::projectile),
-						Codecs.createStrictOptionalFieldCodec(NumberRange.IntRange.CODEC, "killed", NumberRange.IntRange.ANY).forGetter(RangedKilledEntityCriterion.Conditions::killed))
+						LootContextPredicate.CODEC.optionalFieldOf("player").forGetter(RangedKilledEntityCriterion.Conditions::player),
+						ItemPredicate.CODEC.optionalFieldOf("ranged").forGetter(RangedKilledEntityCriterion.Conditions::ranged),
+						LootContextPredicate.CODEC.optionalFieldOf("target").forGetter(RangedKilledEntityCriterion.Conditions::target),
+						EntityPredicate.CODEC.optionalFieldOf("entity").forGetter(RangedKilledEntityCriterion.Conditions::projectile),
+						NumberRange.IntRange.CODEC.optionalFieldOf("killed", NumberRange.IntRange.ANY).forGetter(RangedKilledEntityCriterion.Conditions::killed))
 				.apply(instance, RangedKilledEntityCriterion.Conditions::new));
 		
 		/**
@@ -160,7 +160,7 @@ public class RangedKilledEntityCriterion extends AbstractCriterion<RangedKilledE
 			if (ranged.isEmpty() || !ranged.get().test(stack)) return false;
 			if (projectile.isPresent() && !projectile.get().test(player, entity)) return false;
 			CountState.Data data = CountState.getPlayerState(player);
-			String targetString = target.isEmpty() ? Optional.empty().toString() : LootContextPredicate.CODEC.encodeStart(NbtOps.INSTANCE, target.get()).result().toString();
+			String targetString = target.map(lootContextPredicate -> LootContextPredicate.CODEC.encodeStart(NbtOps.INSTANCE, lootContextPredicate).result().toString()).orElseGet(() -> Optional.empty().toString());
 			String conditions = ranged + targetString + projectile + killed;
 			data.counts.put(conditions, Optional.ofNullable(data.counts.get(conditions)).orElse(0) + count);
 			int countSum = Optional.ofNullable(data.counts.get(conditions)).orElse(0);
@@ -239,7 +239,7 @@ public class RangedKilledEntityCriterion extends AbstractCriterion<RangedKilledE
 		private static final Type<CountState> TYPE = new Type<>(CountState::new, CountState::createFromNbt, DataFixTypes.PLAYER);
 		private final HashMap<UUID, Data> players = new HashMap<>();
 		
-		private static CountState createFromNbt(NbtCompound nbt) {
+		private static CountState createFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 			CountState state = new CountState();
 			NbtCompound playersNbt = nbt.getCompound(STATE_ID);
 			playersNbt.getKeys().forEach(key -> {
@@ -265,7 +265,7 @@ public class RangedKilledEntityCriterion extends AbstractCriterion<RangedKilledE
 		}
 		
 		@Override
-		public NbtCompound writeNbt(NbtCompound nbt) {
+		public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
 			NbtCompound playersNbt = new NbtCompound();
 			players.forEach((uuid, data) -> {
 				NbtCompound playerNbt = new NbtCompound();
