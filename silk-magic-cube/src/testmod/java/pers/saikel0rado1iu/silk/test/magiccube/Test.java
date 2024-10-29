@@ -12,6 +12,10 @@
 package pers.saikel0rado1iu.silk.test.magiccube;
 
 import com.google.common.collect.ImmutableSet;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.BlockView;
+import org.apache.commons.lang3.function.TriConsumer;
 import pers.saikel0rado1iu.silk.api.event.magiccube.FireIgniteBlockCallback;
 import pers.saikel0rado1iu.silk.api.event.magiccube.FlintAndSteelIgniteBlockCallback;
 import pers.saikel0rado1iu.silk.api.modpass.ModData;
@@ -23,6 +27,7 @@ import pers.saikel0rado1iu.silk.test.magiccube.cauldron.CauldronLikeBehaviorTest
 import pers.saikel0rado1iu.silk.test.magiccube.entity.EntityTypes;
 
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * 测试
@@ -46,6 +51,7 @@ public final class Test implements ModMain {
 			Blocks.TNT_LIKE_BLOCK.primeTnt(world, pos);
 			return true;
 		});
+		SilkMagicCube.getInstance().logger().warn(((TriConsumer<BlockView, BlockPos, BiConsumer<BlockPos, BlockState>>) Blocks.TEST_BLOCK::placeBlock).toString());
 	}
 	
 	/**

@@ -61,8 +61,6 @@ public final class PhysicsConnectingBlockTest extends PhysicsConnectingBlock {
 	
 	@Override
 	public BlockState withConnectionProperties(BlockView world, BlockPos pos, BlockState state) {
-		placeBlock(world, pos, (p, s) -> {
-		});
 		return super.withConnectionProperties(world, pos, state);
 	}
 	
