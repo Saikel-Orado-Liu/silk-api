@@ -11,6 +11,7 @@
 
 package pers.saikel0rado1iu.silk.test.spore;
 
+import net.minecraft.item.ArrowItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import pers.saikel0rado1iu.silk.api.spinningjenny.ItemRegistry;
@@ -23,6 +24,6 @@ public interface Items extends ItemRegistry {
 	/**
 	 * fixed_damage_test_item
 	 */
-	Item FIXED_DAMAGE_TEST_ITEM = ItemRegistry.registrar(() -> new Item(new Item.Settings()))
+	ArrowItem FIXED_DAMAGE_TEST_ITEM = ItemRegistry.registrar(() -> new ArrowItem(new Item.Settings()))
 			.group(ItemGroups.COMBAT).register(SilkSpore.getInstance().ofId("fixed_damage_test_item"));
 }

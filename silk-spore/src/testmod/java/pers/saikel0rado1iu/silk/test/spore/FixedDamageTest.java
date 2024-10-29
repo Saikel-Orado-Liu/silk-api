@@ -29,24 +29,18 @@ public final class FixedDamageTest extends PersistentProjectileEntity implements
 	 * @param world      test
 	 */
 	public FixedDamageTest(EntityType<? extends FixedDamageTest> entityType, World world) {
-		super(entityType, world, DEFAULT_STACK);
-	}
-	
-	/**
-	 * @param world test
-	 * @param x     test
-	 * @param y     test
-	 * @param z     test
-	 * @param stack test
-	 */
-	public FixedDamageTest(World world, double x, double y, double z, ItemStack stack) {
-		super(EntityTypes.FIXED_DAMAGE_TEST, x, y, z, world, stack);
+		super(entityType, world);
 	}
 	
 	@Override
 	public void tick() {
 		if (getWorld().isClient && !inGround) getWorld().addParticle(ParticleTypes.INSTANT_EFFECT, getX(), getY(), getZ(), 0, 0, 0);
 		super.tick();
+	}
+	
+	@Override
+	protected ItemStack getDefaultItemStack() {
+		return DEFAULT_STACK;
 	}
 	
 	@Override

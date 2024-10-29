@@ -11,17 +11,10 @@
 
 package pers.saikel0rado1iu.silk.test.spore;
 
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.ProjectileDispenserBehavior;
-import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Position;
-import net.minecraft.world.World;
 import pers.saikel0rado1iu.silk.api.spinningjenny.EntityTypeRegistry;
 import pers.saikel0rado1iu.silk.impl.SilkSpore;
 
@@ -32,14 +25,8 @@ public interface EntityTypes extends EntityTypeRegistry {
 	/**
 	 * fixed_damage_test
 	 */
-	EntityType<FixedDamageTest> FIXED_DAMAGE_TEST = EntityTypeRegistry.registrar(() -> FabricEntityTypeBuilder.<FixedDamageTest>create(SpawnGroup.MISC, FixedDamageTest::new)
-					.dimensions(EntityDimensions.fixed(0.25F, 0.25F)).trackRangeBlocks(4).trackedUpdateRate(20).build())
-			.other(entityType -> DispenserBlock.registerBehavior(Items.FIXED_DAMAGE_TEST_ITEM, new ProjectileDispenserBehavior() {
-				@Override
-				protected ProjectileEntity createProjectile(World world, Position position, ItemStack stack) {
-					FixedDamageTest arrowEntity = new FixedDamageTest(world, position.getX(), position.getY(), position.getZ(), stack);
-					arrowEntity.pickupType = PersistentProjectileEntity.PickupPermission.ALLOWED;
-					return arrowEntity;
-				}
-			})).register(SilkSpore.getInstance().ofId("fixed_damage_test"));
+	EntityType<FixedDamageTest> FIXED_DAMAGE_TEST = EntityTypeRegistry.registrar(() -> EntityType.Builder.create(FixedDamageTest::new, SpawnGroup.MISC)
+					.dimensions(0.25F, 0.25F).maxTrackingRange(20).build())
+			.other(entityType -> DispenserBlock.registerBehavior(Items.FIXED_DAMAGE_TEST_ITEM, new ProjectileDispenserBehavior(Items.FIXED_DAMAGE_TEST_ITEM)))
+			.register(SilkSpore.getInstance().ofId("fixed_damage_test"));
 }
