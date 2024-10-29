@@ -46,7 +46,7 @@ public interface CrossbowModelPredicateProvider {
 		});
 		ModelPredicateProviderRegistry.register(crossbow, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(stack);
+			return stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(entity, stack);
 		});
 	}
 }

@@ -51,7 +51,7 @@ public interface FirearmModelPredicateProvider {
 		});
 		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return stack.getOrDefault(RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(stack);
+			return stack.getOrDefault(RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(entity, stack);
 		});
 		ShootProjectilesModelPredicateProvider.register(firearm);
 	}

@@ -41,7 +41,7 @@ public interface BowModelPredicateProvider {
 		});
 		ModelPredicateProviderRegistry.register(bow, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW).getProjectileIndex(stack);
+			return entity.getActiveItem() != stack ? 0 : stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW).getProjectileIndex(entity, stack);
 		});
 	}
 }

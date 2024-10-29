@@ -188,8 +188,8 @@ public record RangedWeaponComponent(float maxSpeed,
 	 *
 	 * @return 索引
 	 */
-	public float getProjectileIndex(boolean isActive, LivingEntity entity, ItemStack stack) {
-		if (isActive) return getProjectileIndex(RangedWeaponComponent.getProjectileType(entity, stack));
+	public float getProjectileIndex(LivingEntity entity, ItemStack stack) {
+		if (entity.getActiveItem() == stack) return getProjectileIndex(RangedWeaponComponent.getProjectileType(entity, stack));
 		ChargedProjectilesComponent component = stack.get(CHARGED_PROJECTILES);
 		if (component == null || component.isEmpty()) return 0;
 		return getProjectileIndex(component.getProjectiles().getFirst());
