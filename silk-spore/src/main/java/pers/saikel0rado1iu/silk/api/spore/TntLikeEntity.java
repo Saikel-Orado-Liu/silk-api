@@ -102,14 +102,9 @@ public abstract class TntLikeEntity extends Entity implements Ownable {
 	}
 	
 	@Override
-	protected float getEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-		return 0.15F;
-	}
-	
-	@Override
-	protected void initDataTracker() {
-		dataTracker.startTracking(FUSE, fuseTick());
-		dataTracker.startTracking(BLOCK_STATE, tntBlock().getDefaultState());
+	protected void initDataTracker(DataTracker.Builder builder) {
+		builder.add(FUSE, fuseTick());
+		builder.add(BLOCK_STATE, tntBlock().getDefaultState());
 	}
 	
 	@Override
