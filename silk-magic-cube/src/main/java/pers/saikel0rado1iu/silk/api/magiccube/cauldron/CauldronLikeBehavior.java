@@ -15,26 +15,32 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.*;
 import net.minecraft.block.cauldron.CauldronBehavior;
-import net.minecraft.block.entity.BannerBlockEntity;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BannerPatternsComponent;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.potion.PotionUtil;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsage;
+import net.minecraft.item.Items;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.Potions;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
@@ -91,16 +97,27 @@ public abstract class CauldronLikeBehavior {
 	public CauldronBehavior cleanShulkerBox = cleanShulkerBox();
 	
 	/**
+	 * 测试药水
+	 *
+	 * @param stack  测试物品
+	 * @param potion 测试药水
+	 * @return 是否可以匹配
+	 */
+	public static boolean potionTest(ItemStack stack, RegistryEntry<Potion> potion) {
+		PotionContentsComponent potionContentsComponent = stack.get(DataComponentTypes.POTION_CONTENTS);
+		return potionContentsComponent != null && potionContentsComponent.matches(potion);
+	}
+	
+	/**
 	 * 注册行为
 	 */
 	public void registerBehavior() {
 		registerBucketBehavior(emptyBehavior.map());
 		emptyBehavior.map().put(Items.POTION, (state, world, pos, player, hand, stack) -> {
-			if (PotionUtil.getPotion(stack) != Potions.WATER) {
-				return ActionResult.PASS;
+			if (potionTest(stack, Potions.WATER)) {
+				return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 			} else {
 				if (!world.isClient) {
-					if (cantUse(world, pos)) return ActionResult.PASS;
 					Item item = stack.getItem();
 					player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
 					player.incrementStat(Stats.USE_CAULDRON);
@@ -110,16 +127,15 @@ public abstract class CauldronLikeBehavior {
 					world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
 				}
 				
-				return ActionResult.success(world.isClient);
+				return ItemActionResult.success(world.isClient);
 			}
 		});
 		registerBucketBehavior(waterBehavior.map());
 		waterBehavior.map().put(Items.BUCKET, (state, world, pos, player, hand, stack) -> emptyCauldron(state, world, pos, player, hand, stack, new ItemStack(Items.WATER_BUCKET), (blockState) -> blockState.get(leveledCauldronLikeBlock().level()) == leveledCauldronLikeBlock().maxLevel(), SoundEvents.ITEM_BUCKET_FILL));
 		waterBehavior.map().put(Items.GLASS_BOTTLE, (state, world, pos, player, hand, stack) -> {
 			if (!world.isClient) {
-				if (cantUse(world, pos)) return ActionResult.PASS;
 				Item item = stack.getItem();
-				player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.WATER)));
+				player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, PotionContentsComponent.createStack(Items.POTION, Potions.WATER)));
 				player.incrementStat(Stats.USE_CAULDRON);
 				player.incrementStat(Stats.USED.getOrCreateStat(item));
 				leveledCauldronLikeBlock().decrementFluidLevel(world, state, pos);
@@ -127,12 +143,11 @@ public abstract class CauldronLikeBehavior {
 				world.emitGameEvent(null, GameEvent.FLUID_PICKUP, pos);
 			}
 			
-			return ActionResult.success(world.isClient);
+			return ItemActionResult.success(world.isClient);
 		});
 		waterBehavior.map().put(Items.POTION, (state, world, pos, player, hand, stack) -> {
-			if (state.get(leveledCauldronLikeBlock().level()) != leveledCauldronLikeBlock().maxLevel() && PotionUtil.getPotion(stack) == Potions.WATER) {
+			if (state.get(leveledCauldronLikeBlock().level()) != leveledCauldronLikeBlock().maxLevel() && potionTest(stack, Potions.WATER)) {
 				if (!world.isClient) {
-					if (cantUse(world, pos)) return ActionResult.PASS;
 					player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.GLASS_BOTTLE)));
 					player.incrementStat(Stats.USE_CAULDRON);
 					player.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
@@ -141,9 +156,9 @@ public abstract class CauldronLikeBehavior {
 					world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
 				}
 				
-				return ActionResult.success(world.isClient);
+				return ItemActionResult.success(world.isClient);
 			} else {
-				return ActionResult.PASS;
+				return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 			}
 		});
 		waterBehavior.map().put(Items.LEATHER_BOOTS, cleanDyeableItem);
@@ -191,18 +206,18 @@ public abstract class CauldronLikeBehavior {
 	
 	protected CauldronBehavior.CauldronBehaviorMap createMap(String name) {
 		Object2ObjectOpenHashMap<Item, CauldronBehavior> object2ObjectOpenHashMap = new Object2ObjectOpenHashMap<>();
-		object2ObjectOpenHashMap.defaultReturnValue((state, world, pos, player, hand, stack) -> ActionResult.PASS);
+		object2ObjectOpenHashMap.defaultReturnValue((state, world, pos, player, hand, stack) -> ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION);
 		CauldronBehavior.CauldronBehaviorMap cauldronBehaviorMap = new CauldronBehavior.CauldronBehaviorMap(name, object2ObjectOpenHashMap);
 		behaviorMaps.put(name, cauldronBehaviorMap);
 		return cauldronBehaviorMap;
 	}
 	
-	protected ActionResult emptyCauldron(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> fullPredicate, SoundEvent soundEvent) {
+	protected ItemActionResult emptyCauldron(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, ItemStack output, Predicate<BlockState> fullPredicate, SoundEvent soundEvent) {
 		if (!fullPredicate.test(state)) {
-			return ActionResult.PASS;
+			return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		} else {
 			if (!world.isClient) {
-				if (cantUse(world, pos)) return ActionResult.PASS;
+				if (cantUse(world, pos)) return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 				Item item = stack.getItem();
 				player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, output));
 				player.incrementStat(Stats.USE_CAULDRON);
@@ -212,13 +227,12 @@ public abstract class CauldronLikeBehavior {
 				world.emitGameEvent(null, GameEvent.FLUID_PICKUP, pos);
 			}
 			
-			return ActionResult.success(world.isClient);
+			return ItemActionResult.success(world.isClient);
 		}
 	}
 	
-	protected ActionResult fillCauldron(World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, BlockState state, SoundEvent soundEvent) {
+	protected ItemActionResult fillCauldron(World world, BlockPos pos, PlayerEntity player, Hand hand, ItemStack stack, BlockState state, SoundEvent soundEvent) {
 		if (!world.isClient) {
-			if (cantUse(world, pos)) return ActionResult.PASS;
 			Item item = stack.getItem();
 			player.setStackInHand(hand, ItemUsage.exchangeStack(stack, player, new ItemStack(Items.BUCKET)));
 			player.incrementStat(Stats.FILL_CAULDRON);
@@ -228,7 +242,7 @@ public abstract class CauldronLikeBehavior {
 			world.emitGameEvent(null, GameEvent.FLUID_PLACE, pos);
 		}
 		
-		return ActionResult.success(world.isClient);
+		return ItemActionResult.success(world.isClient);
 	}
 	
 	protected boolean cantUse(World world, BlockPos pos) {
@@ -247,36 +261,32 @@ public abstract class CauldronLikeBehavior {
 	
 	protected CauldronBehavior cleanDyeableItem() {
 		return (state, world, pos, player, hand, stack) -> {
-			Item item = stack.getItem();
-			if (!(item instanceof DyeableItem dyeableItem)) {
-				return ActionResult.PASS;
-			} else if (!dyeableItem.hasColor(stack)) {
-				return ActionResult.PASS;
+			if (!stack.isIn(ItemTags.DYEABLE)) {
+				return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+			} else if (!stack.contains(DataComponentTypes.DYED_COLOR)) {
+				return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 			} else {
 				if (!world.isClient) {
-					if (cantUse(world, pos)) return ActionResult.PASS;
-					dyeableItem.removeColor(stack);
+					stack.remove(DataComponentTypes.DYED_COLOR);
 					player.incrementStat(Stats.CLEAN_ARMOR);
 					leveledCauldronLikeBlock().decrementFluidLevel(world, state, pos);
 				}
 				
-				return ActionResult.success(world.isClient);
+				return ItemActionResult.success(world.isClient);
 			}
 		};
 	}
 	
 	protected CauldronBehavior cleanBanner() {
 		return (state, world, pos, player, hand, stack) -> {
-			if (BannerBlockEntity.getPatternCount(stack) <= 0) {
-				return ActionResult.PASS;
+			BannerPatternsComponent bannerPatternsComponent = stack.getOrDefault(DataComponentTypes.BANNER_PATTERNS, BannerPatternsComponent.DEFAULT);
+			if (bannerPatternsComponent.layers().isEmpty()) {
+				return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 			} else {
 				if (!world.isClient) {
-					if (cantUse(world, pos)) return ActionResult.PASS;
 					ItemStack itemStack = stack.copyWithCount(1);
-					BannerBlockEntity.loadFromItemStack(itemStack);
-					if (!player.getAbilities().creativeMode) {
-						stack.decrement(1);
-					}
+					itemStack.set(DataComponentTypes.BANNER_PATTERNS, bannerPatternsComponent.withoutTopLayer());
+					stack.decrementUnlessCreative(1, player);
 					
 					if (stack.isEmpty()) {
 						player.setStackInHand(hand, itemStack);
@@ -290,7 +300,7 @@ public abstract class CauldronLikeBehavior {
 					leveledCauldronLikeBlock().decrementFluidLevel(world, state, pos);
 				}
 				
-				return ActionResult.success(world.isClient);
+				return ItemActionResult.success(world.isClient);
 			}
 		};
 	}
@@ -299,21 +309,15 @@ public abstract class CauldronLikeBehavior {
 		return (state, world, pos, player, hand, stack) -> {
 			Block block = Block.getBlockFromItem(stack.getItem());
 			if (!(block instanceof ShulkerBoxBlock)) {
-				return ActionResult.PASS;
+				return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 			} else {
 				if (!world.isClient) {
-					if (cantUse(world, pos)) return ActionResult.PASS;
-					ItemStack itemStack = new ItemStack(Blocks.SHULKER_BOX);
-					if (stack.hasNbt()) {
-						itemStack.setNbt(Objects.requireNonNull(stack.getNbt()).copy());
-					}
-					
-					player.setStackInHand(hand, itemStack);
+					player.setStackInHand(hand, stack.copyComponentsToNewStack(Blocks.SHULKER_BOX, 1));
 					player.incrementStat(Stats.CLEAN_SHULKER_BOX);
 					leveledCauldronLikeBlock().decrementFluidLevel(world, state, pos);
 				}
 				
-				return ActionResult.success(world.isClient);
+				return ItemActionResult.success(world.isClient);
 			}
 		};
 	}

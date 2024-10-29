@@ -179,7 +179,6 @@ public abstract class PhysicsConnectingBlock extends ConnectingBlock implements 
 		return withConnectionProperties(ctx.getWorld(), ctx.getBlockPos(), super.getPlacementState(ctx));
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
 		BlockPos downPos = pos.down();
@@ -198,7 +197,6 @@ public abstract class PhysicsConnectingBlock extends ConnectingBlock implements 
 		return havePlaceableBlock || canConnect;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
 		BlockState blockState = super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);

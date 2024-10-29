@@ -26,8 +26,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -82,7 +82,6 @@ public abstract class TntLikeBlock extends Block {
 	 * 此方法用于处理是否能接受红石引爆
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
 	public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
 		if (oldState.isOf(state.getBlock())) return;
 		if (!world.isReceivingRedstonePower(pos)) return;
@@ -94,7 +93,6 @@ public abstract class TntLikeBlock extends Block {
 	 * 此方法用于处理是否能接受红石引爆
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
 	public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
 		if (!world.isReceivingRedstonePower(pos)) return;
 		primeTnt(world, pos);
@@ -102,37 +100,36 @@ public abstract class TntLikeBlock extends Block {
 	}
 	
 	/**
-	 * {@link TntLikeBlock#onUse(BlockState, World, BlockPos, PlayerEntity, Hand, BlockHitResult)} 的父类实现<br>
-	 * 用于在需要覆盖 {@code onUse()} 时调用
+	 * {@link TntLikeBlock#onUseWithItem(ItemStack, BlockState, World, BlockPos, PlayerEntity, Hand, BlockHitResult)} 的父类实现<br>
+	 * 用于在需要覆盖 {@code onUseWithItem()} 时调用
 	 */
-	@SuppressWarnings("deprecation")
-	protected ActionResult onUseSuper(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		return super.onUse(state, world, pos, player, hand, hit);
+	protected ItemActionResult onUseWithItemSuper(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
 	}
 	
 	/**
 	 * 此方法用于处理是否能被玩家直接引燃
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+	protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 		ItemStack itemStack = player.getStackInHand(hand);
-		if (!(itemStack.isOf(Items.FLINT_AND_STEEL) || itemStack.isOf(Items.FIRE_CHARGE))) return onUseSuper(state, world, pos, player, hand, hit);
+		if (!(itemStack.isOf(Items.FLINT_AND_STEEL) || itemStack.isOf(Items.FIRE_CHARGE))) {
+			return onUseWithItemSuper(stack, state, world, pos, player, hand, hit);
+		}
 		primeTnt(world, pos, Optional.of(player));
 		world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL_AND_REDRAW);
 		if (!player.isCreative()) {
 			if (!itemStack.isOf(Items.FLINT_AND_STEEL)) itemStack.decrement(1);
-			else itemStack.damage(1, player, p -> p.sendToolBreakStatus(hand));
+			else itemStack.damage(1, player, LivingEntity.getSlotForHand(hand));
 		}
 		player.incrementStat(Stats.USED.getOrCreateStat(itemStack.getItem()));
-		return ActionResult.success(world.isClient);
+		return ItemActionResult.success(world.isClient);
 	}
 	
 	/**
 	 * 此方法用于处理是否能被火箭引燃
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
 	public void onProjectileHit(World world, BlockState state, BlockHitResult hit, ProjectileEntity projectile) {
 		if (world.isClient) return;
 		BlockPos blockPos = hit.getBlockPos();

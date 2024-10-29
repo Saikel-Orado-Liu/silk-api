@@ -17,6 +17,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import pers.saikel0rado1iu.silk.api.base.common.collect.MultiTreeNode;
@@ -79,16 +80,16 @@ public class PhysicsConnectingBlockEntity extends BlockEntity {
 	}
 	
 	@Override
-	protected void writeNbt(NbtCompound nbt) {
-		super.writeNbt(nbt);
+	protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+		super.writeNbt(nbt, registryLookup);
 		Gson gson = new Gson();
 		nbt.putString("rootTree", gson.toJson(rootTree));
 		nbt.putString("treeNode", gson.toJson(treeNode));
 	}
 	
 	@Override
-	public void readNbt(NbtCompound nbt) {
-		super.readNbt(nbt);
+	protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+		super.readNbt(nbt, registryLookup);
 		Gson gson = new Gson();
 		rootTree = gson.fromJson(nbt.getString("rootTree"), new TypeToken<MultiWayTree<BlockPos, String>>() {
 		}.getType());
