@@ -16,9 +16,11 @@ import com.mojang.serialization.Codec;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.OptionListWidget;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -41,14 +43,15 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 public final class SettingOptionHelper extends OptionListWidget {
-	private SettingOptionHelper(MinecraftClient minecraftClient, int i, int j, int k, int l) {
-		super(minecraftClient, i, j, k, l);
+	private SettingOptionHelper(MinecraftClient minecraftClient, int width, int height, GameOptionsScreen optionsScreen) {
+		super(minecraftClient, width, height, optionsScreen);
 	}
 	
 	/**
 	 * 初始化所有选项
 	 *
 	 * @param optionListWidget 选项列表控件
+	 * @param gameOptions      游戏选项
 	 * @param settingData      设置数据
 	 * @param parent           父屏幕
 	 * @param isDouble         是否为双按钮
@@ -56,7 +59,7 @@ public final class SettingOptionHelper extends OptionListWidget {
 	 * @param save             保存方法，用于保存数据设置
 	 */
 	@SuppressWarnings("unchecked")
-	public static void initOptions(OptionListWidget optionListWidget, SettingData settingData, Screen parent, boolean isDouble, boolean linkTrusted, Runnable save) {
+	public static void initOptions(OptionListWidget optionListWidget, GameOptions gameOptions, SettingData settingData, Screen parent, boolean isDouble, boolean linkTrusted, Runnable save) {
 		if (settingData.type() == SettingType.DEVELOPMENT) return;
 		SimpleOption<?> prevOption = null;
 		for (SettingOption<?> option : settingData.options().keySet()) {
@@ -182,13 +185,13 @@ public final class SettingOptionHelper extends OptionListWidget {
 			if (isDouble) {
 				if (prevOption == null) prevOption = simpleOption;
 				if (prevOption == simpleOption) continue;
-				optionListWidget.addOptionEntry(prevOption, simpleOption);
+				optionListWidget.addWidgetEntry(prevOption.createWidget(gameOptions), simpleOption.createWidget(gameOptions));
 				prevOption = null;
 			} else {
 				optionListWidget.addSingleOptionEntry(simpleOption);
 			}
 		}
-		if (isDouble && prevOption != null) optionListWidget.addOptionEntry(prevOption, null);
+		if (isDouble && prevOption != null) optionListWidget.addWidgetEntry(prevOption.createWidget(gameOptions), null);
 	}
 	
 	/**

@@ -13,12 +13,14 @@ package pers.saikel0rado1iu.silk.entrypoint;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.registry.RegistryWrapper;
 import pers.saikel0rado1iu.silk.api.base.common.api.I18nModInfoProvider;
 import pers.saikel0rado1iu.silk.api.pattern.widget.WidgetTexts;
 import pers.saikel0rado1iu.silk.impl.SilkCodex;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <h2 style="color:FFC800">国际化提供器</h2>
@@ -58,10 +60,10 @@ final class CodexI18nProvider extends I18nModInfoProvider {
 	}
 	
 	@Override
-	public FabricLanguageProvider provider(FabricDataOutput fabricDataOutput) {
-		return new FabricLanguageProvider(fabricDataOutput, langCode) {
+	public FabricLanguageProvider provider(FabricDataOutput fabricDataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+		return new FabricLanguageProvider(fabricDataOutput, langCode, registryLookup) {
 			@Override
-			public void generateTranslations(FabricLanguageProvider.TranslationBuilder translationBuilder) {
+			public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
 				generate(translationBuilder);
 			}
 		};

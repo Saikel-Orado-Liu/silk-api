@@ -60,6 +60,6 @@ public class SettingTab extends OptionsTab {
 	@Override
 	protected void addOptions(OptionMenuWidget optionMenuWidget) {
 		if (settingData.type() == SettingType.DEVELOPMENT) return;
-		SettingOptionHelper.initOptions(optionMenuWidget, settingData, parent, isDouble, linkTrusted(), settingData::save);
+		SettingOptionHelper.initOptions(optionMenuWidget, parent.gameOptions(), settingData, parent, isDouble, linkTrusted(), settingData::save);
 	}
 }
