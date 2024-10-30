@@ -11,7 +11,7 @@
 
 package pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.chunk;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -21,13 +21,13 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * <h2 style="color:FFC800">{@link Codec}{@code <? extends }{@link ChunkGenerator}{@code >} 注册表</h2>
- * 用于注册 {@link Codec}{@code <? extends }{@link ChunkGenerator}{@code >} 的注册表
+ * <h2 style="color:FFC800">{@link MapCodec}{@code <? extends }{@link ChunkGenerator}{@code >} 注册表</h2>
+ * 用于注册 {@link MapCodec}{@code <? extends }{@link ChunkGenerator}{@code >} 的注册表
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.0.0
  */
-public interface ChunkGeneratorCodecRegistry extends MainRegistrationProvider<Codec<? extends ChunkGenerator>> {
+public interface ChunkGeneratorCodecRegistry extends MainRegistrationProvider<MapCodec<? extends ChunkGenerator>> {
 	/**
 	 * 服务端注册方法<br>
 	 * 此方法方法一个服务端注册器，注册器注册返回注册对象<br>
@@ -37,7 +37,7 @@ public interface ChunkGeneratorCodecRegistry extends MainRegistrationProvider<Co
 	 * @param <T>     区块生成器类型
 	 * @return 服务端注册器
 	 */
-	static <T extends ChunkGenerator> ChunkGeneratorCodecRegistry.MainRegistrar<T> registrar(Class<T> ignored, Supplier<Codec<T>> codec) {
+	static <T extends ChunkGenerator> ChunkGeneratorCodecRegistry.MainRegistrar<T> registrar(Class<T> ignored, Supplier<MapCodec<T>> codec) {
 		return new ChunkGeneratorCodecRegistry.MainRegistrar<>(codec);
 	}
 	
@@ -46,8 +46,8 @@ public interface ChunkGeneratorCodecRegistry extends MainRegistrationProvider<Co
 	 *
 	 * @param <T> 区块生成器解编码器
 	 */
-	final class MainRegistrar<T extends ChunkGenerator> extends Registrar<Codec<T>, MainRegistrar<T>> {
-		MainRegistrar(Supplier<Codec<T>> type) {
+	final class MainRegistrar<T extends ChunkGenerator> extends Registrar<MapCodec<T>, MainRegistrar<T>> {
+		MainRegistrar(Supplier<MapCodec<T>> type) {
 			super(type);
 		}
 		
