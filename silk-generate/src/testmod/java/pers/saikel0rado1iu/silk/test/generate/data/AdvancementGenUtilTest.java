@@ -20,6 +20,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.RangedKilledEntityCriterion;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.ShotProjectileCriterion;
@@ -27,6 +28,7 @@ import pers.saikel0rado1iu.silk.api.generate.data.AdvancementGenUtil;
 import pers.saikel0rado1iu.silk.api.spinningjenny.tag.EntityTypeTags;
 import pers.saikel0rado1iu.silk.impl.SilkGenerate;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static pers.saikel0rado1iu.silk.test.generate.Items.TEST_BOW;
@@ -88,12 +90,12 @@ public final class AdvancementGenUtilTest extends FabricAdvancementProvider {
 	/**
 	 * @param output 数据输出
 	 */
-	public AdvancementGenUtilTest(FabricDataOutput output) {
-		super(output);
+	public AdvancementGenUtilTest(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+		super(output, registryLookup);
 	}
 	
 	@Override
-	public void generateAdvancement(Consumer<AdvancementEntry> consumer) {
+	public void generateAdvancement(RegistryWrapper.WrapperLookup registryLookup, Consumer<AdvancementEntry> consumer) {
 		consumer.accept(ROOT);
 		consumer.accept(TEST);
 		consumer.accept(TEST_1);

@@ -13,31 +13,35 @@ package pers.saikel0rado1iu.silk.test.generate.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.gen.WorldPresets;
 import pers.saikel0rado1iu.silk.api.generate.data.LinkedLanguageProvider;
 import pers.saikel0rado1iu.silk.impl.SilkGenerate;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Test {@link LinkedLanguageProvider}
  */
 public final class LinkedLanguageProviderTest extends LinkedLanguageProvider {
 	/**
-	 * @param dataOutput 数据输出
+	 * @param dataOutput     数据输出
+	 * @param registryLookup 注册表 Future
 	 */
-	public LinkedLanguageProviderTest(FabricDataOutput dataOutput) {
-		super(dataOutput, "zh_cn");
+	public LinkedLanguageProviderTest(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+		super(dataOutput, "zh_cn", registryLookup);
 	}
 	
 	@Override
-	public void generateTranslations(TranslationBuilder translationBuilder) {
+	public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
 		translationBuilder.add(comment("test"), "test");
 		translationBuilder.add(i18nName(SilkGenerate.getInstance()), "i18nName");
 		translationBuilder.add(i18nSummary(SilkGenerate.getInstance()), "i18nSummary");
 		translationBuilder.add(i18nDesc(SilkGenerate.getInstance()), "i18nDesc");
 		translationBuilder.add(advancementTitle(AdvancementGenUtilTest.TEST), "advancementTitle");
 		translationBuilder.add(advancementDesc(AdvancementGenUtilTest.TEST), "advancementDesc");
-		translationBuilder.add(soundSub(SoundEvents.ITEM_ARMOR_EQUIP_TURTLE), "equip");
+		translationBuilder.add(soundSub(SoundEvents.ITEM_ARMOR_EQUIP_TURTLE.value()), "equip");
 		translationBuilder.add(deathMessage(DamageTypes.ARROW, ""), "death");
 		translationBuilder.add(worldPreset(WorldPresets.DEFAULT), "default");
 	}

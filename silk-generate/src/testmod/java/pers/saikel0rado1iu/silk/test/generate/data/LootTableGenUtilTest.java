@@ -28,10 +28,12 @@ import net.minecraft.loot.function.LootingEnchantLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
-import net.minecraft.util.Identifier;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryWrapper;
 import pers.saikel0rado1iu.silk.api.generate.data.AdvancementGenUtil;
 import pers.saikel0rado1iu.silk.api.generate.data.LootTableGenUtil;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 import static net.minecraft.data.server.loottable.EntityLootTableGenerator.NEEDS_ENTITY_ON_FIRE;
@@ -45,10 +47,11 @@ public interface LootTableGenUtilTest {
 	 */
 	final class Block extends FabricBlockLootTableProvider {
 		/**
-		 * @param dataOutput 数据输出
+		 * @param dataOutput     数据输出
+		 * @param registryLookup 注册表 Future
 		 */
-		public Block(FabricDataOutput dataOutput) {
-			super(dataOutput);
+		public Block(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+			super(dataOutput, registryLookup);
 		}
 		
 		@Override
@@ -62,15 +65,16 @@ public interface LootTableGenUtilTest {
 	 */
 	final class Entity extends SimpleFabricLootTableProvider {
 		/**
-		 * @param output 数据输出
+		 * @param output         数据输出
+		 * @param registryLookup 注册表 Future
 		 */
-		public Entity(FabricDataOutput output) {
-			super(output, LootContextTypes.ENTITY);
+		public Entity(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+			super(output, registryLookup, LootContextTypes.ENTITY);
 		}
 		
 		@Override
-		public void accept(BiConsumer<Identifier, LootTable.Builder> exporter) {
-			exporter.accept(EntityType.PIG.getLootTableId(), LootTable.builder()
+		public void accept(RegistryWrapper.WrapperLookup registryLookup, BiConsumer<RegistryKey<LootTable>, LootTable.Builder> consumer) {
+			consumer.accept(EntityType.PIG.getLootTableId(), LootTable.builder()
 					.pool(LootPool.builder().rolls(ConstantLootNumberProvider.create(1))
 							.with(ItemEntry.builder(Items.BEEF)
 									.apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 2)))

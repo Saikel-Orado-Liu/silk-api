@@ -14,27 +14,33 @@ package pers.saikel0rado1iu.silk.test.generate.data;
 import com.google.common.collect.ImmutableSet;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.potion.Potions;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.RegistryWrapper;
 import pers.saikel0rado1iu.silk.api.base.common.util.TickUtil;
 import pers.saikel0rado1iu.silk.api.generate.data.RecipeGenUtil;
 import pers.saikel0rado1iu.silk.api.generate.data.family.EquipFamily;
-import pers.saikel0rado1iu.silk.api.generate.recipe.NbtShapedRecipeJsonBuilder;
+import pers.saikel0rado1iu.silk.api.generate.data.server.recipe.ShapedRecipeWithComponentsJsonBuilder;
+import pers.saikel0rado1iu.silk.api.generate.data.server.recipe.ShapelessRecipeWithComponentsJsonBuilder;
 import pers.saikel0rado1iu.silk.impl.SilkGenerate;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Test {@link RecipeGenUtil}
  */
 public final class RecipeGenUtilTest extends FabricRecipeProvider {
 	/**
-	 * @param output 数据输出
+	 * @param output           数据输出
+	 * @param registriesFuture 注册表 Future
 	 */
-	public RecipeGenUtilTest(FabricDataOutput output) {
-		super(output);
+	public RecipeGenUtilTest(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+		super(output, registriesFuture);
 	}
 	
 	@Override
@@ -50,9 +56,9 @@ public final class RecipeGenUtilTest extends FabricRecipeProvider {
 				Items.GOLD_NUGGET, 0.15F, TickUtil.getTick(20), getItemPath(Items.GOLD_NUGGET));
 		RecipeGenUtil.offerBlasting(exporter, ImmutableSet.of(Items.GOLDEN_SHOVEL, Items.GOLDEN_PICKAXE, Items.GOLDEN_AXE, Items.GOLDEN_HOE, Items.GOLDEN_SWORD, Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS),
 				Items.GOLD_NUGGET, 0.15F, TickUtil.getTick(10), getItemPath(Items.GOLD_NUGGET));
-		ItemStack out1 = new ItemStack(Items.TIPPED_ARROW, 4);
-		out1.setSubNbt("Potion", NbtString.of("poison"));
-		NbtShapedRecipeJsonBuilder.create(RecipeCategory.COMBAT, out1).group(getItemPath(out1.getItem())).input('#', Items.STRING).input('X', Items.STICK).input('@', Items.FEATHER)
+		ItemStack stack = PotionContentsComponent.createStack(Items.TIPPED_ARROW, Potions.STRONG_POISON);
+		stack.setCount(4);
+		ShapedRecipeWithComponentsJsonBuilder.create(RecipeCategory.COMBAT, stack).group(getItemPath(Items.TIPPED_ARROW)).input('#', Items.STRING).input('X', Items.STICK).input('@', Items.FEATHER)
 				.pattern("#")
 				.pattern("X")
 				.pattern("@")
@@ -60,5 +66,10 @@ public final class RecipeGenUtilTest extends FabricRecipeProvider {
 				.criterion(hasItem(Items.STICK), conditionsFromItem(Items.STICK))
 				.criterion(hasItem(Items.FEATHER), conditionsFromItem(Items.FEATHER))
 				.offerTo(exporter, SilkGenerate.getInstance().ofId("poison_tipped_arrow_with_spider_fang"));
+		ShapelessRecipeWithComponentsJsonBuilder.create(RecipeCategory.COMBAT, PotionContentsComponent.createStack(Items.TIPPED_ARROW, Potions.STRONG_HEALING)).group(getItemPath(Items.TIPPED_ARROW)).input(Items.SADDLE).input(Items.STICK).input(Items.FEATHER)
+				.criterion(hasItem(Items.SADDLE), conditionsFromItem(Items.SADDLE))
+				.criterion(hasItem(Items.STICK), conditionsFromItem(Items.STICK))
+				.criterion(hasItem(Items.FEATHER), conditionsFromItem(Items.FEATHER))
+				.offerTo(exporter, SilkGenerate.getInstance().ofId("healing_tipped_arrow"));
 	}
 }

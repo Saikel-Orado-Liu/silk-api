@@ -11,20 +11,21 @@
 
 package pers.saikel0rado1iu.silk.test.generate;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.Criteria;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.RangedKilledEntityCriterion;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovData;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileHoldComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileHoldComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
-import pers.saikel0rado1iu.silk.api.ropestick.tool.AdjustFovWhileUse;
 
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Test {@link CrossbowLikeItem}
@@ -34,7 +35,26 @@ public final class CrossbowLikeItemTest extends CrossbowLikeItem {
 	 * @param settings 物品设置
 	 */
 	public CrossbowLikeItemTest(Settings settings) {
-		super(settings);
+		super(settings
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(true, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), false, AdjustFovData.DEFAULT_FOV_SCALING, true))
+				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.create(10, true)));
+	}
+	
+	@Override
+	public RangedWeaponComponent rangedWeapon() {
+		return RangedWeaponComponent.builder()
+				.maxSpeed(RangedWeaponComponent.CROSSBOW_MAX_PROJECTILE_SPEED)
+				.maxDamage(50)
+				.maxUseTicks(RangedWeaponComponent.CROSSBOW_MAX_USE_TICKS)
+				.maxPullTicks(RangedWeaponComponent.CROSSBOW_MAX_USE_TICKS)
+				.firingError(RangedWeaponComponent.DEFAULT_FIRING_ERROR)
+				.defaultProjectile(Items.ARROW.getDefaultStack())
+				.launchableProjectiles(ImmutableList.of(
+						Items.ARROW,
+						Items.SPECTRAL_ARROW,
+						Items.TIPPED_ARROW,
+						Items.FIREWORK_ROCKET))
+				.build();
 	}
 	
 	/**
@@ -48,82 +68,5 @@ public final class CrossbowLikeItemTest extends CrossbowLikeItem {
 	public void triggerCriteria(ServerPlayerEntity serverPlayer, ItemStack ranged, ProjectileEntity projectile) {
 		RangedKilledEntityCriterion.setRangedWeapon(projectile, ranged);
 		Criteria.SHOT_PROJECTILE_CRITERION.trigger(serverPlayer, ranged, projectile);
-	}
-	
-	@Override
-	public float maxDamage() {
-		return 50;
-	}
-	
-	@Override
-	public float fovScaling() {
-		return DEFAULT_FOV_SCALING;
-	}
-	
-	@Override
-	public Optional<Identifier> hudOverlay() {
-		return Optional.of(AdjustFovWhileUse.POWDER_SNOW_OUTLINE);
-	}
-	
-	@Override
-	public boolean canStretchHud() {
-		return super.canStretchHud();
-	}
-	
-	@Override
-	public float moveSpeedMultiple() {
-		return 10;
-	}
-	
-	/**
-	 * 设置发射物索引以供 JSON 渲染使用
-	 *
-	 * @param stack         物品堆栈
-	 * @param useProjectile 使用的发射物
-	 */
-	@Override
-	public void setProjectileIndex(ItemStack stack, ItemStack useProjectile) {
-	}
-	
-	/**
-	 * 获取发射物索引以供 JSON 渲染使用
-	 *
-	 * @param stack 物品堆栈
-	 * @return 索引
-	 */
-	@Override
-	public float getProjectileIndex(ItemStack stack) {
-		return 0;
-	}
-	
-	/**
-	 * 获取发射物索引以供 JSON 渲染使用
-	 *
-	 * @param projectile 发射物
-	 * @return 索引
-	 */
-	@Override
-	public float getProjectileIndex(Item projectile) {
-		return 0;
-	}
-	
-	/**
-	 * 默认的发射物
-	 *
-	 * @return 发射物物品堆栈
-	 */
-	@Override
-	public Item defaultProjectile() {
-		return Items.ARROW;
-	}
-	
-	/**
-	 * 获取远程武器能发射的所有的发射物
-	 *
-	 * @return 发射物集合
-	 */
-	@Override
-	public Set<Item> launchableProjectiles() {
-		return ImmutableSet.of(net.minecraft.item.Items.ARROW, net.minecraft.item.Items.SPECTRAL_ARROW, Items.TIPPED_ARROW, Items.FIREWORK_ROCKET);
 	}
 }
