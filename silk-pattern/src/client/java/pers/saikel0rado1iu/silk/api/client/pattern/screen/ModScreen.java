@@ -24,6 +24,7 @@ import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
 import net.minecraft.client.gui.widget.TabNavigationWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -201,9 +202,12 @@ public class ModScreen extends GameOptionsScreen {
 		tabManager.setTabArea(screenRect);
 	}
 	
-	@Override
-	public void close() {
-		if (client == null) return;
-		client.setScreen(parent);
+	/**
+	 * 以公开方法访问游戏设置
+	 *
+	 * @return {@link ModScreen#gameOptions}
+	 */
+	public GameOptions gameOptions() {
+		return gameOptions;
 	}
 }
