@@ -13,9 +13,11 @@ package pers.saikel0rado1iu.silk.api.client.pattern.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.GridWidget;
@@ -33,8 +35,6 @@ import java.util.ArrayList;
 
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderColor;
 import static com.mojang.blaze3d.systems.RenderSystem.setShaderTexture;
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.FOOTER_SEPARATOR_TEXTURE;
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
 
 /**
  * <h2 style="color:FFC800">模组屏幕</h2>
@@ -43,7 +43,7 @@ import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 0.1.0
  */
-public class ModScreen extends BaseScreen {
+public class ModScreen extends GameOptionsScreen {
 	protected final ImmutableList<ScreenTab> tabs;
 	private final TabManager tabManager = new TabManager(this::addDrawableChild, this::remove);
 	private final int mainTabIndex;
@@ -71,7 +71,7 @@ public class ModScreen extends BaseScreen {
 	 * @param tabs         后续选项卡
 	 */
 	public ModScreen(@Nullable Screen parent, int mainTabIndex, ScreenTab tab, ScreenTab... tabs) {
-		this(parent, LIGHT_DIRT_BACKGROUND_TEXTURE, mainTabIndex, tab, tabs);
+		this(parent, null, mainTabIndex, tab, tabs);
 	}
 	
 	/**
@@ -81,8 +81,8 @@ public class ModScreen extends BaseScreen {
 	 * @param tab          选项卡
 	 * @param tabs         后续选项卡
 	 */
-	public ModScreen(@Nullable Screen parent, Identifier background, int mainTabIndex, ScreenTab tab, ScreenTab... tabs) {
-		super(parent, Text.of(""));
+	public ModScreen(@Nullable Screen parent, @Nullable Identifier background, int mainTabIndex, ScreenTab tab, ScreenTab... tabs) {
+		super(parent, null, Text.of(""));
 		this.background = background;
 		this.mainTabIndex = mainTabIndex;
 		this.tabs = ImmutableList.copyOf(Lists.asList(tab, tabs));
@@ -134,24 +134,36 @@ public class ModScreen extends BaseScreen {
 			}
 		}
 		tabNavigation.render(context, mouseX, mouseY, delta);
-		String modLicense = new ArrayList<>(tabs.get(0).modData().licenses()).isEmpty() ? "ARR" : new ArrayList<>(tabs.get(0).modData().licenses()).get(0);
+		String modLicense = new ArrayList<>(tabs.getFirst().modData().licenses()).isEmpty() ? "ARR" : new ArrayList<>(tabs.getFirst().modData().licenses()).getFirst();
 		verWidget.setPosition(0, height - 12);
 		licenseWidget.setPosition(width - textRenderer.getWidth(modLicense), height - 12);
 	}
 	
 	@Override
-	public void renderBackgroundTexture(DrawContext context) {
-		if (background != OPTIONS_BACKGROUND_TEXTURE && background != LIGHT_DIRT_BACKGROUND_TEXTURE) {
+	protected void renderPanoramaBackground(DrawContext context, float delta) {
+		if (null == background) {
+			super.renderPanoramaBackground(context, delta);
+		} else {
+			setShaderTexture(0, background);
+			context.drawTexture(background, 0, 0, 0, 0, 0, width, height, width, height);
+			setShaderColor(1, 1, 1, 1);
+		}
+	}
+	
+	@Override
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+		super.renderBackground(context, mouseX, mouseY, delta);
+		RenderSystem.enableBlend();
+		context.drawTexture(FOOTER_SEPARATOR_TEXTURE, 0, height - layout.getFooterHeight() - 2, 0, 0, width, 2, 32, 2);
+		RenderSystem.disableBlend();
+		if (null == background) {
+			super.renderPanoramaBackground(context, delta);
+		} else {
 			setShaderTexture(0, background);
 			setShaderColor(0.5F, 0.5F, 0.5F, 1.0F);
-			context.drawTexture(background, 0, 0, 0, 0.0F, 0.0F, width, height, width, height);
-			setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			setShaderTexture(0, LIGHT_DIRT_BACKGROUND_TEXTURE);
-			context.drawTexture(LIGHT_DIRT_BACKGROUND_TEXTURE, 0, height - 36, 0, 0, 0, width, height, 32, 32);
-		} else {
-			context.drawTexture(LIGHT_DIRT_BACKGROUND_TEXTURE, 0, 0, 0, 0, 0, width, height, 32, 32);
+			context.drawTexture(background, 0, 0, 0, 0, 0, width, height - layout.getFooterHeight() - 2, width, height);
+			setShaderColor(1, 1, 1, 1);
 		}
-		context.drawTexture(FOOTER_SEPARATOR_TEXTURE, 0, MathHelper.roundUpToMultiple(height - 36 - 2, 2), 0.0F, 0.0F, width, 2, 32, 2);
 	}
 	
 	@Override
@@ -171,9 +183,9 @@ public class ModScreen extends BaseScreen {
 		});
 		tabNavigation.selectTab(mainTabIndex, false);
 		initTabNavigation();
-		String modVerString = tabs.get(0).modData().version();
+		String modVerString = tabs.getFirst().modData().version();
 		addDrawableChild(verWidget = new TextWidget(0, height - 12, textRenderer.getWidth(modVerString), textRenderer.fontHeight, Text.of(modVerString), textRenderer));
-		String modLicense = new ArrayList<>(tabs.get(0).modData().licenses()).isEmpty() ? "ARR" : new ArrayList<>(tabs.get(0).modData().licenses()).get(0);
+		String modLicense = new ArrayList<>(tabs.getFirst().modData().licenses()).isEmpty() ? "ARR" : new ArrayList<>(tabs.getFirst().modData().licenses()).getFirst();
 		addDrawableChild(licenseWidget = new TextWidget(width - textRenderer.getWidth(modLicense), height - 12, textRenderer.getWidth(modLicense), textRenderer.fontHeight, Text.of(modLicense), textRenderer));
 	}
 	
@@ -187,5 +199,11 @@ public class ModScreen extends BaseScreen {
 		int otherAxis = tabNavigation.getNavigationFocus().getBottom();
 		ScreenRect screenRect = new ScreenRect(0, otherAxis, width, grid.getY() - otherAxis);
 		tabManager.setTabArea(screenRect);
+	}
+	
+	@Override
+	public void close() {
+		if (client == null) return;
+		client.setScreen(parent);
 	}
 }

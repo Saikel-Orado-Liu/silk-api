@@ -14,15 +14,13 @@ package pers.saikel0rado1iu.silk.api.client.pattern.widget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.widget.OptionListWidget;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import pers.saikel0rado1iu.silk.api.client.pattern.tab.ScreenTab;
 
 import java.util.Optional;
-
-import static net.minecraft.client.gui.screen.Screen.OPTIONS_BACKGROUND_TEXTURE;
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
 
 /**
  * <h2 style="color:FFC800">选项菜单控件</h2>
@@ -35,23 +33,20 @@ public class OptionMenuWidget extends OptionListWidget implements CustomBackgrou
 	/**
 	 * @param minecraftClient 客户端实例
 	 * @param width           宽度
-	 * @param top             顶部坐标
-	 * @param bottom          底部坐标
-	 * @param itemHeight      文本高度
+	 * @param height          高度
+	 * @param optionsScreen   选项屏幕
 	 */
-	public OptionMenuWidget(MinecraftClient minecraftClient, int width, int top, int bottom, int itemHeight) {
-		super(minecraftClient, width, bottom - top, top, itemHeight);
+	public OptionMenuWidget(MinecraftClient minecraftClient, int width, int height, GameOptionsScreen optionsScreen) {
+		super(minecraftClient, width, height, optionsScreen);
 	}
 	
 	@Override
 	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		int scrollbarPositionX = getScrollbarPositionX();
+		int scrollbarPositionX = getScrollbarX();
 		int posX = scrollbarPositionX + 6;
 		RenderSystem.setShaderColor(0.25F, 0.25F, 0.25F, 1.0F);
-		RenderSystem.setShaderTexture(0, background().orElse(OPTIONS_BACKGROUND_TEXTURE));
-		if (background().isPresent() && (background().get() == OPTIONS_BACKGROUND_TEXTURE || background().get() == LIGHT_DIRT_BACKGROUND_TEXTURE)) {
-			context.drawTexture(background().get(), 0, 0, 0, 0, 0, width, height - ScreenTab.TAP_BOTTOM, 32, 32);
-		} else if (background().isPresent()) {
+		if (background().isPresent()) {
+			RenderSystem.setShaderTexture(0, background().get());
 			context.drawTexture(background().get(), 0, 0, 0, 0, 0, width, height - ScreenTab.TAP_BOTTOM, width, height);
 		}
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -64,9 +59,6 @@ public class OptionMenuWidget extends OptionListWidget implements CustomBackgrou
 		
 		renderList(context, mouseX, mouseY, delta);
 		context.disableScissor();
-		RenderSystem.setShaderTexture(0, LIGHT_DIRT_BACKGROUND_TEXTURE);
-		context.drawTexture(LIGHT_DIRT_BACKGROUND_TEXTURE, getX(), 0, 0.0F, 0.0F, width, getY(), 32, 32);
-		context.fillGradient(getX(), getY(), getRight(), getY() + 4, -16777216, 0);
 		
 		int maxScroll = getMaxScroll();
 		if (maxScroll > 0) {

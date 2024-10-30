@@ -33,9 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static net.minecraft.client.gui.screen.Screen.OPTIONS_BACKGROUND_TEXTURE;
-import static net.minecraft.client.gui.screen.world.CreateWorldScreen.LIGHT_DIRT_BACKGROUND_TEXTURE;
-
 /**
  * <h2 style="color:FFC800">文本列表控件</h2>
  * This code is partially referenced from <a href="https://github.com/TerraformersMC/ModMenu">ModMenu(github)</a>, Attached here is its open source license.
@@ -90,7 +87,7 @@ public class TextListWidget extends EntryListWidget<TextListWidget.TextEntry> im
 	}
 	
 	@Override
-	protected int getScrollbarPositionX() {
+	protected int getScrollbarX() {
 		return width - 6 + getX();
 	}
 	
@@ -107,20 +104,15 @@ public class TextListWidget extends EntryListWidget<TextListWidget.TextEntry> im
 		BufferBuilder bufferBuilder = tessellator.getBuffer();
 		
 		RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
-		RenderSystem.setShaderTexture(0, background().orElse(OPTIONS_BACKGROUND_TEXTURE));
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-		if (background().isPresent() && (background().get() == OPTIONS_BACKGROUND_TEXTURE || background().get() == LIGHT_DIRT_BACKGROUND_TEXTURE)) {
-			bufferBuilder.vertex(getX(), getBottom(), 0).texture(getX() / 32F, (getBottom() + (int) getScrollAmount()) / 32F).color(64, 64, 64, 255).next();
-			bufferBuilder.vertex(getRight(), getBottom(), 0).texture(getRight() / 32F, (getBottom() + (int) getScrollAmount()) / 32F).color(64, 64, 64, 255).next();
-			bufferBuilder.vertex(getRight(), getY(), 0).texture(getRight() / 32F, (getY() + (int) getScrollAmount()) / 32F).color(64, 64, 64, 255).next();
-			bufferBuilder.vertex(getX(), getY(), 0).texture(getX() / 32F, (getY() + (int) getScrollAmount()) / 32F).color(64, 64, 64, 255).next();
-		} else if (background().isPresent()) {
-			bufferBuilder.vertex(getX(), getBottom(), 0).texture(getX(), (getBottom() + (int) getScrollAmount())).color(64, 64, 64, 255).next();
-			bufferBuilder.vertex(getRight(), getBottom(), 0).texture(getRight(), (getBottom() + (int) getScrollAmount())).color(64, 64, 64, 255).next();
-			bufferBuilder.vertex(getRight(), getY(), 0).texture(getRight(), (getY() + (int) getScrollAmount())).color(64, 64, 64, 255).next();
-			bufferBuilder.vertex(getX(), getY(), 0).texture(getX(), (getY() + (int) getScrollAmount())).color(64, 64, 64, 255).next();
+		if (background().isPresent()) {
+			RenderSystem.setShaderTexture(0, background().get());
+			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
+			bufferBuilder.vertex(getX(), getBottom(), 0).texture(getX(), (getBottom() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
+			bufferBuilder.vertex(getRight(), getBottom(), 0).texture(getRight(), (getBottom() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
+			bufferBuilder.vertex(getRight(), getY(), 0).texture(getRight(), (getY() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
+			bufferBuilder.vertex(getX(), getY(), 0).texture(getX(), (getY() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
+			tessellator.draw();
 		}
-		tessellator.draw();
 		
 		RenderSystem.depthFunc(515);
 		RenderSystem.disableDepthTest();
@@ -156,7 +148,7 @@ public class TextListWidget extends EntryListWidget<TextListWidget.TextEntry> im
 	 * @param tessellator   镶嵌器
 	 */
 	public void renderScrollBar(BufferBuilder bufferBuilder, Tessellator tessellator) {
-		int scrollbarStartX = getScrollbarPositionX();
+		int scrollbarStartX = getScrollbarX();
 		int scrollbarEndX = scrollbarStartX + 6;
 		int maxScroll = getMaxScroll();
 		if (maxScroll > 0) {
