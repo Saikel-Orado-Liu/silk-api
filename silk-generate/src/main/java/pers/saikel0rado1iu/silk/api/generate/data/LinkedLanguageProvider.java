@@ -11,23 +11,33 @@
 
 package pers.saikel0rado1iu.silk.api.generate.data;
 
+import com.google.common.hash.Hashing;
+import com.google.common.hash.HashingOutputStream;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.stream.JsonWriter;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.data.DataOutput;
-import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+import net.minecraft.util.Util;
 import net.minecraft.world.gen.WorldPreset;
 import pers.saikel0rado1iu.silk.api.base.common.api.I18nModInfoProvider;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -142,6 +152,32 @@ public abstract class LinkedLanguageProvider extends FabricLanguageProvider {
 		return "generator." + key.getValue().getNamespace() + "." + key.getValue().getPath();
 	}
 	
+	/**
+	 * 写入路径
+	 *
+	 * @param writer 数据编写器
+	 * @param json   JSON 元素
+	 * @param path   路径
+	 * @return 异步任务
+	 */
+	@SuppressWarnings("UnstableApiUsage")
+	public static CompletableFuture<?> writeToPath(DataWriter writer, JsonElement json, Path path) {
+		return CompletableFuture.runAsync(() -> {
+			try {
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				HashingOutputStream hashingOutputStream = new HashingOutputStream(Hashing.sha256(), byteArrayOutputStream);
+				try (JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(hashingOutputStream, StandardCharsets.UTF_8))) {
+					jsonWriter.setSerializeNulls(false);
+					jsonWriter.setIndent("  ");
+					JsonHelper.writeSorted(jsonWriter, json, null);
+				}
+				writer.write(path, byteArrayOutputStream.toByteArray(), hashingOutputStream.hash());
+			} catch (IOException e) {
+				LOGGER.error("Failed to save file to {}", path, e);
+			}
+		}, Util.getMainWorkerExecutor());
+	}
+	
 	@Override
 	public CompletableFuture<?> run(DataWriter writer) {
 		LinkedTreeMap<String, String> translationEntries = new LinkedTreeMap<>();
@@ -160,7 +196,7 @@ public abstract class LinkedLanguageProvider extends FabricLanguageProvider {
 			
 			for (Map.Entry<String, String> entry : translationEntries.entrySet()) langEntryJson.addProperty(entry.getKey(), entry.getValue());
 			
-			return DataProvider.writeToPath(writer, langEntryJson, dataOutput
+			return writeToPath(writer, langEntryJson, dataOutput
 					.getResolver(DataOutput.OutputType.RESOURCE_PACK, "lang")
 					.resolveJson(new Identifier(dataOutput.getModId(), languageCode)));
 		});
