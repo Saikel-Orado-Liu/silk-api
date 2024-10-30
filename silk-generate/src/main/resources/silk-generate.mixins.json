@@ -3,11 +3,9 @@
 	"package": "pers.saikel0rado1iu.silk.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"generate.advancement.criterion.RangedKilledEntityCriterionMixin$BowItem",
-		"generate.advancement.criterion.RangedKilledEntityCriterionMixin$CrossbowItem",
+		"generate.advancement.criterion.RangedKilledEntityCriterionMixin$RangedWeaponItem",
 		"generate.advancement.criterion.RangedKilledEntityCriterionMixin$Trigger",
-		"generate.advancement.criterion.ShotProjectileCriterionMixin$BowItem",
-		"generate.advancement.criterion.ShotProjectileCriterionMixin$CrossbowItem",
+		"generate.advancement.criterion.ShotProjectileCriterionMixin$RangedWeaponItem",
 		"generate.data.RecipeGenUtilMixin$CookingRecipeJsonBuilderMixin",
 		"generate.data.RecipeGenUtilMixin$ShapedRecipeJsonBuilderMixin",
 		"generate.data.RecipeGenUtilMixin$ShapelessRecipeJsonBuilderMixin",

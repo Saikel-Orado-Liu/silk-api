@@ -8,6 +8,8 @@ transitive-extendable	method	net/minecraft/world/gen/WorldPresets$Registrar	regi
 transitive-extendable	method	net/minecraft/world/gen/WorldPresets$Registrar	createPreset	(Lnet/minecraft/world/dimension/DimensionOptions;)Lnet/minecraft/world/gen/WorldPreset;
 transitive-extendable	method	net/minecraft/world/gen/WorldPresets$Registrar	createOverworldOptions	(Lnet/minecraft/world/gen/chunk/ChunkGenerator;)Lnet/minecraft/world/dimension/DimensionOptions;
 transitive-extendable	method	net/minecraft/world/gen/WorldPresets$Registrar	createOverworldOptions	(Lnet/minecraft/world/biome/source/BiomeSource;Lnet/minecraft/registry/entry/RegistryEntry;)Lnet/minecraft/world/dimension/DimensionOptions;
+transitive-extendable	method	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	validate	(Lnet/minecraft/util/Identifier;)Lnet/minecraft/recipe/RawShapedRecipe;
+transitive-extendable	method	net/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder	validate	(Lnet/minecraft/util/Identifier;)V
 transitive-accessible	field  	net/minecraft/world/gen/WorldPresets$Registrar	chunkGeneratorSettingsLookup	Lnet/minecraft/registry/RegistryEntryLookup;
 transitive-accessible	field  	net/minecraft/world/gen/WorldPresets$Registrar	biomeLookup	Lnet/minecraft/registry/RegistryEntryLookup;
 transitive-accessible	field  	net/minecraft/world/gen/WorldPresets$Registrar	featureLookup	Lnet/minecraft/registry/RegistryEntryLookup;
@@ -16,3 +18,12 @@ transitive-accessible	field  	net/minecraft/world/gen/WorldPresets$Registrar	mul
 transitive-accessible	field  	net/minecraft/data/client/BlockStateModelGenerator	simpleItemModelExemptionCollector	Ljava/util/function/Consumer;
 transitive-accessible	field  	net/minecraft/item/ItemStack	ITEM_CODEC	Lcom/mojang/serialization/Codec;
 transitive-accessible	field  	net/minecraft/data/server/loottable/EntityLootTableGenerator	NEEDS_ENTITY_ON_FIRE	Lnet/minecraft/predicate/entity/EntityPredicate$Builder;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	criteria	Ljava/util/Map;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	category	Lnet/minecraft/recipe/book/RecipeCategory;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	group	Ljava/lang/String;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	showNotification	Z
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder	advancementBuilder	Ljava/util/Map;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder	inputs	Lnet/minecraft/util/collection/DefaultedList;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder	category	Lnet/minecraft/recipe/book/RecipeCategory;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder	group	Ljava/lang/String;
+transitive-accessible	field  	net/minecraft/data/server/recipe/ShapelessRecipeJsonBuilder	showNotification	Z
