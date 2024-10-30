@@ -30,6 +30,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.Criteria;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.RangedKilledEntityCriterion;
 
+import java.util.List;
+
 /**
  * <h2 style="color:FFC800">{@link RangedKilledEntityCriterion} 混入</h2>
  * 设置远程武器击杀实体标准触发
@@ -54,40 +56,20 @@ public interface RangedKilledEntityCriterionMixin {
 	}
 	
 	/**
-	 * 弓物品混入
+	 * 远程武器物品混入
 	 */
-	@Mixin(net.minecraft.item.BowItem.class)
-	abstract class BowItem {
+	@Mixin(net.minecraft.item.RangedWeaponItem.class)
+	abstract class RangedWeaponItem {
 		@Unique
 		private ItemStack stack;
 		
-		@Inject(method = "onStoppedUsing", at = @At("HEAD"))
-		private void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
+		@Inject(method = "shootAll", at = @At("HEAD"))
+		private void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, LivingEntity target, CallbackInfo ci) {
 			this.stack = stack;
 		}
 		
-		@ModifyArg(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
+		@ModifyArg(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
 		private Entity getEntity(Entity entity) {
-			RangedKilledEntityCriterion.setRangedWeapon(entity, stack);
-			return entity;
-		}
-	}
-	
-	/**
-	 * 弩物品混入
-	 */
-	@Mixin(net.minecraft.item.CrossbowItem.class)
-	abstract class CrossbowItem {
-		@Unique
-		private static ItemStack stack;
-		
-		@Inject(method = "shoot", at = @At("HEAD"))
-		private static void shoot(World world, LivingEntity shooter, Hand hand, ItemStack crossbow, ItemStack projectile, float soundPitch, boolean creative, float speed, float divergence, float simulated, CallbackInfo ci) {
-			stack = crossbow;
-		}
-		
-		@ModifyArg(method = "shoot", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
-		private static Entity getEntity(Entity entity) {
 			RangedKilledEntityCriterion.setRangedWeapon(entity, stack);
 			return entity;
 		}

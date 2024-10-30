@@ -26,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.Criteria;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.ShotProjectileCriterion;
 
+import java.util.List;
+
 /**
  * <h2 style="color:FFC800">{@link ShotProjectileCriterion} 混入</h2>
  * 设置射击弹药标准在原版中弓弩可触发
@@ -35,40 +37,21 @@ import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.ShotProjectil
  */
 interface ShotProjectileCriterionMixin {
 	/**
-	 * 弓物品混入
+	 * 远程武器物品混入
 	 */
-	@Mixin(net.minecraft.item.BowItem.class)
-	abstract class BowItem {
+	@Mixin(net.minecraft.item.RangedWeaponItem.class)
+	abstract class RangedWeaponItem {
 		@Unique
 		private Entity persistentProjectileEntity;
 		
-		@ModifyArg(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
+		@ModifyArg(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
 		private Entity getEntity(Entity entity) {
 			return persistentProjectileEntity = entity;
 		}
 		
-		@Inject(method = "onStoppedUsing", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z", shift = At.Shift.AFTER))
-		private void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo ci) {
-			if (user instanceof ServerPlayerEntity serverPlayer) Criteria.SHOT_PROJECTILE_CRITERION.trigger(serverPlayer, stack, persistentProjectileEntity);
-		}
-	}
-	
-	/**
-	 * 弩物品混入
-	 */
-	@Mixin(net.minecraft.item.CrossbowItem.class)
-	abstract class CrossbowItem {
-		@Unique
-		private static Entity projectileEntity;
-		
-		@ModifyArg(method = "shoot", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
-		private static Entity getEntity(Entity entity) {
-			return projectileEntity = entity;
-		}
-		
-		@Inject(method = "shoot", at = @At("TAIL"))
-		private static void shoot(World world, LivingEntity shooter, Hand hand, ItemStack crossbow, ItemStack projectile, float soundPitch, boolean creative, float speed, float divergence, float simulated, CallbackInfo ci) {
-			if (shooter instanceof ServerPlayerEntity serverPlayer) Criteria.SHOT_PROJECTILE_CRITERION.trigger(serverPlayer, crossbow, projectileEntity);
+		@Inject(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z", shift = At.Shift.AFTER))
+		private void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, LivingEntity target, CallbackInfo ci) {
+			if (shooter instanceof ServerPlayerEntity serverPlayer) Criteria.SHOT_PROJECTILE_CRITERION.trigger(serverPlayer, stack, persistentProjectileEntity);
 		}
 	}
 }

@@ -13,7 +13,6 @@ package pers.saikel0rado1iu.silk.entrypoint;
 
 import com.google.common.collect.ImmutableSet;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.Criteria;
-import pers.saikel0rado1iu.silk.api.generate.recipe.RecipeSerializer;
 import pers.saikel0rado1iu.silk.api.modpass.ModData;
 import pers.saikel0rado1iu.silk.api.modpass.ModMain;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
@@ -46,7 +45,7 @@ public final class GenerateMain implements ModMain {
 	 */
 	@Override
 	public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
-		return ImmutableSet.of(Criteria.class, RecipeSerializer.class);
+		return ImmutableSet.of(Criteria.class);
 	}
 	
 	/**
