@@ -12,16 +12,14 @@
 package pers.saikel0rado1iu.silk.test.landform;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.FixedBiomeSource;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
 import pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.chunk.ChunkGeneratorCodecRegistry;
-
-import java.util.List;
 
 import static pers.saikel0rado1iu.silk.api.landform.gen.chunk.ChunkGeneratorUpgradable.NON_VERSION;
 import static pers.saikel0rado1iu.silk.api.landform.gen.chunk.ChunkGeneratorUpgradable.VERSION_KEY;
@@ -34,11 +32,12 @@ public interface ChunkGeneratorCodecs extends ChunkGeneratorCodecRegistry {
 	/**
 	 * test
 	 */
-	Codec<TestChunkGenerator> TEST = ChunkGeneratorCodecRegistry.registrar(TestChunkGenerator.class, () -> RecordCodecBuilder.create(instance -> instance.group(
-							BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource),
-							Codecs.createStrictOptionalFieldCodec(FixedBiomeSource.CODEC.listOf(), "fixed_biome_sources", List.of()).forGetter(TestChunkGenerator::additionalBiomeSources),
-							ChunkGeneratorSettings.REGISTRY_CODEC.fieldOf("settings").forGetter(NoiseChunkGenerator::getSettings),
-							Codecs.createStrictOptionalFieldCodec(Codec.STRING, VERSION_KEY, NON_VERSION).forGetter(TestChunkGenerator::version))
-					.apply(instance, instance.stable(TestChunkGenerator::new))))
+	MapCodec<TestChunkGenerator> TEST = ChunkGeneratorCodecRegistry.registrar(TestChunkGenerator.class, () ->
+					RecordCodecBuilder.mapCodec(instance -> instance.group(
+									BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource),
+									FixedBiomeSource.CODEC.codec().listOf().fieldOf("fixed_biome_sources").forGetter(TestChunkGenerator::additionalBiomeSources),
+									ChunkGeneratorSettings.REGISTRY_CODEC.fieldOf("settings").forGetter(NoiseChunkGenerator::getSettings),
+									Codec.STRING.optionalFieldOf(VERSION_KEY, NON_VERSION).forGetter(TestChunkGenerator::version))
+							.apply(instance, instance.stable(TestChunkGenerator::new))))
 			.register(MOD_PASS.ofId("test"));
 }

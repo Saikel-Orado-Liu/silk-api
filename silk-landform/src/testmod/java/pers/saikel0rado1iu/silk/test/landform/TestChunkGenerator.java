@@ -13,7 +13,7 @@ package pers.saikel0rado1iu.silk.test.landform;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.*;
@@ -172,12 +172,12 @@ public final class TestChunkGenerator extends ModifiedChunkGenerator {
 	}
 	
 	/**
-	 * 用于提供区块生成器的 {@link Codec}
+	 * 用于提供区块生成器的 {@link MapCodec}
 	 *
-	 * @return 区块生成器的 {@link Codec}
+	 * @return 区块生成器的 {@link MapCodec}
 	 */
 	@Override
-	public Codec<? extends ChunkGenerator> getCodec() {
+	public MapCodec<? extends ChunkGenerator> getCodec() {
 		return ChunkGeneratorCodecs.TEST;
 	}
 }
