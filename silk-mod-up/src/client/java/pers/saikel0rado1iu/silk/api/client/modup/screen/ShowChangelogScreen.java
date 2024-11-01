@@ -17,15 +17,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.SimplePositioningWidget;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.client.modup.ClientUpdateManager;
 import pers.saikel0rado1iu.silk.api.client.pattern.widget.TextListWidget;
 import pers.saikel0rado1iu.silk.api.modpass.log.Changelog;
 import pers.saikel0rado1iu.silk.api.modup.UpdateData;
 import pers.saikel0rado1iu.silk.api.modup.UpdateState;
-
-import java.util.Optional;
 
 /**
  * <h2 style="color:FFC800">模组日志展示屏幕</h2>
@@ -71,12 +68,7 @@ public class ShowChangelogScreen extends UpdateScreen {
 				screenWidth - INTERVAL,
 				(int) ((height - screenHeight) / 2F + (textRenderer.fontHeight + INTERVAL) * 2) + ICON_SIZE / 2,
 				(height + screenHeight) / 2 - gridWidget.getHeight() - BUTTON_SPACING,
-				textRenderer.fontHeight, Changelog.read(updateData.modData(), MinecraftClient.getInstance().getLanguageManager().getLanguage())) {
-			@Override
-			public Optional<Identifier> background() {
-				return Optional.of(OPTIONS_BACKGROUND_TEXTURE);
-			}
-		});
+				textRenderer.fontHeight, Changelog.read(updateData.modData(), MinecraftClient.getInstance().getLanguageManager().getLanguage())));
 		changelogWidget.setX((width - changelogWidget.getWidth()) / 2);
 	}
 }

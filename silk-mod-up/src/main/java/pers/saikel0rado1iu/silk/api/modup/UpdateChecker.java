@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.*;
@@ -48,7 +50,7 @@ public final class UpdateChecker implements Callable<UpdateData> {
 	private UpdateChecker(UpdateData.Builder updateDataBuilder) {
 		this.updateDataBuilder = updateDataBuilder;
 		this.projectLink = String.format("https://api.modrinth.com/v2/project/%s", updateDataBuilder.modData().slug());
-		this.basicLink = projectLink + "/version?loaders=[%%22fabric%%22]";
+		this.basicLink = projectLink + "/version?loaders=%5B%22fabric%22%5D";
 	}
 	
 	/**
@@ -76,11 +78,11 @@ public final class UpdateChecker implements Callable<UpdateData> {
 		return switch (updateDataBuilder.updateSettings.getValue(UpdateSettings.UPDATE_CHANNEL)) {
 			case ALPHA: {
 				UpdateState state = check(UpdateChannel.ALPHA);
-				if (state != UpdateState.UPDATE_FAIL) yield state;
+				if (state != UpdateState.UPDATE_FAIL && state != UpdateState.DONE) yield state;
 			}
 			case BETA: {
 				UpdateState state = check(UpdateChannel.BETA);
-				if (state != UpdateState.UPDATE_FAIL) yield state;
+				if (state != UpdateState.UPDATE_FAIL && state != UpdateState.DONE) yield state;
 			}
 			case RELEASE: {
 				yield check(UpdateChannel.RELEASE);
@@ -92,24 +94,24 @@ public final class UpdateChecker implements Callable<UpdateData> {
 		String value = channel.toString().toLowerCase();
 		// 检查是否联网，如未联网则不进行更新检查
 		try {
-			URL testOnline = new URL("https://www.minecraft.net");
+			URL testOnline = new URI("https://www.minecraft.net").toURL();
 			HttpsURLConnection connection = (HttpsURLConnection) testOnline.openConnection();
 			connection.setConnectTimeout(1000);
 			connection.connect();
-		} catch (IOException unknownHostException) {
+		} catch (IOException | URISyntaxException unknownHostException) {
 			String msg = "Unable to update: Unable to connect to the internet.";
 			SilkModUp.getInstance().logger().debug(msg);
 			return UpdateState.NONE;
 		}
 		// 检查是否存在项目主页，如不存在项目主页则报错
 		try {
-			URL testOnline = new URL(projectLink);
+			URL testOnline = new URI(projectLink).toURL();
 			HttpsURLConnection connection = (HttpsURLConnection) testOnline.openConnection();
 			connection.setConnectTimeout(1000);
 			connection.setReadTimeout(1000);
 			connection.connect();
 			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) throw new IOException();
-		} catch (IOException unknownHostException) {
+		} catch (IOException | URISyntaxException unknownHostException) {
 			String msg = "URL Error: The update link you attempted to connect to does not exist. Please check if the slug provided by ModPass is correct.";
 			SilkModUp.getInstance().logger().error(msg);
 			return UpdateState.UPDATE_FAIL;
@@ -118,7 +120,7 @@ public final class UpdateChecker implements Callable<UpdateData> {
 		try {
 			String checkUpdateBasic = String.format("%s&version_type=%s", basicLink, value);
 			if (updateDataBuilder.updateSettings.getValue(UpdateSettings.CHECK_NEW_MC_VER_MOD)) {
-				updateLink = new URL(checkUpdateBasic);
+				updateLink = new URI(checkUpdateBasic).toURL();
 				updateLink.openConnection().setConnectTimeout(200);
 				// 通过 URL 的 openStream 方法获取 URL 对象所表示的自愿字节输入流
 				String s = new BufferedReader(new InputStreamReader(updateLink.openStream())).lines().collect(Collectors.joining(System.lineSeparator()));
@@ -133,7 +135,7 @@ public final class UpdateChecker implements Callable<UpdateData> {
 					else if (Minecraft.getInstance().compareVersion(updateVer) > 0) return UpdateState.NEW_MC_VER;
 				}
 			} else {
-				updateLink = new URL(String.format("%s&game_versions=[%%22%s%%22]", checkUpdateBasic, Minecraft.getInstance().version()));
+				updateLink = new URI(String.format("%s&game_versions=%5B%22%s%22%5D", checkUpdateBasic, Minecraft.getInstance().version())).toURL();
 				updateLink.openConnection().setConnectTimeout(200);
 				// 通过 URL 的 openStream 方法获取 URL 对象所表示的自愿字节输入流
 				String s = new BufferedReader(new InputStreamReader(updateLink.openStream())).lines().collect(Collectors.joining(System.lineSeparator()));
@@ -146,7 +148,7 @@ public final class UpdateChecker implements Callable<UpdateData> {
 			}
 			if (UpdateData.canShowChangelog(updateDataBuilder.updateSettings)) return UpdateState.MOD_LOG;
 			return UpdateState.DONE;
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			String msg = "URL Error: The update link you attempted to connect to does not exist.";
 			SilkModUp.getInstance().logger().error(msg, e);
 			return UpdateState.UPDATE_FAIL;

@@ -11,7 +11,6 @@
 
 package pers.saikel0rado1iu.silk.api.client.modup.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,6 +23,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.ColorHelper;
 import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.client.modup.ClientUpdateManager;
 import pers.saikel0rado1iu.silk.api.client.pattern.screen.BaseScreen;
@@ -110,9 +110,6 @@ public abstract class UpdateScreen extends BaseScreen {
 		if (confirmUpdateButton != null)
 			confirmUpdateButton.setMessage(confirmUpdateButton.getMessage().copy().setStyle(Style.EMPTY.withBold(true).withColor(transColor)));
 		if (client != null && client.world != null) context.fillGradient(0, 0, width, height, -1072689136, -804253680);
-		ButtonWidget.builder(Text.of(""), (button) -> {
-				}).dimensions((width - (screenWidth + INTERVAL)) / 2, (height - (screenHeight + INTERVAL)) / 2, screenWidth + INTERVAL, screenHeight + INTERVAL)
-				.build().render(context, mouseX, mouseY, delta);
 		super.render(context, mouseX, mouseY, delta);
 	}
 	
@@ -120,11 +117,12 @@ public abstract class UpdateScreen extends BaseScreen {
 	 * 渲染背景纹理
 	 */
 	@Override
-	public void renderBackgroundTexture(DrawContext context) {
-		RenderSystem.setShaderTexture(0, OPTIONS_BACKGROUND_TEXTURE);
-		RenderSystem.setShaderColor(0.25F, 0.25F, 0.25F, 1);
-		context.drawTexture(OPTIONS_BACKGROUND_TEXTURE, (width - screenWidth) / 2, (height - screenHeight) / 2, 0, 0, 0, screenWidth, screenHeight, 32, 32);
-		RenderSystem.setShaderColor(1, 1, 1, 1);
+	public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+		super.renderBackground(context, mouseX, mouseY, delta);
+		final int screenX = (width - screenWidth) / 2;
+		final int screenY = (height - screenHeight) / 2;
+		context.fill(screenX, screenY, screenX + screenWidth, screenY + screenHeight + 1, ColorHelper.Argb.withAlpha(128, 0x000000));
+		context.drawBorder(screenX, screenY, screenWidth, screenHeight + 1, ColorHelper.Argb.fullAlpha(0xAAAAAA));
 	}
 	
 	@Override

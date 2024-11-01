@@ -19,9 +19,7 @@ import pers.saikel0rado1iu.silk.impl.SilkModUp;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.Optional;
@@ -70,7 +68,7 @@ public final class ModUpdater extends Thread {
 				case AUTO_DOWNLOAD -> modUpdater.getAutoDownloadUpdateLink();
 				case AUTO_UPDATE -> modUpdater.getAutoUpdateLink();
 			};
-			return downloadLink.orElse(new URL(String.format("https://modrinth.com/mod/%s/version", updateData.modData().slug())));
+			return downloadLink.orElse(new URI(String.format("https://modrinth.com/mod/%s/version", updateData.modData().slug())).toURL());
 		});
 		MOD_UPDATER_POOL.schedule(() -> {
 			if (!futureTask.isDone()) futureTask.run();
@@ -103,8 +101,8 @@ public final class ModUpdater extends Thread {
 	
 	private Optional<URL> getManualDownloadUpdateLink() {
 		try {
-			return Optional.of(new URL(String.format("https://modrinth.com/mod/%s/version/%s", updateData.modData().slug(), updateData.modVersion())));
-		} catch (MalformedURLException e) {
+			return Optional.of(new URI(String.format("https://modrinth.com/mod/%s/version/%s", updateData.modData().slug(), updateData.modVersion())).toURL());
+		} catch (MalformedURLException | URISyntaxException e) {
 			String msg = "URL Error: The update link you attempted to connect to does not exist. Please check if the slug provided by ModPass is correct.";
 			SilkModUp.getInstance().logger().error(msg, e);
 			return Optional.empty();
@@ -122,8 +120,8 @@ public final class ModUpdater extends Thread {
 			// 判断更新
 			JsonObject jsonObject = (JsonObject) data.getAsJsonArray("files").get(0);
 			String url = jsonObject.get("url").getAsString();
-			return Optional.of(new URL(url));
-		} catch (IOException e) {
+			return Optional.of(new URI(url).toURL());
+		} catch (IOException | URISyntaxException e) {
 			String msg = "URL Error: The update link you attempted to connect to does not exist. Please check if the slug provided by ModPass is correct.";
 			SilkModUp.getInstance().logger().error(msg, e);
 			return Optional.empty();
