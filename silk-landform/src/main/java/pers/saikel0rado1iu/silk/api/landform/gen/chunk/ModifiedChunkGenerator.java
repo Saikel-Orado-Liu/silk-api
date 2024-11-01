@@ -12,7 +12,7 @@
 package pers.saikel0rado1iu.silk.api.landform.gen.chunk;
 
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
@@ -129,5 +129,5 @@ public abstract class ModifiedChunkGenerator extends DefaultChunkGenerator imple
 	}
 	
 	@Override
-	public abstract Codec<? extends ChunkGenerator> getCodec();
+	public abstract MapCodec<? extends ChunkGenerator> getCodec();
 }

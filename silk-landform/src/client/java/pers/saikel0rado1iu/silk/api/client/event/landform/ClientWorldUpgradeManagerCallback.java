@@ -11,17 +11,15 @@
 
 package pers.saikel0rado1iu.silk.api.client.event.landform;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryOps;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -108,6 +106,7 @@ public interface ClientWorldUpgradeManagerCallback extends Supplier<ClientUpgrad
 	/**
 	 * 使用关卡存储器会话进行可升级世界管理器操作的事件
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	Event<Supplier<ClientUpgradableWorldManager<?>>> SESSION_EVENT = EventFactory.createArrayBacked(Supplier.class, listeners -> () -> {
 		for (Supplier<ClientUpgradableWorldManager<?>> event : listeners) {
 			ClientUpgradableWorldManager<?> manager = event.get();
@@ -124,11 +123,9 @@ public interface ClientWorldUpgradeManagerCallback extends Supplier<ClientUpgrad
 				NbtCompound dimensions = nbt.getCompound("Data").getCompound("WorldGenSettings").getCompound("dimensions");
 				NbtCompound dimension;
 				if ((dimension = dimensions.getCompound(upgradableWorldData.dimension().getValue().toString())).isEmpty()) return nbt;
-				Codec<? extends ChunkGenerator> codec = chunkGeneratorUpgradable.getCodec();
-				String generatorId = String.valueOf(Registries.CHUNK_GENERATOR.getId(codec));
-				if (!dimension.getCompound("generator").getString("type").equals(generatorId)) return nbt;
-				@SuppressWarnings("unchecked")
-				NbtCompound nbtCompound = (NbtCompound) Util.getResult(((Codec<ChunkGenerator>) codec).encodeStart(RegistryOps.of(NbtOps.INSTANCE, registryManager), chunkGenerator), IllegalStateException::new);
+				MapCodec mapCodec = chunkGeneratorUpgradable.getCodec();
+				NbtCompound nbtCompound = (NbtCompound) mapCodec.encoder().encodeStart(registryManager.getOps(NbtOps.INSTANCE), chunkGeneratorUpgradable).getOrThrow();
+				String generatorId = String.valueOf(Registries.CHUNK_GENERATOR.getId(chunkGeneratorUpgradable.getCodec()));
 				nbtCompound.putString("type", generatorId);
 				dimension.put("generator", nbtCompound);
 				return nbt;

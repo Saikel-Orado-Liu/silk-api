@@ -13,6 +13,7 @@ package pers.saikel0rado1iu.silk.entrypoint;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.registry.RegistryWrapper;
 import pers.saikel0rado1iu.silk.api.base.common.api.I18nModInfoProvider;
 import pers.saikel0rado1iu.silk.api.codex.OptionTexts;
 import pers.saikel0rado1iu.silk.api.generate.data.LinkedLanguageProvider;
@@ -22,6 +23,7 @@ import pers.saikel0rado1iu.silk.impl.SilkLandform;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <h2 style="color:FFC800">国际化 Silk API: Landform 提供器</h2>
@@ -292,10 +294,10 @@ final class LandformI18nProvider extends I18nModInfoProvider {
 	}
 	
 	@Override
-	public LinkedLanguageProvider provider(FabricDataOutput fabricDataOutput) {
-		return new LinkedLanguageProvider(fabricDataOutput, langCode) {
+	public LinkedLanguageProvider provider(FabricDataOutput fabricDataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+		return new LinkedLanguageProvider(fabricDataOutput, langCode, registryLookup) {
 			@Override
-			public void generateTranslations(TranslationBuilder translationBuilder) {
+			public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
 				generate(translationBuilder);
 			}
 		};

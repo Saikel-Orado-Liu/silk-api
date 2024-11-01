@@ -11,7 +11,7 @@
 
 package pers.saikel0rado1iu.silk.api.landform.gen.chunk;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -31,5 +31,5 @@ public abstract class DefaultChunkGenerator extends NoiseChunkGenerator {
 	}
 	
 	@Override
-	protected abstract Codec<? extends ChunkGenerator> getCodec();
+	protected abstract MapCodec<? extends ChunkGenerator> getCodec();
 }

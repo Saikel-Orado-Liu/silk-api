@@ -11,6 +11,7 @@
 
 package pers.saikel0rado1iu.silk.api.client.landform;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -33,7 +34,7 @@ import pers.saikel0rado1iu.silk.api.landform.UpgradableWorldManager;
 import pers.saikel0rado1iu.silk.api.landform.gen.chunk.ChunkGeneratorUpgradable;
 import pers.saikel0rado1iu.silk.impl.SilkLandform;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,9 +75,11 @@ public class ClientUpgradableWorldManager<T extends ChunkGenerator & ChunkGenera
 	public void start(LevelStorage.LevelList levels) {
 		GET_MANAGER_POOL.schedule(new Thread(() -> {
 			if (REGISTRY_MANAGER_GETTER.get() != null) return;
-			try (LevelStorage.Session session = MinecraftClient.getInstance().getLevelStorage().createSession(levels.levels().get(0).getRootPath())) {
+			try (LevelStorage.Session session = MinecraftClient.getInstance().getLevelStorage().createSession(levels.levels().getFirst().getRootPath())) {
 				ResourcePackManager resourcePackManager = VanillaDataPackProvider.createManager(session);
-				DataConfiguration dataConfiguration = new DataConfiguration(new DataPackSettings(new ArrayList<String>(resourcePackManager.getNames()), List.of()), FeatureFlags.FEATURE_MANAGER.getFeatureSet());
+				Collection<String> collection = resourcePackManager.getEnabledIds();
+				List<String> list = ImmutableList.copyOf(collection);
+				DataConfiguration dataConfiguration = new DataConfiguration(new DataPackSettings(list, List.of()), FeatureFlags.FEATURE_MANAGER.getFeatureSet());
 				SaveLoading.DataPacks dataPacks = new SaveLoading.DataPacks(resourcePackManager, dataConfiguration, false, true);
 				SaveLoading.ServerConfig serverConfig = new SaveLoading.ServerConfig(dataPacks, CommandManager.RegistrationEnvironment.INTEGRATED, 2);
 				REGISTRY_MANAGER_GETTER.set(SaveLoading.load(serverConfig, context -> new SaveLoading.LoadContext<>(null, context.dimensionsRegistryManager()),

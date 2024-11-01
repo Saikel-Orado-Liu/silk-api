@@ -31,7 +31,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeCoords;
 import net.minecraft.world.biome.source.BiomeSupplier;
 import net.minecraft.world.biome.source.FixedBiomeSource;
-import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.ChunkGenerating;
+import net.minecraft.world.chunk.ChunkGenerationContext;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -41,10 +42,7 @@ import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import pers.saikel0rado1iu.silk.api.landform.gen.chunk.ChunkGeneratorCustom;
@@ -68,18 +66,24 @@ interface ChunkGeneratorCustomMixin {
 	 * 获取地图种子
 	 */
 	interface GetSeed {
-		@Mixin(ChunkStatus.class)
+		@Mixin(ChunkGenerating.class)
 		abstract class Chunk {
-			@ModifyArg(method = "<clinit>", at = @At(value = "INVOKE",
-					target = "L net/minecraft/world/chunk/ChunkStatus;register(L java/lang/String;L net/minecraft/world/chunk/ChunkStatus;IZL java/util/EnumSet;L net/minecraft/world/chunk/ChunkStatus$ChunkType;L net/minecraft/world/chunk/ChunkStatus$GenerationTask;L net/minecraft/world/chunk/ChunkStatus$LoadTask;)L net/minecraft/world/chunk/ChunkStatus;",
-					ordinal = 0), index = 6)
-			private static ChunkStatus.GenerationTask empty(ChunkStatus.GenerationTask generationTask) {
-				return (targetStatus, executor, world, generator, structureTemplateManager, lightingProvider, fullChunkConverter, chunks, chunk) -> {
-					if (generator instanceof ChunkGeneratorCustom chunkGeneratorCustom) {
-						ChunkGeneratorCustom.SEED_MAP.put(chunkGeneratorCustom, world.getSeed());
-					}
-					return generationTask.doWork(targetStatus, executor, world, generator, structureTemplateManager, lightingProvider, fullChunkConverter, chunks, chunk);
-				};
+			@ModifyVariable(method = "generateStructures", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+			private static ChunkGenerationContext generateStructures(ChunkGenerationContext context) {
+				if (context.generator() instanceof ChunkGeneratorCustom chunkGeneratorCustom) {
+					//noinspection resource
+					ChunkGeneratorCustom.SEED_MAP.put(chunkGeneratorCustom, context.world().getSeed());
+				}
+				return context;
+			}
+			
+			@ModifyVariable(method = "loadStructures", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+			private static ChunkGenerationContext loadStructures(ChunkGenerationContext context) {
+				if (context.generator() instanceof ChunkGeneratorCustom chunkGeneratorCustom) {
+					//noinspection resource
+					ChunkGeneratorCustom.SEED_MAP.put(chunkGeneratorCustom, context.world().getSeed());
+				}
+				return context;
 			}
 		}
 		
@@ -126,7 +130,7 @@ interface ChunkGeneratorCustomMixin {
 			Function<ChunkGeneratorCustom, BiomeSupplier> supplier = (generator) -> (x, y, z, noise) -> {
 				BlockPos pos = new BlockPos(BiomeCoords.toBlock(x), BiomeCoords.toBlock(y), BiomeCoords.toBlock(z));
 				if (generator.getBiomeSource(pos) instanceof FixedBiomeSource fixedBiomeSource)
-					return fixedBiomeSource.getBiomes().stream().toList().get(0);
+					return fixedBiomeSource.getBiomes().stream().toList().getFirst();
 				return biomeSupplier.getBiome(x, y, z, noise);
 			};
 			return (Object) (this) instanceof ChunkGeneratorCustom silkNoiseChunkGenerator

@@ -12,6 +12,7 @@
 package pers.saikel0rado1iu.silk.api.landform.gen.chunk;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import pers.saikel0rado1iu.silk.api.landform.ChunkStorageData;
@@ -79,9 +80,9 @@ public interface ChunkGeneratorUpgradable {
 	boolean needDowngrade(BlockPos pos, ChunkStorageData chunk, String version);
 	
 	/**
-	 * 用于提供区块生成器的 {@link Codec}
+	 * 用于提供区块生成器的 {@link MapCodec}
 	 *
-	 * @return 区块生成器的 {@link Codec}
+	 * @return 区块生成器的 {@link MapCodec}
 	 */
-	Codec<? extends ChunkGenerator> getCodec();
+	MapCodec<? extends ChunkGenerator> getCodec();
 }
