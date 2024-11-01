@@ -19,6 +19,8 @@ import pers.saikel0rado1iu.silk.impl.SilkModPass;
 import pers.saikel0rado1iu.silk.test.modpass.log.ChangelogTest;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
@@ -47,8 +49,8 @@ public final class Test implements ModMain {
 			}
 			
 			@Override
-			public Optional<URL> community() throws MalformedURLException {
-				return Optional.of(new URL(""));
+			public Optional<URL> community() throws MalformedURLException, URISyntaxException {
+				return Optional.of(new URI("").toURL());
 			}
 		}.link(ModData.LinkType.COMMUNITY);
 	}

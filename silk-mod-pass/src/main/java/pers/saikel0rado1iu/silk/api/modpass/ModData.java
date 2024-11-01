@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import pers.saikel0rado1iu.silk.impl.SilkModPass;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -183,7 +185,7 @@ public interface ModData extends ModPass {
 				case COMMUNITY -> community();
 				case SUPPORT -> support();
 			};
-		} catch (MalformedURLException e) {
+		} catch (MalformedURLException | URISyntaxException e) {
 			String msg = String.format("Mod link error: Mod '%s(%s)' does not have a %s URL or the URL format is incorrect.", name(), id(), type);
 			SilkModPass.getInstance().logger().error(msg);
 			throw new RuntimeException(msg);
@@ -198,10 +200,10 @@ public interface ModData extends ModPass {
 	 * @throws MalformedURLException 如果模组主页链接格式不正确
 	 */
 	@ApiStatus.OverrideOnly
-	default Optional<URL> homepage() throws MalformedURLException {
+	default Optional<URL> homepage() throws MalformedURLException, URISyntaxException {
 		Optional<String> url = mod().getMetadata().getContact().get("homepage");
 		if (url.isEmpty()) return Optional.empty();
-		return Optional.of(new URL(url.get()));
+		return Optional.of(new URI(url.get()).toURL());
 	}
 	
 	/**
@@ -212,10 +214,10 @@ public interface ModData extends ModPass {
 	 * @throws MalformedURLException 如果模组源代码链接格式不正确
 	 */
 	@ApiStatus.OverrideOnly
-	default Optional<URL> sources() throws MalformedURLException {
+	default Optional<URL> sources() throws MalformedURLException, URISyntaxException {
 		Optional<String> url = mod().getMetadata().getContact().get("sources");
 		if (url.isEmpty()) return Optional.empty();
-		return Optional.of(new URL(url.get()));
+		return Optional.of(new URI(url.get()).toURL());
 	}
 	
 	/**
@@ -226,10 +228,10 @@ public interface ModData extends ModPass {
 	 * @throws MalformedURLException 如果模组问题跟踪链接格式不正确
 	 */
 	@ApiStatus.OverrideOnly
-	default Optional<URL> issues() throws MalformedURLException {
+	default Optional<URL> issues() throws MalformedURLException, URISyntaxException {
 		Optional<String> url = mod().getMetadata().getContact().get("issues");
 		if (url.isEmpty()) return Optional.empty();
-		return Optional.of(new URL(url.get()));
+		return Optional.of(new URI(url.get()).toURL());
 	}
 	
 	/**
@@ -240,7 +242,7 @@ public interface ModData extends ModPass {
 	 * @throws MalformedURLException URL 格式异常
 	 */
 	@ApiStatus.OverrideOnly
-	default Optional<URL> community() throws MalformedURLException {
+	default Optional<URL> community() throws MalformedURLException, URISyntaxException {
 		return Optional.empty();
 	}
 	
@@ -253,7 +255,7 @@ public interface ModData extends ModPass {
 	 * @throws MalformedURLException URL 格式异常
 	 */
 	@ApiStatus.OverrideOnly
-	default Optional<URL> support() throws MalformedURLException {
+	default Optional<URL> support() throws MalformedURLException, URISyntaxException {
 		return Optional.empty();
 	}
 	

@@ -20,6 +20,8 @@ import pers.saikel0rado1iu.silk.api.modpass.pack.DataPack;
 import pers.saikel0rado1iu.silk.api.modpass.pack.ResourcePack;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Optional;
@@ -111,16 +113,16 @@ public interface SilkApi extends ModDataExpansion {
 	}
 	
 	@Override
-	default Optional<URL> community() throws MalformedURLException {
+	default Optional<URL> community() throws MalformedURLException, URISyntaxException {
 		String url = mod().getMetadata().getCustomValue("modmenu").getAsObject().get("links").getAsObject().get("modmenu.discord").getAsString();
-		return Optional.of(new URL(url));
+		return Optional.of(new URI(url).toURL());
 	}
 	
 	@Override
-	default Optional<URL> support() throws MalformedURLException {
+	default Optional<URL> support() throws MalformedURLException, URISyntaxException {
 		String url = mod().getMetadata().getCustomValue("modmenu").getAsObject().get("links").getAsObject().get("modmenu.support.patreon").getAsString();
 		if ("zh".equals(Locale.getDefault().getLanguage()) && "CN".equals(Locale.getDefault().getCountry()))
 			url = mod().getMetadata().getCustomValue("modmenu").getAsObject().get("links").getAsObject().get("modmenu.support.afdian").getAsString();
-		return Optional.of(new URL(url));
+		return Optional.of(new URI(url).toURL());
 	}
 }

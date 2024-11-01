@@ -167,7 +167,7 @@ allprojects {
 			def headers = ['Authorization': "token ${System.getenv("GITHUB_TOKEN")}"]
 			
 			def versionsResponse
-			def connection = new URL(versionsUrl).openConnection() as HttpURLConnection
+			def connection = new URI(versionsUrl).toURL().openConnection() as HttpURLConnection
 			headers.each { k, v -> connection.setRequestProperty(k, v) }
 			
 			if (connection.responseCode == 200) {
@@ -189,7 +189,7 @@ allprojects {
 				
 				// 执行删除操作
 				def deleteUrl = "https://api.github.com/users/${project.organizations_name}/packages/maven/${project.maven_group}.${archivesBaseName}/versions/${versionId}"
-				def deleteResponse = new URL(deleteUrl).openConnection()
+				def deleteResponse = new URI(deleteUrl).openConnection()
 						.with {
 							requestMethod = 'DELETE'
 							headers.each { k, v -> setRequestProperty(k, v) }
