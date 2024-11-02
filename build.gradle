@@ -199,7 +199,7 @@ allprojects {
 				
 				// 执行删除操作
 				def deleteUrl = "https://api.github.com/users/${project.organizations_name}/packages/maven/${project.maven_group}.${archivesBaseName}/versions/${versionId}"
-				def deleteResponse = new URI(deleteUrl).openConnection()
+				def deleteResponse = new URI(deleteUrl).toURL().openConnection()
 						.with {
 							requestMethod = 'DELETE'
 							headers.each { k, v -> setRequestProperty(k, v) }
