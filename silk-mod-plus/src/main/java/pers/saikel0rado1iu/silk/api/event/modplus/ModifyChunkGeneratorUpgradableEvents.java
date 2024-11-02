@@ -11,7 +11,7 @@
 
 package pers.saikel0rado1iu.silk.api.event.modplus;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.util.ActionResult;
@@ -119,14 +119,14 @@ public interface ModifyChunkGeneratorUpgradableEvents {
 	/**
 	 * 此事件将 {@link ChunkGeneratorUpgradable} 修改方法 {@link ChunkGeneratorUpgradable#getCodec()}<br>
 	 * <br>
-	 * - {@link ActionResult#SUCCESS} 退出原始方法实现，模组作者应返回对应的 {@link Codec}<br>
-	 * - {@link ActionResult#FAIL} 回落到原始方法实现，模组作者应返回原始方法的 {@link Codec}<br>
-	 * - {@link ActionResult#PASS} 回落到原始方法实现，如果没有其他的监听器了，模组作者应返回原始方法的 {@link Codec}<br>
+	 * - {@link ActionResult#SUCCESS} 退出原始方法实现，模组作者应返回对应的 {@link MapCodec}<br>
+	 * - {@link ActionResult#FAIL} 回落到原始方法实现，模组作者应返回原始方法的 {@link MapCodec}<br>
+	 * - {@link ActionResult#PASS} 回落到原始方法实现，如果没有其他的监听器了，模组作者应返回原始方法的 {@link MapCodec}<br>
 	 */
 	Event<ModifyGetCodec> MODIFY_GET_CODEC = EventFactory.createArrayBacked(ModifyGetCodec.class, listeners -> (upgradable, codec) -> {
-		Codec<? extends ChunkGenerator> c = codec;
+		MapCodec<? extends ChunkGenerator> c = codec;
 		for (ModifyGetCodec event : listeners) {
-			Map.Entry<ActionResult, Codec<? extends ChunkGenerator>> entry = event.getCodec(upgradable, c);
+			Map.Entry<ActionResult, MapCodec<? extends ChunkGenerator>> entry = event.getCodec(upgradable, c);
 			if (entry.getKey() != ActionResult.PASS) return entry;
 			c = entry.getValue();
 		}
@@ -178,6 +178,6 @@ public interface ModifyChunkGeneratorUpgradableEvents {
 	 */
 	@FunctionalInterface
 	interface ModifyGetCodec {
-		Map.Entry<ActionResult, Codec<? extends ChunkGenerator>> getCodec(ChunkGeneratorUpgradable upgradable, Codec<? extends ChunkGenerator> codec);
+		Map.Entry<ActionResult, MapCodec<? extends ChunkGenerator>> getCodec(ChunkGeneratorUpgradable upgradable, MapCodec<? extends ChunkGenerator> codec);
 	}
 }
