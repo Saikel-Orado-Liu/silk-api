@@ -13,7 +13,7 @@ package pers.saikel0rado1iu.silk.test.modplus;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockState;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registerable;
@@ -126,9 +126,9 @@ public final class ModifiedChunkGeneratorTest extends ModifiedChunkGenerator {
 	
 	@SuppressWarnings("ConstantValue")
 	@Override
-	public Codec<? extends ChunkGenerator> getCodec() {
-		Codec<? extends ChunkGenerator> codec = null;
-		Map.Entry<ActionResult, Codec<? extends ChunkGenerator>> result = ModifyChunkGeneratorUpgradableEvents.MODIFY_GET_CODEC.invoker().getCodec(this, codec);
+	public MapCodec<? extends ChunkGenerator> getCodec() {
+		MapCodec<? extends ChunkGenerator> codec = null;
+		Map.Entry<ActionResult, MapCodec<? extends ChunkGenerator>> result = ModifyChunkGeneratorUpgradableEvents.MODIFY_GET_CODEC.invoker().getCodec(this, codec);
 		if (ActionResult.FAIL == result.getKey()) return codec;
 		return result.getValue();
 	}
