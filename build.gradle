@@ -1,9 +1,7 @@
 //file:noinspection GroovyAssignabilityCheck
 //file:noinspection DependencyNotationArgument
-//file:noinspection ForeignDelegate
-//file:noinspection UnnecessaryQualifiedReference
-//file:noinspection GroovyAccessibility
-//file:noinspection GrDeprecatedAPIUsage
+import groovy.json.JsonSlurper
+
 plugins {
 	id 'fabric-loom' version '1.8-SNAPSHOT'
 	id 'maven-publish'
@@ -20,7 +18,9 @@ allprojects {
 		archivesName = project.name
 	}
 	
-	loom.splitEnvironmentSourceSets()
+	loom {
+		splitEnvironmentSourceSets()
+	}
 	
 	sourceSets {
 		main {
@@ -28,6 +28,7 @@ allprojects {
 				srcDirs += ['src/main/generated']
 			}
 		}
+		
 		testmod {
 			compileClasspath += main.compileClasspath
 			runtimeClasspath += main.runtimeClasspath
@@ -36,6 +37,7 @@ allprojects {
 				srcDirs += ['src/testmod/generated']
 			}
 		}
+		
 		testmodClient {
 			compileClasspath += main.compileClasspath
 			runtimeClasspath += main.runtimeClasspath
@@ -45,6 +47,7 @@ allprojects {
 			compileClasspath += testmod.compileClasspath
 			runtimeClasspath += testmod.runtimeClasspath
 		}
+		
 		test {
 			compileClasspath += testmodClient.compileClasspath
 			runtimeClasspath += testmodClient.runtimeClasspath
@@ -52,24 +55,18 @@ allprojects {
 	}
 	
 	loom {
-		mods {
-			register(project.name) {
-				sourceSet project.sourceSets.main
-				sourceSet project.sourceSets.client
-			}
-			register(project.name + "-testmod") {
-				sourceSet project.sourceSets.testmod
-				sourceSet project.sourceSets.testmodClient
-			}
-		}
 		runs {
-			// 为测试创建基本运行配置的示例
-			testClient {
-				// 从另一个运行配置复制设置。
-				inherit client
-				
-				configName = "Test Minecraft Client"
-				source = sourceSets.test
+			testmodClient {
+				client()
+				ideConfigGenerated project.rootProject == project
+				name = "Testmod Client"
+				source sourceSets.testmodClient
+			}
+			testmodServer {
+				server()
+				ideConfigGenerated project.rootProject == project
+				name = "Testmod Server"
+				source sourceSets.testmod
 			}
 			// 添加一个新的 gradle 任务，会运行数据生成 API：“gradlew runTestmodDatagen”
 			testmodDatagen {
@@ -86,6 +83,18 @@ allprojects {
 		
 		runConfigs.configureEach {
 			ideConfigGenerated = true
+		}
+	}
+	
+	allprojects.each { p ->
+		loom.mods.register(p.name) {
+			sourceSet p.sourceSets.main
+			sourceSet p.sourceSets.client
+		}
+		
+		loom.mods.register(p.name + "-testmod") {
+			sourceSet p.sourceSets.testmod
+			sourceSet p.sourceSets.testmodClient
 		}
 	}
 	
@@ -135,10 +144,11 @@ allprojects {
 		options.encoding = 'UTF-8'
 	}
 	
-	tasks.withType(Javadoc).configureEach {
+	javadoc {
 		options {
-			encoding = 'UTF-8'
-			charSet = 'UTF-8'
+			source = "21"
+			encoding = "UTF-8"
+			charSet = "UTF-8"
 		}
 	}
 	
@@ -148,7 +158,7 @@ allprojects {
 		// 如果删除此行，则不会生成源.
 		withSourcesJar()
 		// 生成文档
-		withJavadocJar()
+		// withJavadocJar()
 		
 		sourceCompatibility = JavaVersion.VERSION_21
 		targetCompatibility = JavaVersion.VERSION_21
@@ -178,7 +188,7 @@ allprojects {
 			}
 			
 			// 解析 JSON 响应以获取版本列表
-			def versions = new groovy.json.JsonSlurper().parseText versionsResponse
+			def versions = new JsonSlurper().parseText versionsResponse
 			
 			// 遍历版本列表并执行删除操作
 			versions.each { ver ->
