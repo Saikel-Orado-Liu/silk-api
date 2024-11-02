@@ -1,3 +1,27 @@
+## 1.0.4+1.20.6---2024/11/02
+
+### 功能：
+
+- 新增数据组件 "silk-api:adjust_fov_while_hold"
+- 新增数据组件 "silk-api:adjust_fov_while_use"
+- 新增数据组件 "silk-api:modify_move_while_hold"
+- 新增数据组件 "silk-api:modify_move_while_use"
+- 新增数据组件 "silk-api:projectile_container"
+- 新增数据组件 "silk-api:shoot_projectiles"
+- 新增数据组件 "silk-api:ranged_weapon"
+- 新增数据组件 "silk-api:inherent_status_effects"
+- 新增数据组件 "silk-api:custom_entity_hurt"
+
+### 更改：
+
+- 将 Armor 接口更新为 ArmorHelper 并优化其方法。
+- 将 Tool 接口更新为 ToolHelper 并优化其方法。
+- 优化了远程武器物品的相关实现使其更易编写。
+- 将 Bow 类更名为 BowLikeItem。
+- 将 CrossBow 类更名为 CrossbowLikeItem。
+- 删除了 RangedExpansion，BowExpansion 与 CrossbowExpansion 这三个远程武器拓展接口。
+- 删除物品属性系统并将其替换为新版的物品数组组件。
+
 ## 1.0.3---2024/10/19
 
 ### 更改：

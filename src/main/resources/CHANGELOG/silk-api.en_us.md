@@ -1,3 +1,27 @@
+## 1.0.4+1.20.6---2024/11/02
+
+### Features:
+
+- Added data component 'silk-api:adjust_fov_while_hold'
+- Added data component 'silk-api:adjust_fov_while_use'
+- Added data component 'silk-api:modify_move_while_hold'
+- Added data component 'silk-api:modify_move_while_use'
+- Added data component 'silk-api:projectile_container'
+- Added data component 'silk-api:shoot_projectiles'
+- Added data component 'silk-api:ranged_weapon'
+- Added data component 'silk-api:inherent_status_effects'
+- Added data component 'silk-api:custom_entity_hurt'
+
+### Change:
+
+- Updated Armor interface to ArmorHelper and optimized its methods.
+- Updated Tool interface to ToolHelper and optimized its methods.
+- Optimized the implementation of ranged weapon items to make them easier to write.
+- Renamed Bow class to BowLikeItem.
+- Renamed CrossBow class to CrossbowLikeItem.
+- Removed the three ranged weapon expansion interfaces: RangedExpansion, BowExpansion, and CrossbowExpansion.
+- Removed the item property system and replaced it with the new item array component.
+
 ## 1.0.3---2024/10/19
 
 ### Change:
