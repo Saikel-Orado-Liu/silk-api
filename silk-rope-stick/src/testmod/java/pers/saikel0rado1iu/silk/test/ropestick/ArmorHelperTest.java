@@ -40,7 +40,7 @@ import java.util.function.Supplier;
  * Test {@link ArmorHelper}
  */
 public enum ArmorHelperTest implements ArmorHelper {
-	MATERIAL("test", Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+	MATERIAL("test", 2, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
 		map.put(ArmorItem.Type.BOOTS, 2);
 		map.put(ArmorItem.Type.LEGGINGS, 5);
 		map.put(ArmorItem.Type.CHESTPLATE, 6);
@@ -49,6 +49,7 @@ public enum ArmorHelperTest implements ArmorHelper {
 	}), 15, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 5, 2, () -> Ingredient.ofItems(Items.TEST_ITEM));
 	
 	private final String name;
+	private final int durability;
 	private final Map<ArmorItem.Type, Integer> defense;
 	private final int enchantability;
 	private final RegistryEntry<SoundEvent> equipSound;
@@ -57,8 +58,9 @@ public enum ArmorHelperTest implements ArmorHelper {
 	private final Supplier<Ingredient> ingredient;
 	private final Supplier<RegistryEntry<ArmorMaterial>> material;
 	
-	ArmorHelperTest(String name, Map<ArmorItem.Type, Integer> defense, int enchantability, RegistryEntry<SoundEvent> equipSound, float toughness, float knockbackResistance, Supplier<Ingredient> ingredient) {
+	ArmorHelperTest(String name, int durability, Map<ArmorItem.Type, Integer> defense, int enchantability, RegistryEntry<SoundEvent> equipSound, float toughness, float knockbackResistance, Supplier<Ingredient> ingredient) {
 		this.name = name;
+		this.durability = durability;
 		this.defense = defense;
 		this.enchantability = enchantability;
 		this.equipSound = equipSound;
@@ -95,6 +97,11 @@ public enum ArmorHelperTest implements ArmorHelper {
 	@Override
 	public Identifier id() {
 		return SilkRopeStick.getInstance().ofId(name);
+	}
+	
+	@Override
+	public int durability() {
+		return durability;
 	}
 	
 	@Override
