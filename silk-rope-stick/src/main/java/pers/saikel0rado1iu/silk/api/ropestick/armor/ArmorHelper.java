@@ -65,7 +65,7 @@ public interface ArmorHelper {
 	 * @return 头盔物品
 	 */
 	default ArmorItem createHelmet(Item.Settings settings) {
-		return new ArmorItem(material().get(), ArmorItem.Type.HELMET, settings);
+		return new ArmorItem(material().get(), ArmorItem.Type.HELMET, settings.maxDamage(ArmorItem.Type.HELMET.getMaxDamage(durability())));
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public interface ArmorHelper {
 	 * @return 头盔胸甲
 	 */
 	default ArmorItem createChestplate(Item.Settings settings) {
-		return new ArmorItem(material().get(), ArmorItem.Type.CHESTPLATE, settings);
+		return new ArmorItem(material().get(), ArmorItem.Type.CHESTPLATE, settings.maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(durability())));
 	}
 	
 	/**
@@ -85,7 +85,7 @@ public interface ArmorHelper {
 	 * @return 头盔护腿
 	 */
 	default ArmorItem createLeggings(Item.Settings settings) {
-		return new ArmorItem(material().get(), ArmorItem.Type.LEGGINGS, settings);
+		return new ArmorItem(material().get(), ArmorItem.Type.LEGGINGS, settings.maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(durability())));
 	}
 	
 	/**
@@ -95,7 +95,7 @@ public interface ArmorHelper {
 	 * @return 头盔靴子
 	 */
 	default ArmorItem createBoots(Item.Settings settings) {
-		return new ArmorItem(material().get(), ArmorItem.Type.BOOTS, settings);
+		return new ArmorItem(material().get(), ArmorItem.Type.BOOTS, settings.maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(durability())));
 	}
 	
 	/**
@@ -104,6 +104,13 @@ public interface ArmorHelper {
 	 * @return 标识符
 	 */
 	Identifier id();
+	
+	/**
+	 * 耐久度
+	 *
+	 * @return 耐久度
+	 */
+	int durability();
 	
 	/**
 	 * 盔甲防御属性
