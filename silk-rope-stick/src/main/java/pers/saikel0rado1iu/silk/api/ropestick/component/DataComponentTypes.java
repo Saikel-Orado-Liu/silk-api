@@ -51,4 +51,7 @@ public interface DataComponentTypes extends DataComponentTypeRegistry {
 	DataComponentType<CustomEntityHurtComponent> CUSTOM_ENTITY_HURT = DataComponentTypeRegistry.registrar(() ->
 					DataComponentType.<CustomEntityHurtComponent>builder().codec(CustomEntityHurtComponent.CODEC).packetCodec(CustomEntityHurtComponent.PACKET_CODEC).build())
 			.register(SilkApi.getInternal().ofId("custom_entity_hurt"));
+	DataComponentType<EnchantmentTraitsComponent> ENCHANTMENT_TRAITS = DataComponentTypeRegistry.registrar(() ->
+					DataComponentType.<EnchantmentTraitsComponent>builder().codec(EnchantmentTraitsComponent.CODEC).packetCodec(EnchantmentTraitsComponent.PACKET_CODEC).build())
+			.register(SilkApi.getInternal().ofId("enchantment_traits"));
 }

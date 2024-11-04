@@ -4,6 +4,8 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ropestick.component.type.CustomEntityHurtComponentMixin",
+		"ropestick.component.type.EnchantmentTraitsComponentMixin$SetAcceptEnchantment",
+		"ropestick.component.type.EnchantmentTraitsComponentMixin$SetTableEnchantment",
 		"ropestick.component.type.InherentStatusEffectsComponentMixin",
 		"ropestick.weapon.BreakingShieldMixin"
 	],
