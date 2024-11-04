@@ -13,9 +13,6 @@ package pers.saikel0rado1iu.silk.api.ropestick.component.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 
 /**
  * <h2 style="color:FFC800">修改移动数据</h2>
@@ -34,7 +31,6 @@ public record ModifyMoveData(float moveSpeedMultiple) {
 	public static final Codec<ModifyMoveData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 					Codec.FLOAT.optionalFieldOf("move_speed_multiple", DEFAULT_SPEED_MULTIPLE).forGetter(ModifyMoveData::moveSpeedMultiple))
 			.apply(builder, ModifyMoveData::new));
-	public static final PacketCodec<RegistryByteBuf, ModifyMoveData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
 	/**
 	 * 修改移动数据创建方法

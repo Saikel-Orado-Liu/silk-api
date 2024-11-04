@@ -15,9 +15,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.item.Item;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 
@@ -57,7 +54,6 @@ public record InherentStatusEffectData(RegistryEntry<StatusEffect> effect,
 					EffectiveItemSlotData.CODEC.fieldOf("effective_item_slot").forGetter(InherentStatusEffectData::effectiveItemSlot))
 			.apply(builder, (effect, baseLevel, maxLevel, stackingLevel, statusEffectKit, kitTriggerThreshold, effectiveItemSlot) ->
 					new InherentStatusEffectData(effect, baseLevel, maxLevel, stackingLevel, () -> statusEffectKit, kitTriggerThreshold, effectiveItemSlot)));
-	public static final PacketCodec<RegistryByteBuf, InherentStatusEffectData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
 	/**
 	 * 自带状态效果数据创建方法

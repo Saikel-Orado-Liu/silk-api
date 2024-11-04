@@ -17,9 +17,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 
 import java.util.List;
 
@@ -47,7 +44,6 @@ public record EffectiveItemSlotData(List<EquipmentSlot> slots) {
 	public static final Codec<EffectiveItemSlotData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 					EquipmentSlot.CODEC.listOf().fieldOf("slots").forGetter(EffectiveItemSlotData::slots))
 			.apply(builder, EffectiveItemSlotData::new));
-	public static final PacketCodec<RegistryByteBuf, EffectiveItemSlotData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
 	/**
 	 * 有效物品槽数据创建方法

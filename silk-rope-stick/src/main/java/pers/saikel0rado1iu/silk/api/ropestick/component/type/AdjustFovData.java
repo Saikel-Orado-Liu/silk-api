@@ -13,9 +13,6 @@ package pers.saikel0rado1iu.silk.api.ropestick.component.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.Identifier;
 
 import java.util.Optional;
@@ -63,7 +60,6 @@ public record AdjustFovData(boolean onlyFirstPerson, Optional<Identifier> hudOve
 					Codec.BOOL.optionalFieldOf("can_stretch_hud", false).forGetter(AdjustFovData::canStretchHud),
 					Codec.FLOAT.optionalFieldOf("fov_scaling", DEFAULT_FOV_SCALING).forGetter(AdjustFovData::fovScaling))
 			.apply(builder, AdjustFovData::new));
-	public static final PacketCodec<RegistryByteBuf, AdjustFovData> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
 	/**
 	 * 调整视场角数据创建方法
