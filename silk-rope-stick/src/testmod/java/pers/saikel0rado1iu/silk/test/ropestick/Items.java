@@ -11,12 +11,18 @@
 
 package pers.saikel0rado1iu.silk.test.ropestick;
 
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.*;
 import net.minecraft.util.math.ColorHelper;
+import pers.saikel0rado1iu.silk.api.ropestick.component.type.EnchantmentTraitsComponent;
 import pers.saikel0rado1iu.silk.api.spinningjenny.ItemRegistry;
 import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
+
+import java.util.List;
+
+import static net.minecraft.component.DataComponentTypes.DYED_COLOR;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.ENCHANTMENT_TRAITS;
 
 /**
  * 物品
@@ -32,19 +38,25 @@ public interface Items extends ItemRegistry {
 	/**
 	 * test_bolt_action_firearm
 	 */
-	BoltActionFirearmItemTest TEST_BOLT_ACTION_FIREARM = ItemRegistry.registrar(() -> new BoltActionFirearmItemTest(new Item.Settings()))
+	BoltActionFirearmItemTest TEST_BOLT_ACTION_FIREARM = ItemRegistry.registrar(() -> new BoltActionFirearmItemTest(new Item.Settings().maxDamage(100)
+					.component(ENCHANTMENT_TRAITS, EnchantmentTraitsComponent.of(Enchantments.AQUA_AFFINITY))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_bolt_action_firearm"));
 	/**
 	 * test_bolt_action_repeating_firearm
 	 */
-	BoltActionRepeatingFirearmItemTest TEST_BOLT_ACTION_REPEATING_FIREARM = ItemRegistry.registrar(() -> new BoltActionRepeatingFirearmItemTest(new Item.Settings()))
+	BoltActionRepeatingFirearmItemTest TEST_BOLT_ACTION_REPEATING_FIREARM = ItemRegistry.registrar(() -> new BoltActionRepeatingFirearmItemTest(new Item.Settings().maxDamage(100)
+					.component(ENCHANTMENT_TRAITS, EnchantmentTraitsComponent.create(List.of(Enchantments.INFINITY), List.of(EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.POWER))))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_bolt_action_repeating_firearm"));
 	/**
 	 * test_semi_automatic_firearm
 	 */
-	SemiAutomaticFirearmItemTest TEST_SEMI_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new SemiAutomaticFirearmItemTest(new Item.Settings()))
+	SemiAutomaticFirearmItemTest TEST_SEMI_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new SemiAutomaticFirearmItemTest(new Item.Settings().maxDamage(100)
+					.component(ENCHANTMENT_TRAITS, EnchantmentTraitsComponent.of(
+							EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.POWER, List.of(Enchantments.UNBREAKING, Enchantments.MENDING), 1),
+							EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.UNBREAKING, List.of(Enchantments.POWER, Enchantments.MENDING), 1),
+							EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.MENDING, List.of(Enchantments.UNBREAKING, Enchantments.POWER), 1)))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_semi_automatic_firearm"));
 	/**
@@ -110,7 +122,7 @@ public interface Items extends ItemRegistry {
 	/**
 	 * test_leggings
 	 */
-	ArmorItem TEST_LEGGINGS = ItemRegistry.registrar(() -> ArmorHelperTest.MATERIAL.createLeggings(ArmorHelperTest.createArmorSettings().component(DataComponentTypes.DYED_COLOR, new DyedColorComponent(ColorHelper.Argb.fullAlpha(0xFFFFB3), true))))
+	ArmorItem TEST_LEGGINGS = ItemRegistry.registrar(() -> ArmorHelperTest.MATERIAL.createLeggings(ArmorHelperTest.createArmorSettings().component(DYED_COLOR, new DyedColorComponent(ColorHelper.Argb.fullAlpha(0xFFFFB3), true))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_leggings"));
 	/**
