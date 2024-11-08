@@ -1,4 +1,4 @@
-## 1.0.4+1.20.6---2024/11/03
+## 1.0.4+1.20.6---2024/11/08
 
 ### Features:
 
@@ -11,6 +11,7 @@
 - Added data component 'silk-api:ranged_weapon'
 - Added data component 'silk-api:inherent_status_effects'
 - Added data component 'silk-api:custom_entity_hurt'
+- Added data component 'silk-api:enchantment_traits'
 
 ### Change:
 

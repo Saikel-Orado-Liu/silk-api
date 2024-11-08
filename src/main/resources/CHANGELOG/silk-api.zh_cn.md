@@ -1,4 +1,4 @@
-## 1.0.4+1.20.6---2024/11/03
+## 1.0.4+1.20.6---2024/11/08
 
 ### 功能：
 
@@ -11,6 +11,7 @@
 - 新增数据组件 "silk-api:ranged_weapon"
 - 新增数据组件 "silk-api:inherent_status_effects"
 - 新增数据组件 "silk-api:custom_entity_hurt"
+- 新增数据组件 "silk-api:enchantment_traits"
 
 ### 更改：
 
