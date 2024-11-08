@@ -48,13 +48,13 @@ abstract class ModifyMoveWhileHoldComponentMixin extends AbstractClientPlayerEnt
 		ItemStack mainHandItem = getMainHandStack();
 		ItemStack offHandItem = getOffHandStack();
 		Optional.ofNullable(mainHandItem.get(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD)).ifPresent(component -> {
-			if (!component.canModifyMove()) return;
+			if (!component.canModify()) return;
 			input.movementSideways *= component.modifyMove().moveSpeedMultiple();
 			input.movementForward *= component.modifyMove().moveSpeedMultiple();
 		});
 		Optional.ofNullable(offHandItem.get(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD)).ifPresent(component -> {
 			if (component.isConflictItem(mainHandItem)) return;
-			if (!component.canModifyMove()) return;
+			if (!component.canModify()) return;
 			input.movementSideways *= component.modifyMove().moveSpeedMultiple();
 			input.movementForward *= component.modifyMove().moveSpeedMultiple();
 		});

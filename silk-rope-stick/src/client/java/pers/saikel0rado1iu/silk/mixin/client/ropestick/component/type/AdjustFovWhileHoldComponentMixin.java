@@ -63,7 +63,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
 			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
 						float fovChangeAmount = 1 - component.adjustFov().fovScalingMultiple();
@@ -76,7 +76,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			});
 			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.isConflictItem(mainHandItem)) return;
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
 						float fovChangeAmount = 1 - component.adjustFov().fovScalingMultiple();
@@ -106,7 +106,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
 			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
 						args.set(0, (double) args.get(0) * Math.pow(component.adjustFov().fovScalingMultiple(), 3));
@@ -119,7 +119,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			});
 			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.isConflictItem(mainHandItem)) return;
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
 						args.set(0, (double) args.get(0) * Math.pow(component.adjustFov().fovScalingMultiple(), 3));
@@ -139,7 +139,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
 			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
 						args.set(0, (double) args.get(0) * Math.pow(component.adjustFov().fovScalingMultiple(), 3));
@@ -152,7 +152,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			});
 			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.isConflictItem(mainHandItem)) return;
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
 						args.set(0, (double) args.get(0) * Math.pow(component.adjustFov().fovScalingMultiple(), 3));
@@ -214,7 +214,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			hudScale = MathHelper.lerp(0.5F * client.getLastFrameDuration(), hudScale, 1.125F);
 			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.adjustFov().hudOverlay().isEmpty()) return;
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (client.options.getPerspective().isFirstPerson()) {
 					if (component.adjustFov().canStretchHud()) renderOverlay(context, component.adjustFov().hudOverlay().get(), 1);
 					else renderHudOverlay(context, component.adjustFov().hudOverlay().get(), hudScale);
@@ -222,7 +222,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			});
 			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.adjustFov().hudOverlay().isEmpty()) return;
-				if (!component.canAdjustFov()) return;
+				if (!component.canAdjust()) return;
 				if (client.options.getPerspective().isFirstPerson()) {
 					if (component.adjustFov().canStretchHud()) renderOverlay(context, component.adjustFov().hudOverlay().get(), 1);
 					else renderHudOverlay(context, component.adjustFov().hudOverlay().get(), hudScale);
