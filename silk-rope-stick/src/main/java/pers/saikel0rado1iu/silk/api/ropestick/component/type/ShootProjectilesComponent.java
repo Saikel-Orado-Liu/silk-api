@@ -24,22 +24,36 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
  * <h2 style="color:FFC800">射击发射物组件</h2>
  * 用于设置弓弩的发射物发射属性的数据组件
  *
+ * @param interval 射击间隔
+ * @param state    射击状态
+ * @param shot     是否已射击
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record ShootProjectilesComponent(boolean shot, int interval, State state) {
+public record ShootProjectilesComponent(int interval, State state, boolean shot) {
 	/**
 	 * 已射击 NBT 谓词
 	 */
 	public static final String SHOT_KEY = "shot";
 	public static final int DEFAULT_SHOOTING_INTERVAL = TickUtil.getTick(0.25F);
-	public static final ShootProjectilesComponent DEFAULT = new ShootProjectilesComponent(false, DEFAULT_SHOOTING_INTERVAL, State.EVERY);
+	public static final ShootProjectilesComponent DEFAULT = ShootProjectilesComponent.create(DEFAULT_SHOOTING_INTERVAL, State.EVERY);
 	public static final Codec<ShootProjectilesComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					Codec.BOOL.optionalFieldOf("shot", false).forGetter(ShootProjectilesComponent::shot),
 					Codec.INT.optionalFieldOf("interval", DEFAULT_SHOOTING_INTERVAL).forGetter(ShootProjectilesComponent::interval),
-					Codec.STRING.optionalFieldOf("state", State.EVERY.name()).forGetter(component -> component.state.name()))
-			.apply(builder, (shot, interval, state) -> new ShootProjectilesComponent(shot, interval, State.valueOf(state))));
+					Codec.STRING.optionalFieldOf("state", State.EVERY.name()).forGetter(component -> component.state.name()),
+					Codec.BOOL.optionalFieldOf("shot", false).forGetter(ShootProjectilesComponent::shot))
+			.apply(builder, (interval, state, shot) -> new ShootProjectilesComponent(interval, State.valueOf(state), shot)));
 	public static final PacketCodec<RegistryByteBuf, ShootProjectilesComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 创建射击发射物组件方法
+	 *
+	 * @param interval 射击间隔
+	 * @param state    射击状态
+	 * @return 射击发射物组件
+	 */
+	public static ShootProjectilesComponent create(int interval, State state) {
+		return new ShootProjectilesComponent(interval, state, false);
+	}
 	
 	/**
 	 * 获取物品的射击状态
@@ -53,31 +67,31 @@ public record ShootProjectilesComponent(boolean shot, int interval, State state)
 	}
 	
 	/**
-	 * 设置物品已射击
+	 * 设置已射击
 	 *
-	 * @param stack 物品堆栈
+	 * @return 射击发射物组件
 	 */
-	public void setShot(ItemStack stack) {
-		setShot(stack, true);
+	public ShootProjectilesComponent setShot() {
+		return setShot(true);
 	}
 	
 	/**
-	 * 重置物品至未射击状态
+	 * 重置至未射击状态
 	 *
-	 * @param stack 物品堆栈
+	 * @return 射击发射物组件
 	 */
-	public void resetShot(ItemStack stack) {
-		setShot(stack, false);
+	public ShootProjectilesComponent resetShot() {
+		return setShot(false);
 	}
 	
 	/**
-	 * 设置物品的射击状态
+	 * 设置射击状态
 	 *
-	 * @param stack 物品堆栈
-	 * @param shot  是否已射击
+	 * @param shot 是否已射击
+	 * @return 射击发射物组件
 	 */
-	public void setShot(ItemStack stack, boolean shot) {
-		stack.set(DataComponentTypes.SHOOT_PROJECTILES, new ShootProjectilesComponent(shot, interval, state));
+	public ShootProjectilesComponent setShot(boolean shot) {
+		return new ShootProjectilesComponent(interval, state, shot);
 	}
 	
 	/**

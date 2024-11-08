@@ -184,6 +184,19 @@ public record RangedWeaponComponent(float maxSpeed,
 	}
 	
 	/**
+	 * 获取“快速装填”刻数
+	 *
+	 * @param ticks 原始刻数
+	 * @param stack 物品堆栈
+	 * @return 有“快速装填”附魔的刻数
+	 */
+	public static int getQuickTicks(int ticks, ItemStack stack) {
+		// 设置“快速装填”效果
+		int quickChargeLevel = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
+		return quickChargeLevel == 0 ? ticks : ticks - ticks / 5 * quickChargeLevel;
+	}
+	
+	/**
 	 * 获取发射物索引以供 JSON 渲染使用
 	 *
 	 * @return 索引
@@ -212,18 +225,6 @@ public record RangedWeaponComponent(float maxSpeed,
 	 */
 	public float adjustedProjectileDamage() {
 		return maxDamage / maxSpeed;
-	}
-	
-	/**
-	 * 获取最大拉弓刻数
-	 *
-	 * @param stack 物品堆栈
-	 * @return 最大拉弓刻数
-	 */
-	public int getMaxPullTicks(ItemStack stack) {
-		// 设置“快速装填”效果
-		int quickChargeLevel = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
-		return quickChargeLevel == 0 ? maxUseTicks : maxUseTicks - maxUseTicks / 5 * quickChargeLevel;
 	}
 	
 	/**

@@ -23,16 +23,16 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
  * <h2 style="color:FFC800">在持有时修改移动组件</h2>
  * 握持物品时的移动速度修改器组件
  *
- * @param modifyMove    修改移动组件
- * @param canModifyMove 是否能够修改移动速度
+ * @param modifyMove 修改移动数据
+ * @param canModify  是否能够修改移动速度方法
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public record ModifyMoveWhileHoldComponent(ModifyMoveData modifyMove, boolean canModifyMove) {
+public record ModifyMoveWhileHoldComponent(ModifyMoveData modifyMove, boolean canModify) {
 	public static final ModifyMoveWhileHoldComponent DEFAULT = new ModifyMoveWhileHoldComponent(ModifyMoveData.DEFAULT, true);
 	public static final Codec<ModifyMoveWhileHoldComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 					ModifyMoveData.CODEC.optionalFieldOf("modify_move", ModifyMoveData.DEFAULT).forGetter(ModifyMoveWhileHoldComponent::modifyMove),
-					Codec.BOOL.optionalFieldOf("can_modify_move", true).forGetter(ModifyMoveWhileHoldComponent::canModifyMove))
+					Codec.BOOL.optionalFieldOf("can_modify", true).forGetter(ModifyMoveWhileHoldComponent::canModify))
 			.apply(builder, ModifyMoveWhileHoldComponent::new));
 	public static final PacketCodec<RegistryByteBuf, ModifyMoveWhileHoldComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
 	
@@ -40,11 +40,20 @@ public record ModifyMoveWhileHoldComponent(ModifyMoveData modifyMove, boolean ca
 	 * 在持有时修改移动组件创建方法
 	 *
 	 * @param moveSpeedMultiple 相较于行走时的移动速度倍率
-	 * @param canModifyMove     是否能够修改移动速度
 	 * @return 在持有时修改移动组件
 	 */
-	public static ModifyMoveWhileHoldComponent create(float moveSpeedMultiple, boolean canModifyMove) {
-		return new ModifyMoveWhileHoldComponent(ModifyMoveData.of(moveSpeedMultiple), canModifyMove);
+	public static ModifyMoveWhileHoldComponent of(float moveSpeedMultiple) {
+		return new ModifyMoveWhileHoldComponent(ModifyMoveData.of(moveSpeedMultiple), true);
+	}
+	
+	/**
+	 * 设置是否可修改
+	 *
+	 * @param canModify 是否可修改
+	 * @return 在持有时修改移动组件
+	 */
+	public ModifyMoveWhileHoldComponent setModify(boolean canModify) {
+		return new ModifyMoveWhileHoldComponent(modifyMove, canModify);
 	}
 	
 	/**

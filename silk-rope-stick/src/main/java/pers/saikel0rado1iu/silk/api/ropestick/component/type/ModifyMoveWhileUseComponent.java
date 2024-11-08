@@ -21,7 +21,7 @@ import net.minecraft.network.codec.PacketCodecs;
  * <h2 style="color:FFC800">在使用时修改移动组件</h2>
  * 使用物品时的移动速度修改器组件
  *
- * @param modifyMove 修改移动组件属性
+ * @param modifyMove 修改移动数据
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
@@ -38,7 +38,7 @@ public record ModifyMoveWhileUseComponent(ModifyMoveData modifyMove) {
 	 * @param moveSpeedMultiple 相较于行走时的移动速度倍率
 	 * @return 在使用时修改移动组件
 	 */
-	public static ModifyMoveWhileUseComponent create(float moveSpeedMultiple) {
+	public static ModifyMoveWhileUseComponent of(float moveSpeedMultiple) {
 		return new ModifyMoveWhileUseComponent(ModifyMoveData.of(moveSpeedMultiple));
 	}
 }

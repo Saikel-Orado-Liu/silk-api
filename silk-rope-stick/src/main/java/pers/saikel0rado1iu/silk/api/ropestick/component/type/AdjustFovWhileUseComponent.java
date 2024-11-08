@@ -28,6 +28,7 @@ import java.util.Optional;
  * <h2 style="color:FFC800">在使用时调整视场角组件</h2>
  * 使用物品时的视场角缩放组件
  *
+ * @param adjustFov 调整视场角数据
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */

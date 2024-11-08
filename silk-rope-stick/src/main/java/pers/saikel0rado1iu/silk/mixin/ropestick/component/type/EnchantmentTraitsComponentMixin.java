@@ -50,19 +50,18 @@ interface EnchantmentTraitsComponentMixin {
 		/**
 		 * 如果物品为自定义物品判断此魔咒是否包含在自定义魔咒中，所以请忽略 'EqualsBetweenInconvertibleTypes' 警告
 		 */
-		@SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+		@SuppressWarnings({"DataFlowIssue"})
 		@Inject(method = "isAcceptableItem", at = @At("RETURN"), cancellable = true)
 		private void acceptEnchantment(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
 			EnchantmentTraitsComponent component = stack.get(DataComponentTypes.ENCHANTMENT_TRAITS);
 			if (component == null) return;
-			if (component.normals().stream().anyMatch(enchantment -> getId(enchantment).equals(getId((Enchantment) (Object) this)))) cir.setReturnValue(true);
-			else component.specials().forEach(special -> {
-				if (!getId(special.enchantment()).equals(getId((Enchantment) (Object) this))) return;
+			component.enchantments().forEach(trait -> {
+				if (!getId(trait.enchantment()).equals(getId((Enchantment) (Object) this))) return;
 				int conflictNum = 0;
-				for (Enchantment enchantment : special.conflicts()) {
+				for (Enchantment enchantment : trait.conflicts()) {
 					if (stack.getEnchantments().getEnchantments().stream().anyMatch(entry -> getId(enchantment).equals(getId(entry.value())))) conflictNum++;
 				}
-				if (conflictNum > special.threshold()) cir.setReturnValue(false);
+				if (conflictNum > trait.threshold()) cir.setReturnValue(false);
 				else cir.setReturnValue(true);
 			});
 		}

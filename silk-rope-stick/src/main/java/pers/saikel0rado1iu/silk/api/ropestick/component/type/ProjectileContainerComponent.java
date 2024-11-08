@@ -36,11 +36,21 @@ import java.util.List;
  * @since 1.1.2
  */
 public record ProjectileContainerComponent(int maxCapacity) {
-	public static final ProjectileContainerComponent DEFAULT = new ProjectileContainerComponent(1);
+	public static final ProjectileContainerComponent DEFAULT = ProjectileContainerComponent.of(1);
 	public static final Codec<ProjectileContainerComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 					Codec.INT.optionalFieldOf("max_capacity", 1).forGetter(ProjectileContainerComponent::maxCapacity))
 			.apply(builder, ProjectileContainerComponent::new));
 	public static final PacketCodec<RegistryByteBuf, ProjectileContainerComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
+	
+	/**
+	 * 创建发射物容器组件方法
+	 *
+	 * @param maxCapacity 最大发射物容量
+	 * @return 发射物容器组件
+	 */
+	public static ProjectileContainerComponent of(int maxCapacity) {
+		return new ProjectileContainerComponent(maxCapacity);
+	}
 	
 	/**
 	 * 获取已装填发射物
