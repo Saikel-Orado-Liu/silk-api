@@ -11,6 +11,7 @@
 
 package pers.saikel0rado1iu.silk.api.ropestick.ranged;
 
+import net.minecraft.component.ComponentMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -25,15 +26,14 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentUtil;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovData;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileUseComponent;
-import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileUseComponent;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DynamicComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+
+import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">类弓物品</h2>
@@ -42,17 +42,21 @@ import java.util.function.Predicate;
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public abstract class BowLikeItem extends BowItem {
+public abstract class BowLikeItem extends BowItem implements DynamicComponent {
 	protected ItemStack tempStack;
 	
 	/**
 	 * @param settings 物品设置
 	 */
 	public BowLikeItem(Settings settings) {
-		super(settings
-				.component(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW)
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_USE, AdjustFovWhileUseComponent.create(false, Optional.empty(), false, AdjustFovData.BOW_FOV_SCALING))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.DEFAULT));
+		super(settings);
+	}
+	
+	@Override
+	public ComponentMap dynamicComponents(ItemStack stack) {
+		return ComponentMap.builder()
+				.add(RANGED_WEAPON, rangedWeapon(Optional.ofNullable(stack)))
+				.build();
 	}
 	
 	/**
@@ -75,8 +79,8 @@ public abstract class BowLikeItem extends BowItem {
 		List<ItemStack> list = load(stack, projectile, player);
 		if (!world.isClient() && !list.isEmpty()) {
 			// 设置箭矢速度与设计误差
-			RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon());
-			shootAll(world, player, player.getActiveHand(), tempStack = stack, list, progress * component.maxSpeed(), component.firingError(), progress == 1, null);
+			RangedWeaponComponent component = stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
+			shootAll(world, player, player.getActiveHand(), stack, list, progress * component.maxSpeed(), component.firingError(), progress == 1, null);
 		}
 		world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1, 1 / (world.getRandom().nextFloat() * 0.4F + 1.2F) + progress * 0.5F);
 		player.incrementStat(Stats.USED.getOrCreateStat(this));
@@ -92,7 +96,7 @@ public abstract class BowLikeItem extends BowItem {
 		if (projectile instanceof PersistentProjectileEntity persistentProjectile) {
 			persistentProjectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0, speed, divergence);
 			// 设置基础伤害增加
-			RangedWeaponComponent component = DataComponentUtil.setOrGetValue(tempStack, DataComponentTypes.RANGED_WEAPON, rangedWeapon());
+			RangedWeaponComponent component = tempStack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(tempStack)));
 			persistentProjectile.setDamage(component.adjustedProjectileDamage());
 		} else {
 			super.shoot(shooter, projectile, index, speed, divergence, yaw, target);
@@ -102,12 +106,12 @@ public abstract class BowLikeItem extends BowItem {
 	
 	@Override
 	public Predicate<ItemStack> getProjectiles() {
-		return stack -> DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).launchableProjectiles().stream().anyMatch(stack::isOf);
+		return stack -> stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack))).launchableProjectiles().stream().anyMatch(stack::isOf);
 	}
 	
 	@Override
 	public int getMaxUseTime(ItemStack stack) {
-		return DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon()).maxUseTicks();
+		return stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack))).maxUseTicks();
 	}
 	
 	/**
@@ -118,17 +122,18 @@ public abstract class BowLikeItem extends BowItem {
 	 * @return 使用进度
 	 */
 	public float getUsingProgress(int useTicks, ItemStack stack) {
-		RangedWeaponComponent component = DataComponentUtil.setOrGetValue(stack, DataComponentTypes.RANGED_WEAPON, rangedWeapon());
-		float progress = (float) useTicks / component.maxPullTicks();
+		RangedWeaponComponent component = stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
+		float progress = (float) useTicks / RangedWeaponComponent.getQuickTicks(component.maxPullTicks(), stack);
 		return Math.min(1, (progress * (progress + 2)) / 3);
 	}
 	
 	/**
 	 * 物品的远程武器组件
 	 *
+	 * @param stack 当前的物品堆栈
 	 * @return 远程武器组件
 	 */
-	public abstract RangedWeaponComponent rangedWeapon();
+	public abstract RangedWeaponComponent rangedWeapon(Optional<ItemStack> stack);
 	
 	/**
 	 * 触发进度条件

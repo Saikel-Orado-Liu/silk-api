@@ -14,13 +14,13 @@ package pers.saikel0rado1iu.silk.api.ropestick.ranged;
 import com.google.common.collect.Lists;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.item.TooltipType;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -50,19 +50,26 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 	 * @param settings 物品设置
 	 */
 	public SemiAutomaticFirearmItem(Settings settings) {
-		super(settings
-				.component(PROJECTILE_CONTAINER, ProjectileContainerComponent.DEFAULT)
-				.component(SHOOT_PROJECTILES, ShootProjectilesComponent.DEFAULT));
+		super(settings);
+	}
+	
+	@Override
+	public ComponentMap dynamicComponents(ItemStack stack) {
+		return ComponentMap.builder()
+				.addAll(super.dynamicComponents(stack))
+				.add(PROJECTILE_CONTAINER, projectileContainer(Optional.of(stack)))
+				.add(SHOOT_PROJECTILES, shootProjectiles(Optional.of(stack)).setShot(stack.getOrDefault(SHOOT_PROJECTILES, shootProjectiles(Optional.of(stack))).shot()))
+				.build();
 	}
 	
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		ItemStack stack = user.getStackInHand(hand);
-		ShootProjectilesComponent shootProjectiles = DataComponentUtil.setOrGetValue(stack, SHOOT_PROJECTILES, shootProjectiles());
-		shootProjectiles.resetShot(stack);
+		ShootProjectilesComponent shootProjectiles = stack.getOrDefault(SHOOT_PROJECTILES, shootProjectiles(Optional.of(stack)));
+		stack.set(SHOOT_PROJECTILES, shootProjectiles.resetShot());
 		// 如果已装填
 		if (isCharged(stack)) {
-			RangedWeaponComponent rangedWeapon = DataComponentUtil.setOrGetValue(stack, RANGED_WEAPON, rangedWeapon());
+			RangedWeaponComponent rangedWeapon = stack.getOrDefault(RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
 			shootAll(world, user, hand, stack, rangedWeapon.getMaxProjectileSpeed(stack), rangedWeapon.firingError(), null);
 			return TypedActionResult.pass(stack);
 		}
@@ -80,10 +87,8 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
 		if (getUsingProgress(getMaxUseTime(stack) - remainingUseTicks, stack) != 1 || isCharged(stack) || !load(user, stack)) return;
-		// 获取声音类别
-		SoundCategory soundCategory = user instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE;
 		// 播放弩装填结束音效
-		world.playSound(null, user.getX(), user.getY(), user.getZ(), loadedSound(), soundCategory, 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F);
+		world.playSound(null, user.getX(), user.getY(), user.getZ(), loadedSound(), user.getSoundCategory(), 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F);
 	}
 	
 	@Override
@@ -104,12 +109,12 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 		List<ItemStack> list = Lists.newCopyOnWriteArrayList(crossbow.getOrDefault(DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT).getProjectiles());
 		ItemStack projectile = RangedWeaponComponent.getProjectileType(shooter, crossbow);
 		if (projectile.isEmpty()) {
-			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
+			crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer(Optional.of(crossbow))).putChargedProjectiles(crossbow, list, shooter);
 			return false;
 		}
-		int size = DataComponentUtil.setOrGetValue(crossbow, PROJECTILE_CONTAINER, projectileContainer()).getLoadableAmount(crossbow, shooter);
+		int size = crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer(Optional.of(crossbow))).getLoadableAmount(crossbow, shooter);
 		for (int count = 0; count < size; count++) list.add(getProjectile(crossbow, projectile, shooter, false));
-		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer()).putChargedProjectiles(crossbow, list, shooter);
+		crossbow.getOrDefault(PROJECTILE_CONTAINER, projectileContainer(Optional.of(crossbow))).putChargedProjectiles(crossbow, list, shooter);
 		return true;
 	}
 	
@@ -134,22 +139,26 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 	
 	@Override
 	protected void postShot(World world, LivingEntity shooter, ItemStack stack) {
-		ShootProjectilesComponent component = DataComponentUtil.setOrGetValue(stack, SHOOT_PROJECTILES, shootProjectiles());
+		ShootProjectilesComponent component = stack.getOrDefault(SHOOT_PROJECTILES, shootProjectiles(Optional.of(stack)));
 		if (shooter instanceof PlayerEntity player && component.interval() != 0) player.getItemCooldownManager().set(this, component.interval());
-		if (component.state() == ShootProjectilesComponent.State.EVERY || ProjectileContainerComponent.getChargedAmount(stack) == 0) component.setShot(stack);
+		if (component.state() == ShootProjectilesComponent.State.EVERY || ProjectileContainerComponent.getChargedAmount(stack) == 0) {
+			stack.set(SHOOT_PROJECTILES, component.setShot());
+		}
 	}
 	
 	/**
 	 * 物品的发射物容器组件
 	 *
+	 * @param stack 当前的物品堆栈
 	 * @return 发射物容器组件
 	 */
-	public abstract ProjectileContainerComponent projectileContainer();
+	public abstract ProjectileContainerComponent projectileContainer(Optional<ItemStack> stack);
 	
 	/**
 	 * 物品的射击发射物组件
 	 *
+	 * @param stack 当前的物品堆栈
 	 * @return 射击发射物组件
 	 */
-	public abstract ShootProjectilesComponent shootProjectiles();
+	public abstract ShootProjectilesComponent shootProjectiles(Optional<ItemStack> stack);
 }
