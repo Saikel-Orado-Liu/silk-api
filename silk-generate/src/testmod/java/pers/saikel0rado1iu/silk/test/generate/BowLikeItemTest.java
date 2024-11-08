@@ -37,11 +37,11 @@ public final class BowLikeItemTest extends BowLikeItem {
 	public BowLikeItemTest(Settings settings) {
 		super(settings
 				.component(DataComponentTypes.ADJUST_FOV_WHILE_USE, AdjustFovWhileUseComponent.create(false, Optional.of(AdjustFovData.SPYGLASS_SCOPE), true, 1.5F))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.create(1)));
+				.component(DataComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.of(1)));
 	}
 	
 	@Override
-	public RangedWeaponComponent rangedWeapon() {
+	public RangedWeaponComponent rangedWeapon(Optional<ItemStack> stack) {
 		return RangedWeaponComponent.builder()
 				.maxSpeed(RangedWeaponComponent.BOW_MAX_PROJECTILE_SPEED)
 				.maxDamage(10)

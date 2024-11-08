@@ -36,12 +36,12 @@ public final class CrossbowLikeItemTest extends CrossbowLikeItem {
 	 */
 	public CrossbowLikeItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(true, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), false, AdjustFovData.DEFAULT_FOV_SCALING, true))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.create(10, true)));
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(true, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), false, AdjustFovData.DEFAULT_FOV_SCALING))
+				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
 	}
 	
 	@Override
-	public RangedWeaponComponent rangedWeapon() {
+	public RangedWeaponComponent rangedWeapon(Optional<ItemStack> stack) {
 		return RangedWeaponComponent.builder()
 				.maxSpeed(RangedWeaponComponent.CROSSBOW_MAX_PROJECTILE_SPEED)
 				.maxDamage(50)

@@ -32,12 +32,12 @@ public final class FullyAutomaticFirearmItemTest extends FullyAutomaticFirearmIt
 	 */
 	public FullyAutomaticFirearmItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), true, 0.8F, true))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.create(10, true)));
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), true, 0.8F))
+				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
 	}
 	
 	@Override
-	public RangedWeaponComponent rangedWeapon() {
+	public RangedWeaponComponent rangedWeapon(Optional<ItemStack> stack) {
 		return RangedWeaponComponent.builder()
 				.maxSpeed(RangedWeaponComponent.CROSSBOW_MAX_PROJECTILE_SPEED)
 				.maxDamage(1)
@@ -52,13 +52,13 @@ public final class FullyAutomaticFirearmItemTest extends FullyAutomaticFirearmIt
 	}
 	
 	@Override
-	public ProjectileContainerComponent projectileContainer() {
-		return new ProjectileContainerComponent(100);
+	public ProjectileContainerComponent projectileContainer(Optional<ItemStack> stack) {
+		return ProjectileContainerComponent.of(100);
 	}
 	
 	@Override
-	public ShootProjectilesComponent shootProjectiles() {
-		return new ShootProjectilesComponent(false, 1, ShootProjectilesComponent.State.EVERY);
+	public ShootProjectilesComponent shootProjectiles(Optional<ItemStack> stack) {
+		return ShootProjectilesComponent.create(1, ShootProjectilesComponent.State.EVERY);
 	}
 	
 	/**

@@ -46,7 +46,9 @@ public interface Items extends ItemRegistry {
 	 * test_bolt_action_repeating_firearm
 	 */
 	BoltActionRepeatingFirearmItemTest TEST_BOLT_ACTION_REPEATING_FIREARM = ItemRegistry.registrar(() -> new BoltActionRepeatingFirearmItemTest(new Item.Settings().maxDamage(100)
-					.component(ENCHANTMENT_TRAITS, EnchantmentTraitsComponent.create(List.of(Enchantments.INFINITY), List.of(EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.POWER))))))
+					.component(ENCHANTMENT_TRAITS, EnchantmentTraitsComponent.of(
+							EnchantmentTraitsComponent.EnchantmentTrait.create(Enchantments.INFINITY),
+							EnchantmentTraitsComponent.EnchantmentTrait.create(Enchantments.POWER)))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_bolt_action_repeating_firearm"));
 	/**
@@ -54,9 +56,9 @@ public interface Items extends ItemRegistry {
 	 */
 	SemiAutomaticFirearmItemTest TEST_SEMI_AUTOMATIC_FIREARM = ItemRegistry.registrar(() -> new SemiAutomaticFirearmItemTest(new Item.Settings().maxDamage(100)
 					.component(ENCHANTMENT_TRAITS, EnchantmentTraitsComponent.of(
-							EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.POWER, List.of(Enchantments.UNBREAKING, Enchantments.MENDING), 1),
-							EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.UNBREAKING, List.of(Enchantments.POWER, Enchantments.MENDING), 1),
-							EnchantmentTraitsComponent.SpecialEnchantment.create(Enchantments.MENDING, List.of(Enchantments.UNBREAKING, Enchantments.POWER), 1)))))
+							EnchantmentTraitsComponent.EnchantmentTrait.create(Enchantments.POWER, List.of(Enchantments.UNBREAKING, Enchantments.MENDING), 1),
+							EnchantmentTraitsComponent.EnchantmentTrait.create(Enchantments.UNBREAKING, List.of(Enchantments.POWER, Enchantments.MENDING), 1),
+							EnchantmentTraitsComponent.EnchantmentTrait.create(Enchantments.MENDING, List.of(Enchantments.UNBREAKING, Enchantments.POWER), 1)))))
 			.group(ItemGroupCreatorTest.TEST_ITEM_GROUP1, ItemGroupCreatorTest.TEST_ITEM_GROUP2)
 			.register(SilkRopeStick.getInstance().ofId("test_semi_automatic_firearm"));
 	/**

@@ -32,12 +32,12 @@ public final class BoltActionFirearmItemTest extends BoltActionFirearmItem {
 	 */
 	public BoltActionFirearmItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.PUMPKIN_BLUR), true, 0.8F, true))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.create(10, true)));
+				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.PUMPKIN_BLUR), true, 0.8F).setCanAdjust(true))
+				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
 	}
 	
 	@Override
-	public RangedWeaponComponent rangedWeapon() {
+	public RangedWeaponComponent rangedWeapon(Optional<ItemStack> stack) {
 		return RangedWeaponComponent.builder()
 				.maxSpeed(RangedWeaponComponent.CROSSBOW_MAX_PROJECTILE_SPEED)
 				.maxDamage(50)
@@ -52,13 +52,13 @@ public final class BoltActionFirearmItemTest extends BoltActionFirearmItem {
 	}
 	
 	@Override
-	public ProjectileContainerComponent projectileContainer() {
-		return new ProjectileContainerComponent(10);
+	public ProjectileContainerComponent projectileContainer(Optional<ItemStack> stack) {
+		return ProjectileContainerComponent.of(10);
 	}
 	
 	@Override
-	public ShootProjectilesComponent shootProjectiles() {
-		return new ShootProjectilesComponent(false, TickUtil.getTick(0.25F), ShootProjectilesComponent.State.ALL);
+	public ShootProjectilesComponent shootProjectiles(Optional<ItemStack> stack) {
+		return ShootProjectilesComponent.create(TickUtil.getTick(0.25F), ShootProjectilesComponent.State.ALL);
 	}
 	
 	/**
