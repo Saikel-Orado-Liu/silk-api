@@ -106,7 +106,7 @@ public interface ClientWorldUpgradeManagerCallback extends Supplier<ClientUpgrad
 	/**
 	 * 使用关卡存储器会话进行可升级世界管理器操作的事件
 	 */
-	@SuppressWarnings({"rawtypes", "unchecked"})
+	@SuppressWarnings({"unchecked"})
 	Event<Supplier<ClientUpgradableWorldManager<?>>> SESSION_EVENT = EventFactory.createArrayBacked(Supplier.class, listeners -> () -> {
 		for (Supplier<ClientUpgradableWorldManager<?>> event : listeners) {
 			ClientUpgradableWorldManager<?> manager = event.get();
@@ -123,9 +123,11 @@ public interface ClientWorldUpgradeManagerCallback extends Supplier<ClientUpgrad
 				NbtCompound dimensions = nbt.getCompound("Data").getCompound("WorldGenSettings").getCompound("dimensions");
 				NbtCompound dimension;
 				if ((dimension = dimensions.getCompound(upgradableWorldData.dimension().getValue().toString())).isEmpty()) return nbt;
-				MapCodec mapCodec = chunkGeneratorUpgradable.getCodec();
-				NbtCompound nbtCompound = (NbtCompound) mapCodec.encoder().encodeStart(registryManager.getOps(NbtOps.INSTANCE), chunkGeneratorUpgradable).getOrThrow();
-				String generatorId = String.valueOf(Registries.CHUNK_GENERATOR.getId(chunkGeneratorUpgradable.getCodec()));
+				MapCodec<? extends ChunkGenerator> codec = chunkGeneratorUpgradable.getCodec();
+				String generatorId = String.valueOf(Registries.CHUNK_GENERATOR.getId(codec));
+				if (!dimension.getCompound("generator").getString("type").equals(generatorId)) return nbt;
+				@SuppressWarnings("unchecked")
+				NbtCompound nbtCompound = (NbtCompound) ((MapCodec<ChunkGenerator>) codec).encoder().encodeStart(registryManager.getOps(NbtOps.INSTANCE), chunkGenerator).getOrThrow();
 				nbtCompound.putString("type", generatorId);
 				dimension.put("generator", nbtCompound);
 				return nbt;
