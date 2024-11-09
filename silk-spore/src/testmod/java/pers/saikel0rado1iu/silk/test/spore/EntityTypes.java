@@ -16,6 +16,7 @@ import net.minecraft.block.dispenser.ProjectileDispenserBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import pers.saikel0rado1iu.silk.api.spinningjenny.EntityTypeRegistry;
+import pers.saikel0rado1iu.silk.api.spore.EntityUtil;
 import pers.saikel0rado1iu.silk.impl.SilkSpore;
 
 /**
@@ -26,7 +27,10 @@ public interface EntityTypes extends EntityTypeRegistry {
 	 * fixed_damage_test
 	 */
 	EntityType<FixedDamageTest> FIXED_DAMAGE_TEST = EntityTypeRegistry.registrar(() -> EntityType.Builder.create(FixedDamageTest::new, SpawnGroup.MISC)
-					.dimensions(0.25F, 0.25F).maxTrackingRange(20).build())
+					.dimensions(EntityUtil.PROJECTILE_BOX, EntityUtil.PROJECTILE_BOX)
+					.maxTrackingRange(EntityUtil.PROJECTILE_MAX_TRACKING_RANGE)
+					.trackingTickInterval(EntityUtil.PROJECTILE_TRACKING_TICK_INTERVAL)
+					.build())
 			.other(entityType -> DispenserBlock.registerBehavior(Items.FIXED_DAMAGE_TEST_ITEM, new ProjectileDispenserBehavior(Items.FIXED_DAMAGE_TEST_ITEM)))
 			.register(SilkSpore.getInstance().ofId("fixed_damage_test"));
 }

@@ -24,7 +24,7 @@ public class EntityUtilTest {
 	static void test() {
 		SilkSpore.getInstance().logger().error("EntityUtil.POS_SHIFTING: " + EntityUtil.POS_SHIFTING);
 		SilkSpore.getInstance().logger().error("EntityUtil.PROJECTILE_BOX: " + EntityUtil.PROJECTILE_BOX);
-		SilkSpore.getInstance().logger().error("EntityUtil.PROJECTILE_RANGE: " + EntityUtil.PROJECTILE_RANGE);
-		SilkSpore.getInstance().logger().error("EntityUtil.PROJECTILE_UPDATE_RATE: " + EntityUtil.PROJECTILE_UPDATE_RATE);
+		SilkSpore.getInstance().logger().error("EntityUtil.PROJECTILE_MAX_TRACKING_RANGE: " + EntityUtil.PROJECTILE_MAX_TRACKING_RANGE);
+		SilkSpore.getInstance().logger().error("EntityUtil.PROJECTILE_TRACKING_TICK_INTERVAL: " + EntityUtil.PROJECTILE_TRACKING_TICK_INTERVAL);
 	}
 }
