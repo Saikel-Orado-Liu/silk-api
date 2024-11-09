@@ -30,9 +30,9 @@ public interface EntityUtil {
 	/**
 	 * 发射物存在范围
 	 */
-	int PROJECTILE_RANGE = 4;
+	int PROJECTILE_MAX_TRACKING_RANGE = 4;
 	/**
 	 * 发射物更新速率
 	 */
-	int PROJECTILE_UPDATE_RATE = 20;
+	int PROJECTILE_TRACKING_TICK_INTERVAL = 20;
 }
