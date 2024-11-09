@@ -1,4 +1,4 @@
-## 1.0.4+1.20.6---2024/11/08
+## 1.0.4+1.20.6---2024/11/09
 
 ### Features:
 
@@ -22,6 +22,10 @@
 - Renamed CrossBow class to CrossbowLikeItem.
 - Removed the three ranged weapon expansion interfaces: RangedExpansion, BowExpansion, and CrossbowExpansion.
 - Removed the item property system and replaced it with the new item array component.
+
+### Fixes:
+
+- Fixed the crash issue when enabling experimental content or data packs during world creation.
 
 ## 1.0.3---2024/10/19
 
