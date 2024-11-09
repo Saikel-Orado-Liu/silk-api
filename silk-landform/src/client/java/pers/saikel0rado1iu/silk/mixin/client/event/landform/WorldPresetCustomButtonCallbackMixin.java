@@ -17,7 +17,10 @@ import net.minecraft.client.gui.screen.world.WorldCreator;
 import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.tab.TabManager;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,7 +48,7 @@ interface WorldPresetCustomButtonCallbackMixin {
 	@Mixin(CreateWorldScreen.class)
 	abstract class AddButton extends Screen {
 		@Unique
-		private static final Map<WorldCreator.WorldType, ButtonWidget> WORLD_CUSTOMS = new HashMap<>(8);
+		private static final Map<Optional<Identifier>, ButtonWidget> WORLD_CUSTOMS = new HashMap<>(8);
 		@Final
 		@Shadow
 		private TabManager tabManager;
@@ -72,8 +75,10 @@ interface WorldPresetCustomButtonCallbackMixin {
 			List<WorldCreator.WorldType> worldTypes = getWorldCreator().getExtendedWorldTypes();
 			worldTypes.forEach(worldType -> {
 				Optional<ButtonWidget.PressAction> onPress;
-				if ((onPress = WorldPresetCustomButtonCallback.EVENT.invoker().addPressAction(worldType, client, this)).isPresent())
-					WORLD_CUSTOMS.put(worldType, addDrawableChild(ButtonWidget.builder(Text.translatable("selectWorld.customizeType"), onPress.get()).build()));
+				if ((onPress = WorldPresetCustomButtonCallback.EVENT.invoker().addPressAction(worldType, client, this)).isPresent()) {
+					WORLD_CUSTOMS.put(Optional.ofNullable(worldType.preset()).flatMap(RegistryEntry::getKey).map(RegistryKey::getValue),
+							addDrawableChild(ButtonWidget.builder(Text.translatable("selectWorld.customizeType"), onPress.get()).build()));
+				}
 			});
 			WORLD_CUSTOMS.forEach((worldType, buttonWidget) -> buttonWidget.visible = false);
 		}
@@ -85,10 +90,12 @@ interface WorldPresetCustomButtonCallbackMixin {
 		public void tick() {
 			if (WorldPresetCustomButtonCallback.MixinData.customizeButton == null) return;
 			if (WorldPresetCustomButtonCallback.EVENT.invoker().addPressAction(getWorldCreator().getWorldType(), client, this).isPresent()) {
-				custom = WORLD_CUSTOMS.get(getWorldCreator().getWorldType());
-				custom.setPosition(WorldPresetCustomButtonCallback.MixinData.customizeButton.getX(), WorldPresetCustomButtonCallback.MixinData.customizeButton.getY());
-				custom.visible = true;
-				WorldPresetCustomButtonCallback.MixinData.customizeButton.visible = false;
+				custom = WORLD_CUSTOMS.get(Optional.ofNullable(getWorldCreator().getWorldType().preset()).flatMap(RegistryEntry::getKey).map(RegistryKey::getValue));
+				if (custom != null) {
+					custom.setPosition(WorldPresetCustomButtonCallback.MixinData.customizeButton.getX(), WorldPresetCustomButtonCallback.MixinData.customizeButton.getY());
+					custom.visible = true;
+					WorldPresetCustomButtonCallback.MixinData.customizeButton.visible = false;
+				}
 			} else {
 				if (custom != null) custom.visible = false;
 				WorldPresetCustomButtonCallback.MixinData.customizeButton.visible = true;
