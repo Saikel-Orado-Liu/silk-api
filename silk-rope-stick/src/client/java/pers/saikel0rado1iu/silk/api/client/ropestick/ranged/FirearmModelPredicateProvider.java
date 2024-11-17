@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
 
-import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">枪械模型谓词提供器</h2>
@@ -34,19 +34,19 @@ public interface FirearmModelPredicateProvider {
 	 * @param <T>     枪械类型
 	 */
 	static <T extends CrossbowLikeItem> void register(T firearm) {
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, Identifier.of(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, Identifier.of(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : ((CrossbowLikeItem) stack.getItem()).getUsingProgress(stack.getMaxUseTime() - entity.getItemUseTimeLeft() - 1, stack);
+			return entity.getActiveItem() != stack ? 0 : ((CrossbowLikeItem) stack.getItem()).getUsingProgress(stack, entity, stack.getMaxUseTime(entity) - entity.getItemUseTimeLeft() - 1);
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.CHARGED_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, Identifier.of(RangedWeaponComponent.CHARGED_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return CrossbowItem.isCharged(stack) ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(firearm, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(firearm, Identifier.of(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return stack.getOrDefault(RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(entity, stack);
 		});

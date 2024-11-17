@@ -14,7 +14,7 @@ package pers.saikel0rado1iu.silk.api.client.ropestick.ranged;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.util.Identifier;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.CrossbowLikeItem;
 
@@ -32,21 +32,21 @@ public interface CrossbowModelPredicateProvider {
 	 * @param crossbow 弩
 	 */
 	static void register(CrossbowLikeItem crossbow) {
-		ModelPredicateProviderRegistry.register(crossbow, new Identifier(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(crossbow, Identifier.of(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(crossbow, new Identifier(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(crossbow, Identifier.of(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : ((CrossbowLikeItem) stack.getItem()).getUsingProgress(stack.getMaxUseTime() - entity.getItemUseTimeLeft(), stack);
+			return entity.getActiveItem() != stack ? 0 : ((CrossbowLikeItem) stack.getItem()).getUsingProgress(stack, entity, stack.getMaxUseTime(entity) - entity.getItemUseTimeLeft());
 		});
-		ModelPredicateProviderRegistry.register(crossbow, new Identifier(RangedWeaponComponent.CHARGED_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(crossbow, Identifier.of(RangedWeaponComponent.CHARGED_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return CrossbowItem.isCharged(stack) ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(crossbow, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(crossbow, Identifier.of(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(entity, stack);
+			return stack.getOrDefault(ComponentTypes.RANGED_WEAPON, RangedWeaponComponent.CROSSBOW).getProjectileIndex(entity, stack);
 		});
 	}
 }

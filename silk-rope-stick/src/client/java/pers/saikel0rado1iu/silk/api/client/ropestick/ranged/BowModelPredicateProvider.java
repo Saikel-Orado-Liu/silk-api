@@ -13,7 +13,7 @@ package pers.saikel0rado1iu.silk.api.client.ropestick.ranged;
 
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.util.Identifier;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.BowLikeItem;
 
@@ -31,17 +31,17 @@ public interface BowModelPredicateProvider {
 	 * @param bow 弓
 	 */
 	static void register(BowLikeItem bow) {
-		ModelPredicateProviderRegistry.register(bow, new Identifier(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(bow, Identifier.of(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1 : 0;
 		});
-		ModelPredicateProviderRegistry.register(bow, new Identifier(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(bow, Identifier.of(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : ((BowLikeItem) stack.getItem()).getUsingProgress(stack.getMaxUseTime() - entity.getItemUseTimeLeft(), stack);
+			return entity.getActiveItem() != stack ? 0 : ((BowLikeItem) stack.getItem()).getUsingProgress(stack, entity, stack.getMaxUseTime(entity) - entity.getItemUseTimeLeft());
 		});
-		ModelPredicateProviderRegistry.register(bow, new Identifier(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(bow, Identifier.of(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW).getProjectileIndex(entity, stack);
+			return entity.getActiveItem() != stack ? 0 : stack.getOrDefault(ComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW).getProjectileIndex(entity, stack);
 		});
 	}
 }
