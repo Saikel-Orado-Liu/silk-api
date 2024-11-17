@@ -19,7 +19,6 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModel;
@@ -28,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -56,8 +56,9 @@ public abstract class CustomEntityRenderer<T extends Entity, M extends EntityMod
 	}
 	
 	private static boolean shouldFlipUpsideDown(Entity entity) {
-		String string;
-		if ((entity instanceof PlayerEntity || entity.hasCustomName()) && ("Dinnerbone".equals(string = Formatting.strip(entity.getName().getString())) || "Grumm".equals(string))) {
+		if (!(entity instanceof PlayerEntity) && !entity.hasCustomName()) return false;
+		String string = Formatting.strip(entity.getName().getString());
+		if ("Dinnerbone".equals(string) || "Grumm".equals(string)) {
 			return !(entity instanceof PlayerEntity) || ((PlayerEntity) entity).isPartVisible(PlayerModelPart.CAPE);
 		}
 		return false;
@@ -116,7 +117,7 @@ public abstract class CustomEntityRenderer<T extends Entity, M extends EntityMod
 		if (renderLayer != null) {
 			VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
 			int overlay = OverlayTexture.packUv(OverlayTexture.getU(getAnimationCounter(entity, tickDelta)), OverlayTexture.getV(false));
-			entityModel.render(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, isNotVisibleToPlayer ? 0.15f : 1.0f);
+			entityModel.render(matrices, vertexConsumer, light, overlay, isNotVisibleToPlayer ? 654311423 : -1);
 		}
 		
 		// Render features
