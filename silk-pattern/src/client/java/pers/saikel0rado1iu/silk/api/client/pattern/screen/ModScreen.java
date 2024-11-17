@@ -191,6 +191,10 @@ public class ModScreen extends GameOptionsScreen {
 	}
 	
 	@Override
+	protected void addOptions() {
+	}
+	
+	@Override
 	protected void initTabNavigation() {
 		if (tabNavigation == null || grid == null) return;
 		tabNavigation.setWidth(width);
