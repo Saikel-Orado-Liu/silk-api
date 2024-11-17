@@ -13,16 +13,18 @@ package pers.saikel0rado1iu.silk.api.ropestick.ranged;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -41,7 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">类弩物品</h2>
@@ -51,6 +53,7 @@ import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentType
  * @since 1.1.2
  */
 public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicComponent {
+	public static final LoadingSounds DEFAULT_LOADING_SOUNDS = new LoadingSounds(Optional.of(SoundEvents.ITEM_CROSSBOW_LOADING_START), Optional.of(SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE), Optional.of(SoundEvents.ITEM_CROSSBOW_LOADING_END));
 	protected ItemStack tempStack;
 	
 	/**
@@ -68,7 +71,7 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicCo
 	}
 	
 	@Override
-	protected void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target) {
+	protected void shootAll(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target) {
 		super.shootAll(world, shooter, hand, tempStack = stack, projectiles, speed, divergence, critical, target);
 		postShot(world, shooter, stack);
 	}
@@ -103,7 +106,7 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicCo
 		}
 		projectile.setVelocity(vector3f.x(), vector3f.y(), vector3f.z(), speed, divergence);
 		float soundPitch = getSoundPitch(shooter.getRandom(), index);
-		shooter.getWorld().playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), shootSound(), shooter.getSoundCategory(), 1, soundPitch);
+		shooter.getWorld().playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), stateSounds(tempStack).shoot(), shooter.getSoundCategory(), 1, soundPitch);
 		if (shooter instanceof ServerPlayerEntity serverPlayer) triggerCriteria(serverPlayer, tempStack, projectile);
 	}
 	
@@ -149,12 +152,12 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicCo
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
 		// 获取已使用游戏刻
-		int usedTicks = getMaxUseTime(stack) - remainingUseTicks;
+		int usedTicks = getMaxUseTime(stack, user) - remainingUseTicks;
 		// 获取张弩进度
-		float progress = getUsingProgress(usedTicks, stack);
+		float progress = getUsingProgress(stack, user, usedTicks);
 		// 如果张弩进度 ≥ 1 且未装填并装填所有弹药
 		if (progress >= 1 && !isCharged(stack) && load(user, stack)) {
-			world.playSound(null, user.getX(), user.getY(), user.getZ(), loadedSound(), user.getSoundCategory(), 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F);
+			stateSounds(stack).loadings().end().ifPresent(sound -> world.playSound(null, user.getX(), user.getY(), user.getZ(), sound, user.getSoundCategory(), 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F));
 		}
 	}
 	
@@ -190,49 +193,20 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicCo
 	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
 		if (world.isClient) return;
 		// 设置“快速装填”音效
-		int quickChargeLevel = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
-		SoundEvent soundEvent = getQuickChargeSound(quickChargeLevel);
-		SoundEvent soundEvent2 = quickChargeLevel == 0 ? loadingSound() : null;
+		LoadingSounds loadingSounds = stateSounds(stack).loadings();
 		// 获取张弩进度
 		RangedWeaponComponent component = stack.getOrDefault(RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
-		float pullProgress = (float) (stack.getMaxUseTime() - remainingUseTicks) / RangedWeaponComponent.getQuickTicks(component.maxPullTicks(), stack);
+		float pullProgress = (float) (stack.getMaxUseTime(user) - remainingUseTicks) / RangedWeaponComponent.getQuickTicks(stack, user, component.maxPullTicks());
 		if (pullProgress < 0.2) {
 			charged = false;
 			loaded = false;
 		} else if (pullProgress >= 0.2 && !charged) {
 			charged = true;
-			if (soundEvent != null) world.playSound(null, user.getX(), user.getY(), user.getZ(), soundEvent, SoundCategory.PLAYERS, 0.5F, 1);
-		} else if (pullProgress >= 0.5 && soundEvent2 != null && !loaded) {
+			loadingSounds.start().ifPresent(sound -> world.playSound(null, user.getX(), user.getY(), user.getZ(), sound, SoundCategory.PLAYERS, 0.5F, 1));
+		} else if (pullProgress >= 0.5 && !loaded) {
 			loaded = true;
-			world.playSound(null, user.getX(), user.getY(), user.getZ(), soundEvent2, SoundCategory.PLAYERS, 0.5F, 1);
+			loadingSounds.mid().ifPresent(sound -> world.playSound(null, user.getX(), user.getY(), user.getZ(), sound, SoundCategory.PLAYERS, 0.5F, 1));
 		}
-	}
-	
-	/**
-	 * 获取装填中音效
-	 *
-	 * @return 音效
-	 */
-	public SoundEvent loadingSound() {
-		return SoundEvents.ITEM_CROSSBOW_LOADING_MIDDLE;
-	}
-	
-	/**
-	 * 获取装填结束音效
-	 *
-	 * @return 音效
-	 */
-	public SoundEvent loadedSound() {
-		return SoundEvents.ITEM_CROSSBOW_LOADING_END;
-	}
-	
-	/**
-	 * 获取弩发射音效
-	 *
-	 * @return 音效
-	 */
-	public SoundEvent shootSound() {
-		return SoundEvents.ITEM_CROSSBOW_SHOOT;
 	}
 	
 	@Override
@@ -246,20 +220,30 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicCo
 	}
 	
 	@Override
-	public int getMaxUseTime(ItemStack stack) {
-		return RangedWeaponComponent.getQuickTicks(stack.getOrDefault(RANGED_WEAPON, rangedWeapon(Optional.of(stack))).maxUseTicks(), stack);
+	public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+		return RangedWeaponComponent.getQuickTicks(stack, user, stack.getOrDefault(RANGED_WEAPON, rangedWeapon(Optional.of(stack))).maxUseTicks());
 	}
 	
 	/**
 	 * 获取使用进度
 	 *
-	 * @param useTicks 使用刻数
 	 * @param stack    物品堆栈
+	 * @param user     使用实体
+	 * @param useTicks 使用刻数
 	 * @return 使用进度
 	 */
-	public float getUsingProgress(int useTicks, ItemStack stack) {
+	public float getUsingProgress(ItemStack stack, LivingEntity user, int useTicks) {
 		RangedWeaponComponent component = stack.getOrDefault(RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
-		return Math.min(1, useTicks / (float) RangedWeaponComponent.getQuickTicks(component.maxPullTicks(), stack));
+		return Math.min(1, useTicks / (float) RangedWeaponComponent.getQuickTicks(stack, user, component.maxPullTicks()));
+	}
+	
+	/**
+	 * 状态音效属性
+	 *
+	 * @return 状态音效
+	 */
+	public StateSounds stateSounds(ItemStack stack) {
+		return new StateSounds(EnchantmentHelper.getEffect(stack, EnchantmentEffectComponentTypes.CROSSBOW_CHARGING_SOUNDS).orElse(DEFAULT_LOADING_SOUNDS), RegistryEntry.of(SoundEvents.ITEM_CROSSBOW_SHOOT));
 	}
 	
 	/**
@@ -278,4 +262,14 @@ public abstract class CrossbowLikeItem extends CrossbowItem implements DynamicCo
 	 * @param projectile   发射物
 	 */
 	public abstract void triggerCriteria(ServerPlayerEntity serverPlayer, ItemStack ranged, ProjectileEntity projectile);
+	
+	/**
+	 * 状态声音<br>
+	 * 弩的不同状态的声音事件
+	 *
+	 * @param loadings
+	 * @param shoot
+	 */
+	public record StateSounds(LoadingSounds loadings, RegistryEntry<SoundEvent> shoot) {
+	}
 }
