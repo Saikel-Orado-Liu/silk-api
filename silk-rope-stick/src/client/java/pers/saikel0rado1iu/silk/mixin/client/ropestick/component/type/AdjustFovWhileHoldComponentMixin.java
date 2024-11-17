@@ -19,6 +19,7 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
@@ -32,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileHoldComponent;
 
 import java.util.Optional;
@@ -62,7 +63,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			if (player == null) return;
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
-			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(mainHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
@@ -74,7 +75,7 @@ interface AdjustFovWhileHoldComponentMixin {
 					fovMultiplier -= fovChangeAmount;
 				}
 			});
-			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(offHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.isConflictItem(mainHandItem)) return;
 				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
@@ -105,7 +106,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			if (player == null) return;
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
-			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(mainHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
@@ -117,7 +118,7 @@ interface AdjustFovWhileHoldComponentMixin {
 					args.set(1, (double) args.get(1) * Math.pow(component.adjustFov().fovScalingMultiple(), 3));
 				}
 			});
-			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(offHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.isConflictItem(mainHandItem)) return;
 				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
@@ -138,7 +139,7 @@ interface AdjustFovWhileHoldComponentMixin {
 			if (player == null) return;
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
-			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(mainHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
@@ -150,7 +151,7 @@ interface AdjustFovWhileHoldComponentMixin {
 					args.set(1, (double) args.get(1) * Math.pow(component.adjustFov().fovScalingMultiple(), 3));
 				}
 			});
-			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(offHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.isConflictItem(mainHandItem)) return;
 				if (!component.canAdjust()) return;
 				if (component.adjustFov().onlyFirstPerson()) {
@@ -206,13 +207,13 @@ interface AdjustFovWhileHoldComponentMixin {
 		}
 		
 		@Inject(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "L net/minecraft/client/option/Perspective;isFirstPerson()Z", shift = At.Shift.BY))
-		private void setRender(DrawContext context, float tickDelta, CallbackInfo ci) {
+		private void setRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 			ClientPlayerEntity player = client.player;
 			if (player == null) return;
 			ItemStack mainHandItem = player.getMainHandStack();
 			ItemStack offHandItem = player.getOffHandStack();
-			hudScale = MathHelper.lerp(0.5F * client.getLastFrameDuration(), hudScale, 1.125F);
-			Optional.ofNullable(mainHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			hudScale = MathHelper.lerp(0.5F * tickCounter.getLastFrameDuration(), hudScale, 1.125F);
+			Optional.ofNullable(mainHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.adjustFov().hudOverlay().isEmpty()) return;
 				if (!component.canAdjust()) return;
 				if (client.options.getPerspective().isFirstPerson()) {
@@ -220,7 +221,7 @@ interface AdjustFovWhileHoldComponentMixin {
 					else renderHudOverlay(context, component.adjustFov().hudOverlay().get(), hudScale);
 				}
 			});
-			Optional.ofNullable(offHandItem.get(DataComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
+			Optional.ofNullable(offHandItem.get(ComponentTypes.ADJUST_FOV_WHILE_HOLD)).ifPresent(component -> {
 				if (component.adjustFov().hudOverlay().isEmpty()) return;
 				if (!component.canAdjust()) return;
 				if (client.options.getPerspective().isFirstPerson()) {

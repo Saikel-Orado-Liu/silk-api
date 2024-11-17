@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileHoldComponent;
 
 import java.util.Optional;
@@ -47,12 +47,12 @@ abstract class ModifyMoveWhileHoldComponentMixin extends AbstractClientPlayerEnt
 	private void applyMovementMultiple(CallbackInfo ci) {
 		ItemStack mainHandItem = getMainHandStack();
 		ItemStack offHandItem = getOffHandStack();
-		Optional.ofNullable(mainHandItem.get(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD)).ifPresent(component -> {
+		Optional.ofNullable(mainHandItem.get(ComponentTypes.MODIFY_MOVE_WHILE_HOLD)).ifPresent(component -> {
 			if (!component.canModify()) return;
 			input.movementSideways *= component.modifyMove().moveSpeedMultiple();
 			input.movementForward *= component.modifyMove().moveSpeedMultiple();
 		});
-		Optional.ofNullable(offHandItem.get(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD)).ifPresent(component -> {
+		Optional.ofNullable(offHandItem.get(ComponentTypes.MODIFY_MOVE_WHILE_HOLD)).ifPresent(component -> {
 			if (component.isConflictItem(mainHandItem)) return;
 			if (!component.canModify()) return;
 			input.movementSideways *= component.modifyMove().moveSpeedMultiple();
