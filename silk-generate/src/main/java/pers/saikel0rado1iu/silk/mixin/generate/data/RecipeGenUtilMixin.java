@@ -11,7 +11,10 @@
 
 package pers.saikel0rado1iu.silk.mixin.generate.data;
 
-import net.minecraft.data.server.recipe.*;
+import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
@@ -47,7 +50,7 @@ interface RecipeGenUtilMixin {
 		
 		@ModifyVariable(method = "offerTo", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 		private Identifier offerTo(Identifier identifier) {
-			return new Identifier(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(input, getOutputItem()) : identifier.getNamespace(), identifier.getPath());
+			return Identifier.of(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(input, getOutputItem()) : identifier.getNamespace(), identifier.getPath());
 		}
 	}
 	
@@ -62,7 +65,7 @@ interface RecipeGenUtilMixin {
 		
 		@ModifyVariable(method = "offerTo", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 		private Identifier offerTo(Identifier identifier) {
-			return new Identifier(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(getInput(inputs), getOutputItem()) : identifier.getNamespace(), identifier.getPath());
+			return Identifier.of(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(getInput(inputs), getOutputItem()) : identifier.getNamespace(), identifier.getPath());
 		}
 	}
 	
@@ -73,26 +76,11 @@ interface RecipeGenUtilMixin {
 	abstract class ShapelessRecipeJsonBuilderMixin implements CraftingRecipeJsonBuilder {
 		@Shadow
 		@Final
-		private DefaultedList<Ingredient> inputs;
+		public DefaultedList<Ingredient> inputs;
 		
 		@ModifyVariable(method = "offerTo", at = @At("HEAD"), ordinal = 0, argsOnly = true)
 		private Identifier offerTo(Identifier identifier) {
-			return new Identifier(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(getInput(inputs), getOutputItem()) : identifier.getNamespace(), identifier.getPath());
-		}
-	}
-	
-	/**
-	 * 单物品配方 JSON 构建器混入
-	 */
-	@Mixin(SingleItemRecipeJsonBuilder.class)
-	abstract class SingleItemRecipeJsonBuilderMixin implements CraftingRecipeJsonBuilder {
-		@Shadow
-		@Final
-		private Ingredient input;
-		
-		@ModifyVariable(method = "offerTo", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-		private Identifier offerTo(Identifier identifier) {
-			return new Identifier(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(input, getOutputItem()) : identifier.getNamespace(), identifier.getPath());
+			return Identifier.of(Minecraft.getInstance().id().equals(identifier.getNamespace()) ? getNamespace(getInput(inputs), getOutputItem()) : identifier.getNamespace(), identifier.getPath());
 		}
 	}
 }
