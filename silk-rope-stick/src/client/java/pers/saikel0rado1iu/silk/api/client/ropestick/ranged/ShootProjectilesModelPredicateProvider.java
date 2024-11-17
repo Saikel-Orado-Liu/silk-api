@@ -31,7 +31,7 @@ public interface ShootProjectilesModelPredicateProvider {
 	 * @param <T>            射击拓展物品类型
 	 */
 	static <T extends Item> void register(T shootExpansion) {
-		ModelPredicateProviderRegistry.register(shootExpansion, new Identifier(ShootProjectilesComponent.SHOT_KEY), (stack, world, entity, seed) -> {
+		ModelPredicateProviderRegistry.register(shootExpansion, Identifier.of(ShootProjectilesComponent.SHOT_KEY), (stack, world, entity, seed) -> {
 			if (entity == null) return 0;
 			return ShootProjectilesComponent.isShot(stack) ? 1 : 0;
 		});
