@@ -70,7 +70,7 @@ public class ExtendedItemModelGenerator extends ItemModelGenerator {
 	 * @param itemGroup 物品组
 	 */
 	public void registerItemGroup(RegistryKey<ItemGroup> itemGroup) {
-		registerModel(new Identifier(itemGroup.getValue().getNamespace(), ItemGroupCreator.getIconId(itemGroup.getValue().getPath())).withPrefixedPath("item/"), Models.GENERATED);
+		registerModel(Identifier.of(itemGroup.getValue().getNamespace(), ItemGroupCreator.getIconId(itemGroup.getValue().getPath())).withPrefixedPath("item/"), Models.GENERATED);
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class ExtendedItemModelGenerator extends ItemModelGenerator {
 	 */
 	public void registerBlockItem(BlockItem blockItem) {
 		Block block = blockItem.getBlock();
-		register(blockItem, new Model(Optional.of(new Identifier(Registries.BLOCK.getId(block).getNamespace(), "block/" + Registries.BLOCK.getId(block).getPath())), Optional.empty()));
+		register(blockItem, new Model(Optional.of(Identifier.of(Registries.BLOCK.getId(block).getNamespace(), "block/" + Registries.BLOCK.getId(block).getPath())), Optional.empty()));
 	}
 	
 	/**
