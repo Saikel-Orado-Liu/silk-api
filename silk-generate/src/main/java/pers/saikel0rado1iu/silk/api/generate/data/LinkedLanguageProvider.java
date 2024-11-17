@@ -198,7 +198,7 @@ public abstract class LinkedLanguageProvider extends FabricLanguageProvider {
 			
 			return writeToPath(writer, langEntryJson, dataOutput
 					.getResolver(DataOutput.OutputType.RESOURCE_PACK, "lang")
-					.resolveJson(new Identifier(dataOutput.getModId(), languageCode)));
+					.resolveJson(Identifier.of(dataOutput.getModId(), languageCode)));
 		});
 	}
 }
