@@ -11,17 +11,16 @@
 
 package pers.saikel0rado1iu.silk.mixin.generate.advancement.criterion;
 
-import net.minecraft.entity.Entity;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.Criteria;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.ShotProjectileCriterion;
@@ -41,17 +40,9 @@ interface ShotProjectileCriterionMixin {
 	 */
 	@Mixin(net.minecraft.item.RangedWeaponItem.class)
 	abstract class RangedWeaponItem {
-		@Unique
-		private Entity persistentProjectileEntity;
-		
-		@ModifyArg(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
-		private Entity getEntity(Entity entity) {
-			return persistentProjectileEntity = entity;
-		}
-		
-		@Inject(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z", shift = At.Shift.AFTER))
-		private void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, LivingEntity target, CallbackInfo ci) {
-			if (shooter instanceof ServerPlayerEntity serverPlayer) Criteria.SHOT_PROJECTILE_CRITERION.trigger(serverPlayer, stack, persistentProjectileEntity);
+		@Inject(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/server/world/ServerWorld;spawnEntity(L net/minecraft/entity/Entity;)Z", shift = At.Shift.AFTER))
+		private void shootAll(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, LivingEntity target, CallbackInfo ci, @Local ProjectileEntity projectile) {
+			if (shooter instanceof ServerPlayerEntity serverPlayer) Criteria.SHOT_PROJECTILE_CRITERION.trigger(serverPlayer, stack, projectile);
 		}
 	}
 }
