@@ -37,7 +37,7 @@ public abstract class OptionsTab extends ScreenTab {
 	
 	@Override
 	public void init(MinecraftClient client, TextRenderer textRenderer, int width, int height) {
-		optionMenuWidget = new OptionMenuWidget(client, width, height, parent);
+		optionMenuWidget = new OptionMenuWidget(client, width, parent);
 		addOptions(optionMenuWidget);
 		addSelectableChild(optionMenuWidget);
 	}
