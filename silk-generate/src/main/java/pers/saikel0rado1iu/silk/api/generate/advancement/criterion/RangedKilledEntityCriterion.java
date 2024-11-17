@@ -156,7 +156,7 @@ public class RangedKilledEntityCriterion extends AbstractCriterion<RangedKilledE
 			if (target.isPresent() && !target.get().test(killedEntityContext)) return false;
 			if (entity == null) return false;
 			String[] id = Optional.ofNullable(Optional.ofNullable(entity.getCustomName()).orElse(Text.literal("")).getLiteralString()).orElse("").split(":");
-			ItemStack stack = new ItemStack("".equals(id[0]) ? Items.AIR : Registries.ITEM.get(new Identifier(id[0], id[1])));
+			ItemStack stack = new ItemStack("".equals(id[0]) ? Items.AIR : Registries.ITEM.get(Identifier.of(id[0], id[1])));
 			if (ranged.isEmpty() || !ranged.get().test(stack)) return false;
 			if (projectile.isPresent() && !projectile.get().test(player, entity)) return false;
 			CountState.Data data = CountState.getPlayerState(player);
