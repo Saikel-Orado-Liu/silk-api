@@ -19,6 +19,7 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Colors;
@@ -33,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileUseComponent;
 
 import java.util.Optional;
@@ -63,15 +64,15 @@ interface AdjustFovWhileUseComponentMixin {
 			if (player == null) return;
 			ItemStack activeStack = player.getActiveItem();
 			Item activeItem = activeStack.getItem();
-			Optional.ofNullable(activeStack.get(DataComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
+			Optional.ofNullable(activeStack.get(ComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
-						float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeItem.getMaxUseTime(activeStack) - player.getItemUseTimeLeft(), activeStack);
+						float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack, player, activeItem.getMaxUseTime(activeStack, player) - player.getItemUseTimeLeft());
 						float fovChangeAmount = (1 - component.adjustFov().fovScalingMultiple()) * pullProgress;
 						fovMultiplier -= fovChangeAmount;
 					}
 				} else {
-					float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeItem.getMaxUseTime(activeStack) - player.getItemUseTimeLeft(), activeStack);
+					float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack, player, activeItem.getMaxUseTime(activeStack, player) - player.getItemUseTimeLeft());
 					float fovChangeAmount = (1 - component.adjustFov().fovScalingMultiple()) * pullProgress;
 					fovMultiplier -= fovChangeAmount;
 				}
@@ -93,16 +94,16 @@ interface AdjustFovWhileUseComponentMixin {
 			ClientPlayerEntity player = client.player;
 			if (player == null) return;
 			ItemStack activeStack = player.getActiveItem();
-			Optional.ofNullable(activeStack.get(DataComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
+			Optional.ofNullable(activeStack.get(ComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
-						float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack.getMaxUseTime() - player.getItemUseTimeLeft(), activeStack);
+						float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack, player, activeStack.getMaxUseTime(player) - player.getItemUseTimeLeft());
 						float moveMultiple = (float) (Math.pow(1 - (1 - component.adjustFov().fovScalingMultiple()) * pullProgress, 3));
 						args.set(0, (double) args.get(0) * moveMultiple);
 						args.set(1, (double) args.get(1) * moveMultiple);
 					}
 				} else {
-					float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack.getMaxUseTime() - player.getItemUseTimeLeft(), activeStack);
+					float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack, player, activeStack.getMaxUseTime(player) - player.getItemUseTimeLeft());
 					float moveMultiple = (float) (Math.pow(1 - (1 - component.adjustFov().fovScalingMultiple()) * pullProgress, 3));
 					args.set(0, (double) args.get(0) * moveMultiple);
 					args.set(1, (double) args.get(1) * moveMultiple);
@@ -115,16 +116,16 @@ interface AdjustFovWhileUseComponentMixin {
 			ClientPlayerEntity player = client.player;
 			if (player == null) return;
 			ItemStack activeStack = player.getActiveItem();
-			Optional.ofNullable(activeStack.get(DataComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
+			Optional.ofNullable(activeStack.get(ComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
 				if (component.adjustFov().onlyFirstPerson()) {
 					if (client.options.getPerspective().isFirstPerson()) {
-						float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack.getMaxUseTime() - player.getItemUseTimeLeft(), activeStack);
+						float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack, player, activeStack.getMaxUseTime(player) - player.getItemUseTimeLeft());
 						float moveMultiple = (float) (Math.pow(1 - (1 - component.adjustFov().fovScalingMultiple()) * pullProgress, 3));
 						args.set(0, (double) args.get(0) * moveMultiple);
 						args.set(1, (double) args.get(1) * moveMultiple);
 					}
 				} else {
-					float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack.getMaxUseTime() - player.getItemUseTimeLeft(), activeStack);
+					float pullProgress = AdjustFovWhileUseComponent.getUsingProgress(activeStack, player, activeStack.getMaxUseTime(player) - player.getItemUseTimeLeft());
 					float moveMultiple = (float) (Math.pow(1 - (1 - component.adjustFov().fovScalingMultiple()) * pullProgress, 3));
 					args.set(0, (double) args.get(0) * moveMultiple);
 					args.set(1, (double) args.get(1) * moveMultiple);
@@ -146,9 +147,6 @@ interface AdjustFovWhileUseComponentMixin {
 		
 		@Shadow
 		protected abstract void renderOverlay(DrawContext context, Identifier texture, float opacity);
-		
-		@Shadow
-		public abstract void render(DrawContext context, float tickDelta);
 		
 		@Unique
 		private void renderHudOverlay(DrawContext context, Identifier texture, float scale) {
@@ -175,13 +173,13 @@ interface AdjustFovWhileUseComponentMixin {
 		}
 		
 		@Inject(method = "renderMiscOverlays", at = @At(value = "INVOKE", target = "L net/minecraft/client/option/Perspective;isFirstPerson()Z", shift = At.Shift.BY))
-		private void setRender(DrawContext context, float tickDelta, CallbackInfo ci) {
+		private void setRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
 			ClientPlayerEntity player = client.player;
 			if (player == null) return;
 			ItemStack activeStack = player.getActiveItem();
-			hudScale = MathHelper.lerp(0.5F * client.getLastFrameDuration(), hudScale, 1.125F);
+			hudScale = MathHelper.lerp(0.5F * tickCounter.getLastFrameDuration(), hudScale, 1.125F);
 			if (!client.options.getPerspective().isFirstPerson()) return;
-			Optional.ofNullable(activeStack.get(DataComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
+			Optional.ofNullable(activeStack.get(ComponentTypes.ADJUST_FOV_WHILE_USE)).ifPresent(component -> {
 				if (component.adjustFov().hudOverlay().isEmpty()) return;
 				if (component.adjustFov().canStretchHud()) renderOverlay(context, component.adjustFov().hudOverlay().get(), 1);
 				else renderHudOverlay(context, component.adjustFov().hudOverlay().get(), hudScale);

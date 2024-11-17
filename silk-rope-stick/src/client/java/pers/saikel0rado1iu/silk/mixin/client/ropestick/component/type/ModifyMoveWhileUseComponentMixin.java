@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileUseComponent;
 
@@ -52,7 +52,7 @@ abstract class ModifyMoveWhileUseComponentMixin extends AbstractClientPlayerEnti
 	private void applyMovementMultiple(CallbackInfo ci) {
 		ItemStack stack = getStackInHand(getActiveHand());
 		if (!isUsingItem()) return;
-		Optional.ofNullable(stack.get(DataComponentTypes.MODIFY_MOVE_WHILE_USE)).ifPresent(component -> {
+		Optional.ofNullable(stack.get(ComponentTypes.MODIFY_MOVE_WHILE_USE)).ifPresent(component -> {
 			input.movementSideways /= ModifyMoveData.DEFAULT_SPEED_MULTIPLE;
 			input.movementSideways *= component.modifyMove().moveSpeedMultiple();
 			input.movementForward /= ModifyMoveData.DEFAULT_SPEED_MULTIPLE;
