@@ -56,7 +56,7 @@ public interface ModData extends ModPass {
 	 * @return 标识符
 	 */
 	default Identifier ofId(String path) {
-		return new Identifier(id(), path);
+		return Identifier.of(id(), path);
 	}
 	
 	/**
@@ -166,7 +166,7 @@ public interface ModData extends ModPass {
 	 */
 	default Optional<Identifier> icon() {
 		Optional<String> path = mod().getMetadata().getIconPath(4);
-		return path.map(id -> new Identifier(id(), "icon.png"));
+		return path.map(id -> Identifier.of(id(), "icon.png"));
 	}
 	
 	/**
