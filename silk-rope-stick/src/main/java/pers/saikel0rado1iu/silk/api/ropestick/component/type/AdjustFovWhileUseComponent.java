@@ -13,6 +13,7 @@ package pers.saikel0rado1iu.silk.api.ropestick.component.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
@@ -55,14 +56,15 @@ public record AdjustFovWhileUseComponent(AdjustFovData adjustFov) {
 	/**
 	 * 获取使用进度
 	 *
-	 * @param useTicks 使用刻数
 	 * @param stack    物品堆栈
+	 * @param user     使用实体
+	 * @param useTicks 使用刻数
 	 * @return 使用进度，在 0 和 1 之间的浮点数
 	 */
-	public static float getUsingProgress(int useTicks, ItemStack stack) {
+	public static float getUsingProgress(ItemStack stack, LivingEntity user, int useTicks) {
 		Item item = stack.getItem();
-		if (item instanceof BowLikeItem bow) return bow.getUsingProgress(useTicks, stack);
-		else if (item instanceof CrossbowLikeItem crossbow) return crossbow.getUsingProgress(useTicks, stack);
-		return Math.min(1, (float) useTicks / stack.getMaxUseTime());
+		if (item instanceof BowLikeItem bow) return bow.getUsingProgress(stack, user, useTicks);
+		else if (item instanceof CrossbowLikeItem crossbow) return crossbow.getUsingProgress(stack, user, useTicks);
+		return Math.min(1, (float) useTicks / stack.getMaxUseTime(user));
 	}
 }
