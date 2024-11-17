@@ -63,10 +63,8 @@ public class ModTab extends ScreenTab {
 		addDrawableChild(ButtonHelper.link(parent, modData(), ModData.LinkType.COMMUNITY, linkTrusted()).dimensions(buttonX, TAP_TOP + INTERVAL + LOGO_SIDE - buttonHeight, width / 2 - width / 60 - buttonX - iconAdd, buttonHeight).build());
 		logTitle = addDrawableChild(new TextWidget(WidgetTexts.title(modData(), "changelog"), textRenderer));
 		targetTitle = addDrawableChild(new TextWidget(WidgetTexts.title(modData(), "target"), textRenderer));
-		changelogWidget = addDrawableChild(new TextListWidget(client, width / 2 - width / 30, TAP_TOP + INTERVAL * 3, height - TAP_BOTTOM - INTERVAL, 12, Changelog.read(modData(), client.getLanguageManager().getLanguage())));
-		targetWidget = addDrawableChild(new TextListWidget(client, width / 2 - width / 30, TAP_TOP + INTERVAL * 4 + LOGO_SIDE, height - TAP_BOTTOM - INTERVAL, 12, WidgetTexts.text(modData(), "target").getString()));
-		changelogWidget.setX(width / 2 + width / 60);
-		targetWidget.setX(width / 60);
+		changelogWidget = addDrawableChild(new TextListWidget(width / 2 + width / 60, TAP_TOP + INTERVAL * 3, width / 2 - width / 30, height - TAP_BOTTOM - TAP_TOP - INTERVAL * 4, textRenderer, Changelog.read(modData(), client.getLanguageManager().getLanguage())));
+		targetWidget = addDrawableChild(new TextListWidget(width / 60, TAP_TOP + INTERVAL * 4 + LOGO_SIDE, width / 2 - width / 30, height - TAP_BOTTOM - TAP_TOP - INTERVAL * 5 - LOGO_SIDE, textRenderer, WidgetTexts.text(modData(), "target").getString()));
 	}
 	
 	@Override
