@@ -43,8 +43,8 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 public final class SettingOptionHelper extends OptionListWidget {
-	private SettingOptionHelper(MinecraftClient minecraftClient, int width, int height, GameOptionsScreen optionsScreen) {
-		super(minecraftClient, width, height, optionsScreen);
+	private SettingOptionHelper(MinecraftClient minecraftClient, int width, GameOptionsScreen optionsScreen) {
+		super(minecraftClient, width, optionsScreen);
 	}
 	
 	/**
