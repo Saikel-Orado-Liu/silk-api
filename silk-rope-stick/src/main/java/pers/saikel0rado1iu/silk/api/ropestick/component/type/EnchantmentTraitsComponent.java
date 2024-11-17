@@ -17,7 +17,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +44,8 @@ public record EnchantmentTraitsComponent(List<EnchantmentTrait> enchantments) {
 	 * @param enchantments 附魔列表
 	 * @return 附魔特质组件
 	 */
-	public static EnchantmentTraitsComponent of(Enchantment... enchantments) {
+	@SafeVarargs
+	public static EnchantmentTraitsComponent of(RegistryKey<Enchantment>... enchantments) {
 		return new EnchantmentTraitsComponent(Arrays.stream(enchantments).map(EnchantmentTrait::create).toList());
 	}
 	
@@ -65,10 +67,10 @@ public record EnchantmentTraitsComponent(List<EnchantmentTrait> enchantments) {
 	 * @param threshold   冲突阈值，冲突阈值代表了附魔几种冲突魔咒后才无法附魔其他的冲突魔咒。
 	 *                    默认为 0，不允许附魔冲突魔咒。
 	 */
-	public record EnchantmentTrait(Enchantment enchantment, List<Enchantment> conflicts, int threshold) {
+	public record EnchantmentTrait(RegistryKey<Enchantment> enchantment, List<RegistryKey<Enchantment>> conflicts, int threshold) {
 		public static final Codec<EnchantmentTrait> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-						Registries.ENCHANTMENT.getCodec().fieldOf("enchantment").forGetter(EnchantmentTrait::enchantment),
-						Registries.ENCHANTMENT.getCodec().listOf().optionalFieldOf("conflicts", List.of()).forGetter(EnchantmentTrait::conflicts),
+						RegistryKey.createCodec(RegistryKeys.ENCHANTMENT).fieldOf("enchantment").forGetter(EnchantmentTrait::enchantment),
+						RegistryKey.createCodec(RegistryKeys.ENCHANTMENT).listOf().optionalFieldOf("conflicts", List.of()).forGetter(EnchantmentTrait::conflicts),
 						Codec.INT.optionalFieldOf("threshold", 0).forGetter(EnchantmentTrait::threshold))
 				.apply(builder, EnchantmentTrait::new));
 		
@@ -79,7 +81,8 @@ public record EnchantmentTraitsComponent(List<EnchantmentTrait> enchantments) {
 		 * @param conflicts   冲突魔咒
 		 * @return 特殊附魔数据
 		 */
-		public static EnchantmentTrait create(Enchantment enchantment, Enchantment... conflicts) {
+		@SafeVarargs
+		public static EnchantmentTrait create(RegistryKey<Enchantment> enchantment, RegistryKey<Enchantment>... conflicts) {
 			return create(enchantment, Arrays.stream(conflicts).toList(), 0);
 		}
 		
@@ -92,7 +95,7 @@ public record EnchantmentTraitsComponent(List<EnchantmentTrait> enchantments) {
 		 *                    默认为 0，不允许附魔冲突魔咒。
 		 * @return 特殊附魔数据
 		 */
-		public static EnchantmentTrait create(Enchantment enchantment, List<Enchantment> conflicts, int threshold) {
+		public static EnchantmentTrait create(RegistryKey<Enchantment> enchantment, List<RegistryKey<Enchantment>> conflicts, int threshold) {
 			return new EnchantmentTrait(enchantment, conflicts, threshold);
 		}
 	}

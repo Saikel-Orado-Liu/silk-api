@@ -13,14 +13,15 @@ package pers.saikel0rado1iu.silk.api.ropestick.ranged;
 
 import com.google.common.collect.Lists;
 import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.client.item.TooltipType;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -28,7 +29,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentUtil;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentUtil;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ProjectileContainerComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ShootProjectilesComponent;
@@ -36,7 +37,7 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.type.ShootProjectilesCom
 import java.util.List;
 import java.util.Optional;
 
-import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.*;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes.*;
 
 /**
  * <h2 style="color:FFC800">半自动枪械物品</h2>
@@ -86,9 +87,9 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 	
 	@Override
 	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-		if (getUsingProgress(getMaxUseTime(stack) - remainingUseTicks, stack) != 1 || isCharged(stack) || !load(user, stack)) return;
+		if (getUsingProgress(stack, user, getMaxUseTime(stack, user) - remainingUseTicks) != 1 || isCharged(stack) || !load(user, stack)) return;
 		// 播放弩装填结束音效
-		world.playSound(null, user.getX(), user.getY(), user.getZ(), loadedSound(), user.getSoundCategory(), 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F);
+		stateSounds(stack).loadings().end().ifPresent(sound -> world.playSound(null, user.getX(), user.getY(), user.getZ(), sound, user.getSoundCategory(), 1, 1 / (world.getRandom().nextFloat() * 0.5F + 1) + 0.2F));
 	}
 	
 	@Override
@@ -120,10 +121,10 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 	
 	@Override
 	public void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, float speed, float divergence, @Nullable LivingEntity livingEntity) {
-		if (world.isClient()) return;
-		Optional<ChargedProjectilesComponent> chargedProjectilesComponent = DataComponentUtil.getOrSetDefault(stack, DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT);
+		if (!(world instanceof ServerWorld serverWorld)) return;
+		Optional<ChargedProjectilesComponent> chargedProjectilesComponent = ComponentUtil.getOrSetDefault(stack, DataComponentTypes.CHARGED_PROJECTILES, ChargedProjectilesComponent.DEFAULT);
 		if (chargedProjectilesComponent.isEmpty() || chargedProjectilesComponent.get().isEmpty()) return;
-		shootAll(world, shooter, hand, stack, List.of(ProjectileContainerComponent.popChargedProjectiles(stack)), speed, divergence, shooter instanceof PlayerEntity, livingEntity);
+		shootAll(serverWorld, shooter, hand, stack, List.of(ProjectileContainerComponent.popChargedProjectiles(stack)), speed, divergence, shooter instanceof PlayerEntity, livingEntity);
 		if (shooter instanceof ServerPlayerEntity serverPlayerEntity) {
 			Criteria.SHOT_CROSSBOW.trigger(serverPlayerEntity, stack);
 			serverPlayerEntity.incrementStat(Stats.USED.getOrCreateStat(stack.getItem()));
@@ -131,7 +132,7 @@ public abstract class SemiAutomaticFirearmItem extends CrossbowLikeItem {
 	}
 	
 	@Override
-	protected void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target) {
+	protected void shootAll(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target) {
 		for (ItemStack projectile : projectiles) {
 			super.shootAll(world, shooter, hand, stack, load(stack, projectile, shooter), speed, divergence, critical, target);
 		}

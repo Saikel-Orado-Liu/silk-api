@@ -16,7 +16,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.component.type.ChargedProjectilesComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,12 +27,13 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 import static net.minecraft.component.DataComponentTypes.CHARGED_PROJECTILES;
-import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">远程武器组件</h2>
@@ -186,14 +186,13 @@ public record RangedWeaponComponent(float maxSpeed,
 	/**
 	 * 获取“快速装填”刻数
 	 *
-	 * @param ticks 原始刻数
 	 * @param stack 物品堆栈
+	 * @param user  使用实体
+	 * @param ticks 原始刻数
 	 * @return 有“快速装填”附魔的刻数
 	 */
-	public static int getQuickTicks(int ticks, ItemStack stack) {
-		// 设置“快速装填”效果
-		int quickChargeLevel = EnchantmentHelper.getLevel(Enchantments.QUICK_CHARGE, stack);
-		return quickChargeLevel == 0 ? ticks : ticks - ticks / 5 * quickChargeLevel;
+	public static int getQuickTicks(ItemStack stack, LivingEntity user, int ticks) {
+		return MathHelper.floor(EnchantmentHelper.getCrossbowChargeTime(stack, user, ticks));
 	}
 	
 	/**

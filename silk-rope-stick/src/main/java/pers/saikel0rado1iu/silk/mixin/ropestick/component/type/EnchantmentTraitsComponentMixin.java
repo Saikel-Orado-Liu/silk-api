@@ -13,21 +13,24 @@ package pers.saikel0rado1iu.silk.mixin.ropestick.component.type;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.component.ComponentHolder;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.EnchantmentTraitsComponent;
 
 import static net.minecraft.component.DataComponentTypes.ENCHANTMENTS;
@@ -42,24 +45,37 @@ import static net.minecraft.component.DataComponentTypes.ENCHANTMENTS;
 interface EnchantmentTraitsComponentMixin {
 	@Mixin(Enchantment.class)
 	abstract class SetAcceptEnchantment {
+		@Shadow
+		@Final
+		private Text description;
+		
 		@Unique
-		private static Identifier getId(Enchantment enchantment) {
-			return Registries.ENCHANTMENT.getId(enchantment);
+		private static Identifier getId(RegistryKey<Enchantment> enchantment) {
+			return enchantment.getValue();
+		}
+		
+		@Unique
+		private static String getKey(RegistryKey<Enchantment> enchantment) {
+			return String.format("enchantment.%s.%s", enchantment.getValue().getNamespace(), enchantment.getValue().getPath());
 		}
 		
 		/**
 		 * 如果物品为自定义物品判断此魔咒是否包含在自定义魔咒中，所以请忽略 'EqualsBetweenInconvertibleTypes' 警告
 		 */
-		@SuppressWarnings({"DataFlowIssue"})
 		@Inject(method = "isAcceptableItem", at = @At("RETURN"), cancellable = true)
 		private void acceptEnchantment(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-			EnchantmentTraitsComponent component = stack.get(DataComponentTypes.ENCHANTMENT_TRAITS);
+			EnchantmentTraitsComponent component = stack.get(ComponentTypes.ENCHANTMENT_TRAITS);
 			if (component == null) return;
 			component.enchantments().forEach(trait -> {
-				if (!getId(trait.enchantment()).equals(getId((Enchantment) (Object) this))) return;
+				// 使用魔咒的翻译键判断是否为同一魔咒，可能对于没有翻译文本以及特殊翻译键的魔咒无法索引，但这是目前唯一能实现的方法。
+				if (!(description.getContent() instanceof TranslatableTextContent content)) return;
+				if (!getKey(trait.enchantment()).equals(content.getKey())) return;
 				int conflictNum = 0;
-				for (Enchantment enchantment : trait.conflicts()) {
-					if (stack.getEnchantments().getEnchantments().stream().anyMatch(entry -> getId(enchantment).equals(getId(entry.value())))) conflictNum++;
+				for (RegistryKey<Enchantment> enchantment : trait.conflicts()) {
+					if (stack.getEnchantments().getEnchantments().stream().anyMatch(entry ->
+							getId(enchantment).equals(getId(entry.getKey().orElseThrow())))) {
+						conflictNum++;
+					}
 				}
 				if (conflictNum > trait.threshold()) cir.setReturnValue(false);
 				else cir.setReturnValue(true);
@@ -74,14 +90,14 @@ interface EnchantmentTraitsComponentMixin {
 		
 		@Shadow
 		@Nullable
-		public abstract <T> T set(DataComponentType<? super T> type, @Nullable T value);
+		public abstract <T> T set(ComponentType<? super T> type, @Nullable T value);
 		
 		@Inject(method = "isEnchantable", at = @At("HEAD"), cancellable = true)
 		private void setEnchantment(CallbackInfoReturnable<Boolean> cir) {
 			if (!getItem().isEnchantable((ItemStack) (Object) this)) {
 				cir.setReturnValue(false);
 			} else {
-				if (contains(DataComponentTypes.ENCHANTMENT_TRAITS) && !contains(ENCHANTMENTS)) set(ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
+				if (contains(ComponentTypes.ENCHANTMENT_TRAITS) && !contains(ENCHANTMENTS)) set(ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT);
 				ItemEnchantmentsComponent itemEnchantmentsComponent = get(ENCHANTMENTS);
 				cir.setReturnValue(itemEnchantmentsComponent != null && itemEnchantmentsComponent.isEmpty());
 			}

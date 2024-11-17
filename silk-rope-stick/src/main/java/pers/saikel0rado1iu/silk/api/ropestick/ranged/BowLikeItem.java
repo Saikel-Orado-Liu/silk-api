@@ -19,13 +19,14 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DynamicComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponComponent;
 
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.RANGED_WEAPON;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes.RANGED_WEAPON;
 
 /**
  * <h2 style="color:FFC800">类弓物品</h2>
@@ -71,23 +72,23 @@ public abstract class BowLikeItem extends BowItem implements DynamicComponent {
 		ItemStack projectile = RangedWeaponComponent.getProjectileType(user, stack);
 		if (projectile.isEmpty()) return;
 		// 获取弓已使用游戏刻
-		int usedTicks = getMaxUseTime(stack) - remainingUseTicks;
+		int usedTicks = getMaxUseTime(stack, user) - remainingUseTicks;
 		// 获取弓拉弓进度
-		float progress = getUsingProgress(usedTicks, stack);
+		float progress = getUsingProgress(stack, user, usedTicks);
 		// 如果拉弓进度小于 0.1
 		if (progress < 0.1) return;
 		List<ItemStack> list = load(stack, projectile, player);
-		if (!world.isClient() && !list.isEmpty()) {
+		if (world instanceof ServerWorld serverWorld && !list.isEmpty()) {
 			// 设置箭矢速度与设计误差
-			RangedWeaponComponent component = stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
-			shootAll(world, player, player.getActiveHand(), stack, list, progress * component.maxSpeed(), component.firingError(), progress == 1, null);
+			RangedWeaponComponent component = stack.getOrDefault(ComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
+			shootAll(serverWorld, player, player.getActiveHand(), stack, list, progress * component.maxSpeed(), component.firingError(), progress == 1, null);
 		}
 		world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1, 1 / (world.getRandom().nextFloat() * 0.4F + 1.2F) + progress * 0.5F);
 		player.incrementStat(Stats.USED.getOrCreateStat(this));
 	}
 	
 	@Override
-	protected void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target) {
+	protected void shootAll(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, @Nullable LivingEntity target) {
 		super.shootAll(world, shooter, hand, tempStack = stack, projectiles, speed, divergence, critical, target);
 	}
 	
@@ -96,7 +97,7 @@ public abstract class BowLikeItem extends BowItem implements DynamicComponent {
 		if (projectile instanceof PersistentProjectileEntity persistentProjectile) {
 			persistentProjectile.setVelocity(shooter, shooter.getPitch(), shooter.getYaw() + yaw, 0, speed, divergence);
 			// 设置基础伤害增加
-			RangedWeaponComponent component = tempStack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(tempStack)));
+			RangedWeaponComponent component = tempStack.getOrDefault(ComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(tempStack)));
 			persistentProjectile.setDamage(component.adjustedProjectileDamage());
 		} else {
 			super.shoot(shooter, projectile, index, speed, divergence, yaw, target);
@@ -106,24 +107,25 @@ public abstract class BowLikeItem extends BowItem implements DynamicComponent {
 	
 	@Override
 	public Predicate<ItemStack> getProjectiles() {
-		return stack -> stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack))).launchableProjectiles().stream().anyMatch(stack::isOf);
+		return stack -> stack.getOrDefault(ComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack))).launchableProjectiles().stream().anyMatch(stack::isOf);
 	}
 	
 	@Override
-	public int getMaxUseTime(ItemStack stack) {
-		return stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack))).maxUseTicks();
+	public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+		return stack.getOrDefault(ComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack))).maxUseTicks();
 	}
 	
 	/**
 	 * 获取使用进度
 	 *
-	 * @param useTicks 使用刻数
 	 * @param stack    物品堆栈
+	 * @param user     使用实体
+	 * @param useTicks 使用刻数
 	 * @return 使用进度
 	 */
-	public float getUsingProgress(int useTicks, ItemStack stack) {
-		RangedWeaponComponent component = stack.getOrDefault(DataComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
-		float progress = (float) useTicks / RangedWeaponComponent.getQuickTicks(component.maxPullTicks(), stack);
+	public float getUsingProgress(ItemStack stack, LivingEntity user, int useTicks) {
+		RangedWeaponComponent component = stack.getOrDefault(ComponentTypes.RANGED_WEAPON, rangedWeapon(Optional.of(stack)));
+		float progress = (float) useTicks / RangedWeaponComponent.getQuickTicks(stack, user, component.maxPullTicks());
 		return Math.min(1, (progress * (progress + 2)) / 3);
 	}
 	
