@@ -18,7 +18,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.Criteria;
 import pers.saikel0rado1iu.silk.api.generate.advancement.criterion.RangedKilledEntityCriterion;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileHoldComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileHoldComponent;
@@ -36,8 +36,8 @@ public final class CrossbowLikeItemTest extends CrossbowLikeItem {
 	 */
 	public CrossbowLikeItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(true, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), false, AdjustFovData.DEFAULT_FOV_SCALING))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
+				.component(ComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(true, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), false, AdjustFovData.DEFAULT_FOV_SCALING))
+				.component(ComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
 	}
 	
 	@Override
