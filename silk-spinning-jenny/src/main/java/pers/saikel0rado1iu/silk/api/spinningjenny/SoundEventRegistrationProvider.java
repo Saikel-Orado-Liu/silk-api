@@ -13,6 +13,7 @@ package pers.saikel0rado1iu.silk.api.spinningjenny;
 
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import org.jetbrains.annotations.ApiStatus;
 import pers.saikel0rado1iu.silk.api.annotation.ServerRegistration;
@@ -60,6 +61,18 @@ public interface SoundEventRegistrationProvider extends MainRegistrationProvider
 		@SuppressWarnings("deprecation")
 		public T register() {
 			return register(type.getId());
+		}
+		
+		/**
+		 * 注册此项目无需提供标识符
+		 *
+		 * @return 注册表项
+		 */
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		public RegistryEntry<T> registerReference() {
+			return registry()
+					.map(registry -> (RegistryEntry) Registry.registerReference((Registry<? super Object>) registry, type.getId(), type))
+					.orElseGet(() -> RegistryEntry.of(register()));
 		}
 	}
 }

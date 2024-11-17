@@ -13,6 +13,7 @@ package pers.saikel0rado1iu.silk.api.modpass.registry;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import pers.saikel0rado1iu.silk.api.annotation.ServerRegistration;
@@ -110,6 +111,20 @@ public interface MainRegistrationProvider<T> extends RegisterableModPass<T> {
 		public R other(Consumer<T> consumer) {
 			consumer.accept(type);
 			return self();
+		}
+		
+		/**
+		 * 进行注册<br>
+		 * 注册标识符为 {@code id}
+		 *
+		 * @param id 注册 ID
+		 * @return 注册表项
+		 */
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		public RegistryEntry<T> registerReference(Identifier id) {
+			return registry()
+					.map(registry -> (RegistryEntry) Registry.registerReference((Registry<? super Object>) registry, id, type))
+					.orElseGet(() -> RegistryEntry.of(register(id)));
 		}
 		
 		/**
