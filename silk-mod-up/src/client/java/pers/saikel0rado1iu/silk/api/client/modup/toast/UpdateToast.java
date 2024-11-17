@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @since 0.1.0
  */
 public abstract class UpdateToast implements Toast {
-	private static final Identifier TEXTURE = new Identifier("toast/advancement");
+	private static final Identifier TEXTURE = Identifier.of("toast/advancement");
 	private static final int SHOW_SEC = 45;
 	private static final int SHOW_TITLE_SEC = SHOW_SEC / 3;
 	private static final int SHOW_TEXT_SEC = SHOW_SEC - SHOW_TITLE_SEC;
