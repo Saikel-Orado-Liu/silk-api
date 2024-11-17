@@ -19,6 +19,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.client.codex.SettingOptionHelper;
 import pers.saikel0rado1iu.silk.api.client.pattern.screen.LinkTrusted;
+import pers.saikel0rado1iu.silk.api.client.pattern.screen.ModScreen;
 import pers.saikel0rado1iu.silk.api.client.pattern.widget.ButtonHelper;
 import pers.saikel0rado1iu.silk.api.codex.*;
 import pers.saikel0rado1iu.silk.api.modpass.ModData;
@@ -94,17 +95,27 @@ public class SettingScreen extends GameOptionsScreen implements LinkTrusted {
 	protected void init() {
 		// 添加"支持我们"按钮
 		addDrawableChild(ButtonHelper.link(this, SilkCodex.getInstance(), ModData.LinkType.SUPPORT, linkTrusted()).position(width - 115, 6).width(110).build());
+		// 添加完成/返回按钮
+		if (parent != null && (parent instanceof SettingScreen || parent instanceof ModScreen)) {
+			addDrawableChild(ButtonHelper.back(this).position(width / 2 - 100, height - 26).width(200).build());
+		} else {
+			addDrawableChild(ButtonHelper.done(this).position(width / 2 - 100, height - 26).width(200).build());
+		}
 		// 添加黑色透明窗口
-		optionListWidget = new OptionListWidget(client, width, height, this);
+		optionListWidget = new OptionListWidget(client, width, this);
 		if (settingData.type() == SettingType.DEVELOPMENT) return;
 		SettingOptionHelper.initOptions(optionListWidget, gameOptions, settingData, this, isDouble, linkTrusted(), save);
 		layout.addBody(optionListWidget);
-		super.init();
+	}
+	
+	@Override
+	protected void addOptions() {
 	}
 	
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
+		context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 15, 0xFFFFFF);
 		SettingOptionHelper.formatOptionRender(optionListWidget, settingData);
 		optionListWidget.render(context, mouseX, mouseY, delta);
 	}
