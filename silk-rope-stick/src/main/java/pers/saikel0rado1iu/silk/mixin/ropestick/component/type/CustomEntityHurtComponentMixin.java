@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.CustomEntityHurtComponent;
 
 /**
@@ -50,7 +50,7 @@ abstract class CustomEntityHurtComponentMixin {
 	private float setDamage(float amount) {
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			ItemStack stack = getEquippedStack(slot);
-			CustomEntityHurtComponent component = stack.get(DataComponentTypes.CUSTOM_ENTITY_HURT);
+			CustomEntityHurtComponent component = stack.get(ComponentTypes.CUSTOM_ENTITY_HURT);
 			if (component == null) continue;
 			if (!component.damageTypes().contains(damageSource.getTypeRegistryEntry().getKey().orElseThrow())) continue;
 			return component.evaluateExpression(stack, amount);

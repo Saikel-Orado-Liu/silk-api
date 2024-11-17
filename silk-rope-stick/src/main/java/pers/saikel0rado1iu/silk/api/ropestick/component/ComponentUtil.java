@@ -11,19 +11,19 @@
 
 package pers.saikel0rado1iu.silk.api.ropestick.component;
 
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.item.ItemStack;
 
 import java.util.Optional;
 
 /**
- * <h2 style="color:FFC800">数据组件实用工具</h2>
+ * <h2 style="color:FFC800">组件实用工具</h2>
  * 用于提供数据组件的部分常用的操作方法
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
  * @since 1.1.2
  */
-public interface DataComponentUtil {
+public interface ComponentUtil {
 	/**
 	 * 获取一个物品堆栈中的一个数据组件或者设置此组件的默认值<br>
 	 * 优先获取存储在物品堆栈中的数据组件，如果此数据组件不存在，则为这个物品设置默认组件值。如果无法设置值则返回 {@link Optional#empty()}
@@ -34,7 +34,7 @@ public interface DataComponentUtil {
 	 * @param <T>          组件类型
 	 * @return 储存的物品中的组件的值
 	 */
-	static <T> Optional<T> getOrSetDefault(ItemStack stack, DataComponentType<T> type, T defaultValue) {
+	static <T> Optional<T> getOrSetDefault(ItemStack stack, ComponentType<T> type, T defaultValue) {
 		T component = stack.get(type);
 		if (component == null) component = stack.set(type, defaultValue);
 		return Optional.ofNullable(component);
@@ -50,7 +50,7 @@ public interface DataComponentUtil {
 	 * @param <T>   组件类型
 	 * @return 储存的物品中的组件的值
 	 */
-	static <T> T setOrGetValue(ItemStack stack, DataComponentType<T> type, T value) {
+	static <T> T setOrGetValue(ItemStack stack, ComponentType<T> type, T value) {
 		T component = stack.set(type, value);
 		return component == null ? stack.getOrDefault(type, value) : component;
 	}
