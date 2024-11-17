@@ -8,8 +8,7 @@
 		"generate.advancement.criterion.ShotProjectileCriterionMixin$RangedWeaponItem",
 		"generate.data.RecipeGenUtilMixin$CookingRecipeJsonBuilderMixin",
 		"generate.data.RecipeGenUtilMixin$ShapedRecipeJsonBuilderMixin",
-		"generate.data.RecipeGenUtilMixin$ShapelessRecipeJsonBuilderMixin",
-		"generate.data.RecipeGenUtilMixin$SingleItemRecipeJsonBuilderMixin"
+		"generate.data.RecipeGenUtilMixin$ShapelessRecipeJsonBuilderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
