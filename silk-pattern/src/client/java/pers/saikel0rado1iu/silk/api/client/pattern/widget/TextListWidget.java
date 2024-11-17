@@ -11,167 +11,71 @@
 
 package pers.saikel0rado1iu.silk.api.client.pattern.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
-import net.minecraft.client.render.*;
-import net.minecraft.text.OrderedText;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
+import net.minecraft.client.gui.widget.*;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.ColorHelper;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 /**
  * <h2 style="color:FFC800">文本列表控件</h2>
- * This code is partially referenced from <a href="https://github.com/TerraformersMC/ModMenu">ModMenu(github)</a>, Attached here is its open source license.
- * MIT License
- * <p>
- * Copyright (c) 2018-2020 Prospector
- * <p>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p>
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * <p>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * 用于显示列表的文本控件
+ *
+ * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @since 0.1.0
  */
-public class TextListWidget extends EntryListWidget<TextListWidget.TextEntry> implements CustomBackground {
-	protected final String text;
-	protected final TextRenderer textRenderer;
+public class TextListWidget extends ScrollableWidget implements CustomBackground {
+	private final Contents contents;
 	
-	/**
-	 * @param client      客户端实例
-	 * @param width       宽度
-	 * @param top         顶部坐标
-	 * @param bottom      底部坐标
-	 * @param entryHeight 条目高度
-	 * @param text        文本列表的文本
-	 */
-	public TextListWidget(MinecraftClient client, int width, int top, int bottom, int entryHeight, String text) {
-		super(client, width, bottom - top, top, entryHeight);
-		this.text = text;
-		textRenderer = client.textRenderer;
+	public TextListWidget(int x, int y, int width, int height, TextRenderer textRenderer, String text) {
+		super(x, y, width, height, Text.empty());
+		ContentsBuilder contentsBuilder = new ContentsBuilder(getGridWidth());
+		contentsBuilder.appendText(textRenderer, Text.literal(text));
+		this.contents = contentsBuilder.build();
 	}
 	
 	@Override
-	public TextEntry getSelectedOrNull() {
-		return null;
+	protected int getContentsHeight() {
+		return contents.grid().getHeight();
 	}
 	
 	@Override
-	public int getRowWidth() {
-		return width - 10;
+	protected double getDeltaYPerScroll() {
+		return 9;
 	}
 	
 	@Override
-	protected int getScrollbarX() {
-		return width - 6 + getX();
+	protected void renderContents(DrawContext context, int mouseX, int mouseY, float delta) {
+		context.getMatrices().push();
+		context.getMatrices().translate(getX() + getPadding(), getY() + getPadding(), 0);
+		contents.grid().forEachChild(widget -> widget.render(context, mouseX, mouseY, delta));
+		context.getMatrices().pop();
 	}
 	
 	@Override
-	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		clearEntries();
-		if (!text.isEmpty()) {
-			int interval = 6;
-			for (OrderedText line : textRenderer.wrapLines(Text.literal(text), getRowWidth() - interval))
-				children().add(new TextEntry(line, this));
-		}
-		
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
-		
-		RenderSystem.setShader(GameRenderer::getPositionTexColorProgram);
-		if (background().isPresent()) {
-			RenderSystem.setShaderTexture(0, background().get());
-			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-			bufferBuilder.vertex(getX(), getBottom(), 0).texture(getX(), (getBottom() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
-			bufferBuilder.vertex(getRight(), getBottom(), 0).texture(getRight(), (getBottom() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
-			bufferBuilder.vertex(getRight(), getY(), 0).texture(getRight(), (getY() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
-			bufferBuilder.vertex(getX(), getY(), 0).texture(getX(), (getY() + (int) getScrollAmount())).color(32, 32, 32, 255).next();
-			tessellator.draw();
-		}
-		
-		RenderSystem.depthFunc(515);
-		RenderSystem.disableDepthTest();
-		RenderSystem.enableBlend();
-		RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ZERO, GlStateManager.DstFactor.ONE);
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		
-		bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-		bufferBuilder.vertex(getX(), (getY() + 4), 0).color(0, 0, 0, 0).next();
-		bufferBuilder.vertex(getRight(), (getY() + 4), 0).color(0, 0, 0, 0).next();
-		bufferBuilder.vertex(getRight(), getY(), 0).color(0, 0, 0, 255).next();
-		bufferBuilder.vertex(getX(), getY(), 0).color(0, 0, 0, 255).next();
-		bufferBuilder.vertex(getX(), getBottom(), 0).color(0, 0, 0, 255).next();
-		bufferBuilder.vertex(getRight(), getBottom(), 0).color(0, 0, 0, 255).next();
-		bufferBuilder.vertex(getRight(), (getBottom() - 4), 0).color(0, 0, 0, 0).next();
-		bufferBuilder.vertex(getX(), (getBottom() - 4), 0).color(0, 0, 0, 0).next();
-		tessellator.draw();
-		
-		renderList(context, mouseX, mouseY, delta);
-		renderScrollBar(bufferBuilder, tessellator);
-		
-		RenderSystem.disableBlend();
+	protected void drawBox(DrawContext context, int x, int y, int width, int height) {
+		final int gradientHeight = 12;
+		context.fillGradient(x, y, x + width, y + gradientHeight, ColorHelper.Argb.withAlpha(128, 0x000000), ColorHelper.Argb.withAlpha(0, 0x000000));
+		context.fillGradient(x, y + height - gradientHeight, x + width, y + height, ColorHelper.Argb.withAlpha(0, 0x000000), ColorHelper.Argb.withAlpha(128, 0x000000));
+		if (isFocused()) context.drawBorder(x, y, width, height, ColorHelper.Argb.fullAlpha(0xFFFFFF));
+		else context.drawBorder(x, y, width, height, ColorHelper.Argb.fullAlpha(0x666666));
 	}
 	
 	@Override
 	protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+		builder.put(NarrationPart.TITLE, contents.narration());
 	}
 	
-	/**
-	 * 渲染滚动条
-	 *
-	 * @param bufferBuilder 缓冲区生成器
-	 * @param tessellator   镶嵌器
-	 */
-	public void renderScrollBar(BufferBuilder bufferBuilder, Tessellator tessellator) {
-		int scrollbarStartX = getScrollbarX();
-		int scrollbarEndX = scrollbarStartX + 6;
-		int maxScroll = getMaxScroll();
-		if (maxScroll > 0) {
-			int value = (int) ((float) ((getBottom() - getY()) * (getBottom() - getY())) / (float) getMaxPosition());
-			value = MathHelper.clamp(value, 32, getBottom() - getY() - 8);
-			int y = Math.max(getY(), (int) getScrollAmount() * (getBottom() - getY() - value) / maxScroll + getY());
-			
-			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-			bufferBuilder.vertex(scrollbarStartX, getBottom(), 0).color(0, 0, 0, 255).next();
-			bufferBuilder.vertex(scrollbarEndX, getBottom(), 0).color(0, 0, 0, 255).next();
-			bufferBuilder.vertex(scrollbarEndX, getY(), 0).color(0, 0, 0, 255).next();
-			bufferBuilder.vertex(scrollbarStartX, getY(), 0).color(0, 0, 0, 255).next();
-			bufferBuilder.vertex(scrollbarStartX, y + value, 0).color(128, 128, 128, 255).next();
-			bufferBuilder.vertex(scrollbarEndX, y + value, 0).color(128, 128, 128, 255).next();
-			bufferBuilder.vertex(scrollbarEndX, y, 0).color(128, 128, 128, 255).next();
-			bufferBuilder.vertex(scrollbarStartX, y, 0).color(128, 128, 128, 255).next();
-			bufferBuilder.vertex(scrollbarStartX, y + value - 1, 0).color(192, 192, 192, 255).next();
-			bufferBuilder.vertex(scrollbarEndX - 1, y + value - 1, 0).color(192, 192, 192, 255).next();
-			bufferBuilder.vertex(scrollbarEndX - 1, y, 0).color(192, 192, 192, 255).next();
-			bufferBuilder.vertex(scrollbarStartX, y, 0).color(192, 192, 192, 255).next();
-			tessellator.draw();
-		}
+	private int getGridWidth() {
+		return width - getPaddingDoubled();
 	}
 	
 	@Override
@@ -179,40 +83,29 @@ public class TextListWidget extends EntryListWidget<TextListWidget.TextEntry> im
 		return Optional.empty();
 	}
 	
-	/**
-	 * 文本条目
-	 */
 	@Environment(EnvType.CLIENT)
-	public class TextEntry extends ElementListWidget.Entry<TextEntry> {
-		protected final boolean updateTextEntry = false;
-		protected final OrderedText text;
-		protected final int indent;
-		protected final TextListWidget widget;
+	record Contents(LayoutWidget grid, Text narration) {
+	}
+	
+	@Environment(EnvType.CLIENT)
+	static class ContentsBuilder {
+		private final DirectionalLayoutWidget layout;
+		private final MutableText narration = Text.empty();
 		
-		protected TextEntry(OrderedText text, TextListWidget widget, int indent) {
-			this.text = text;
-			this.widget = widget;
-			this.indent = indent;
+		public ContentsBuilder(int gridWidth) {
+			this.layout = DirectionalLayoutWidget.vertical();
+			this.layout.getMainPositioner().alignLeft();
+			this.layout.add(EmptyWidget.ofWidth(gridWidth));
 		}
 		
-		protected TextEntry(OrderedText text, TextListWidget widget) {
-			this(text, widget, 0);
+		public void appendText(TextRenderer textRenderer, Text text) {
+			layout.add(new MultilineTextWidget(text, textRenderer));
+			narration.append(text).append("\n");
 		}
 		
-		@Override
-		public void render(DrawContext context, int index, int y, int x, int itemWidth, int itemHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-			if (widget.getY() > y || widget.getBottom() - textRenderer.fontHeight < y) return;
-			context.drawTextWithShadow(textRenderer, text, updateTextEntry ? x + indent + 11 : x + indent, y, 0xFFFFFF);
-		}
-		
-		@Override
-		public List<? extends Element> children() {
-			return Collections.emptyList();
-		}
-		
-		@Override
-		public List<? extends Selectable> selectableChildren() {
-			return Collections.emptyList();
+		public Contents build() {
+			layout.refreshPositions();
+			return new Contents(layout, narration);
 		}
 	}
 }
