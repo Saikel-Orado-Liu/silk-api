@@ -40,19 +40,19 @@ public record AdjustFovData(boolean onlyFirstPerson, Optional<Identifier> hudOve
 	/**
 	 * 暗角纹理
 	 */
-	public static final Identifier VIGNETTE_TEXTURE = new Identifier("textures/misc/vignette.png");
+	public static final Identifier VIGNETTE_TEXTURE = Identifier.of("textures/misc/vignette.png");
 	/**
 	 * 南瓜头模糊纹理
 	 */
-	public static final Identifier PUMPKIN_BLUR = new Identifier("textures/misc/pumpkinblur.png");
+	public static final Identifier PUMPKIN_BLUR = Identifier.of("textures/misc/pumpkinblur.png");
 	/**
 	 * 望远镜镜头纹理
 	 */
-	public static final Identifier SPYGLASS_SCOPE = new Identifier("textures/misc/spyglass_scope.png");
+	public static final Identifier SPYGLASS_SCOPE = Identifier.of("textures/misc/spyglass_scope.png");
 	/**
 	 * 细雪轮廓纹理
 	 */
-	public static final Identifier POWDER_SNOW_OUTLINE = new Identifier("textures/misc/powder_snow_outline.png");
+	public static final Identifier POWDER_SNOW_OUTLINE = Identifier.of("textures/misc/powder_snow_outline.png");
 	public static final AdjustFovData DEFAULT = AdjustFovData.create(false, Optional.empty(), false, DEFAULT_FOV_SCALING);
 	public static final Codec<AdjustFovData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 					Codec.BOOL.optionalFieldOf("only_first_person", false).forGetter(AdjustFovData::onlyFirstPerson),
