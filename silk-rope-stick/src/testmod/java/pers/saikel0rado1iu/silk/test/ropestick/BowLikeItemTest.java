@@ -16,7 +16,7 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.AdjustFovWhileUseComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.ModifyMoveWhileUseComponent;
@@ -34,8 +34,8 @@ public final class BowLikeItemTest extends BowLikeItem {
 	 */
 	public BowLikeItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_USE, AdjustFovWhileUseComponent.create(false, Optional.of(AdjustFovData.SPYGLASS_SCOPE), true, 1.5F))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.of(1)));
+				.component(ComponentTypes.ADJUST_FOV_WHILE_USE, AdjustFovWhileUseComponent.create(false, Optional.of(AdjustFovData.SPYGLASS_SCOPE), true, 1.5F))
+				.component(ComponentTypes.MODIFY_MOVE_WHILE_USE, ModifyMoveWhileUseComponent.of(1)));
 	}
 	
 	@Override

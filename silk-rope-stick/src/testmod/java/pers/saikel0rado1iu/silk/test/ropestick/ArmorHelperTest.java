@@ -25,7 +25,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import pers.saikel0rado1iu.silk.api.ropestick.armor.ArmorHelper;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.CustomEntityHurtComponent;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectData;
@@ -72,7 +72,7 @@ public enum ArmorHelperTest implements ArmorHelper {
 	
 	public static Item.Settings createArmorSettings() {
 		return new Item.Settings()
-				.component(DataComponentTypes.INHERENT_STATUS_EFFECTS, InherentStatusEffectsComponent.of(
+				.component(ComponentTypes.INHERENT_STATUS_EFFECTS, InherentStatusEffectsComponent.of(
 						InherentStatusEffectData.create(
 								StatusEffects.LUCK,
 								0,
@@ -89,7 +89,7 @@ public enum ArmorHelperTest implements ArmorHelper {
 								() -> ImmutableList.of(Items.TEST_HELMET, Items.TEST_CHESTPLATE, Items.TEST_LEGGINGS, Items.TEST_BOOTS),
 								2,
 								EffectiveItemSlotData.ALL)))
-				.component(DataComponentTypes.CUSTOM_ENTITY_HURT, new CustomEntityHurtComponent(
+				.component(ComponentTypes.CUSTOM_ENTITY_HURT, new CustomEntityHurtComponent(
 						ImmutableList.of(DamageTypes.MOB_ATTACK),
 						"amount * 3"));
 	}

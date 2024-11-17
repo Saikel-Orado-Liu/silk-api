@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import pers.saikel0rado1iu.silk.api.base.common.util.TickUtil;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.*;
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.BoltActionRepeatingFirearmItem;
 
@@ -32,8 +32,8 @@ public final class BoltActionRepeatingFirearmItemTest extends BoltActionRepeatin
 	 */
 	public BoltActionRepeatingFirearmItemTest(Settings settings) {
 		super(settings
-				.component(DataComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), true, 0.8F))
-				.component(DataComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
+				.component(ComponentTypes.ADJUST_FOV_WHILE_HOLD, AdjustFovWhileHoldComponent.create(false, Optional.of(AdjustFovData.POWDER_SNOW_OUTLINE), true, 0.8F))
+				.component(ComponentTypes.MODIFY_MOVE_WHILE_HOLD, ModifyMoveWhileHoldComponent.of(10)));
 	}
 	
 	@Override

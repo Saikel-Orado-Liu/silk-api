@@ -11,18 +11,18 @@
 
 package pers.saikel0rado1iu.silk.test.spinningjenny;
 
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.dynamic.Codecs;
-import pers.saikel0rado1iu.silk.api.spinningjenny.DataComponentTypeRegistry;
+import pers.saikel0rado1iu.silk.api.spinningjenny.ComponentTypeRegistry;
 
 /**
- * Test {@link DataComponentType}
+ * Test {@link ComponentType}
  */
-public interface DataComponentTypeRegistryTest extends DataComponentTypeRegistry {
+public interface ComponentTypeRegistryTest extends ComponentTypeRegistry {
 	/**
 	 * test_data_component_type
 	 */
-	DataComponentType<Integer> TEST_DATA_COMPONENT_TYPE = DataComponentTypeRegistry.registrar(() ->
-			DataComponentType.<Integer>builder().codec(Codecs.rangedInt(1, 99)).packetCodec(PacketCodecs.VAR_INT).build()).register("test_data_component_type");
+	ComponentType<Integer> TEST_DATA_COMPONENT_TYPE = ComponentTypeRegistry.registrar(() ->
+			ComponentType.<Integer>builder().codec(Codecs.rangedInt(1, 99)).packetCodec(PacketCodecs.VAR_INT).build()).register("test_data_component_type");
 }

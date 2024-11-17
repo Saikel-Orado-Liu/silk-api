@@ -18,7 +18,7 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import pers.saikel0rado1iu.silk.api.base.common.util.TickUtil;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 
 /**
  * <h2 style="color:FFC800">射击发射物组件</h2>
@@ -62,7 +62,7 @@ public record ShootProjectilesComponent(int interval, State state, boolean shot)
 	 * @return 是否已射击
 	 */
 	public static boolean isShot(ItemStack stack) {
-		ShootProjectilesComponent shot = stack.get(DataComponentTypes.SHOOT_PROJECTILES);
+		ShootProjectilesComponent shot = stack.get(ComponentTypes.SHOOT_PROJECTILES);
 		return shot != null && shot.shot;
 	}
 	

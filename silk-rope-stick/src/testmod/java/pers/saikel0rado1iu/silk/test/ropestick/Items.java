@@ -22,7 +22,7 @@ import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 import java.util.List;
 
 import static net.minecraft.component.DataComponentTypes.DYED_COLOR;
-import static pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes.ENCHANTMENT_TRAITS;
+import static pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes.ENCHANTMENT_TRAITS;
 
 /**
  * 物品

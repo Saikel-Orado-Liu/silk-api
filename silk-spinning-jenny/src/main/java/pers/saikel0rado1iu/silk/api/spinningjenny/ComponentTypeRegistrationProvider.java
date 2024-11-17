@@ -11,7 +11,7 @@
 
 package pers.saikel0rado1iu.silk.api.spinningjenny;
 
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
@@ -29,14 +29,14 @@ import java.util.function.Supplier;
  * @since 1.2.1
  */
 @ApiStatus.OverrideOnly
-@ServerRegistration(registrar = DataComponentTypeRegistrationProvider.MainRegistrar.class, type = DataComponentType.class)
-public interface DataComponentTypeRegistrationProvider extends MainRegistrationProvider<DataComponentType<?>> {
+@ServerRegistration(registrar = ComponentTypeRegistrationProvider.MainRegistrar.class, type = ComponentType.class)
+public interface ComponentTypeRegistrationProvider extends MainRegistrationProvider<ComponentType<?>> {
 	/**
 	 * 数据组件类型主注册器
 	 *
 	 * @param <T> 数据组件类型
 	 */
-	final class MainRegistrar<T extends DataComponentType<?>> extends Registrar<T, MainRegistrar<T>> {
+	final class MainRegistrar<T extends ComponentType<?>> extends Registrar<T, MainRegistrar<T>> {
 		MainRegistrar(Supplier<T> type) {
 			super(type);
 		}

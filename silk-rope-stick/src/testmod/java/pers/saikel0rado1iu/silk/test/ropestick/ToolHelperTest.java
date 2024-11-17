@@ -19,7 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectsComponent;
@@ -50,7 +50,7 @@ public enum ToolHelperTest implements ToolHelper {
 	}
 	
 	public static Item.Settings createToolSettings() {
-		return new Item.Settings().component(DataComponentTypes.INHERENT_STATUS_EFFECTS,
+		return new Item.Settings().component(ComponentTypes.INHERENT_STATUS_EFFECTS,
 				InherentStatusEffectsComponent.of(
 						InherentStatusEffectData.create(
 								StatusEffects.HEALTH_BOOST,
