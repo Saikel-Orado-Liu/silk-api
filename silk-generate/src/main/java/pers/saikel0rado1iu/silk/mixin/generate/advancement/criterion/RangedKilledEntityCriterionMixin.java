@@ -18,6 +18,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -64,11 +65,11 @@ public interface RangedKilledEntityCriterionMixin {
 		private ItemStack stack;
 		
 		@Inject(method = "shootAll", at = @At("HEAD"))
-		private void shootAll(World world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, LivingEntity target, CallbackInfo ci) {
+		private void shootAll(ServerWorld world, LivingEntity shooter, Hand hand, ItemStack stack, List<ItemStack> projectiles, float speed, float divergence, boolean critical, LivingEntity target, CallbackInfo ci) {
 			this.stack = stack;
 		}
 		
-		@ModifyArg(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/world/World;spawnEntity(L net/minecraft/entity/Entity;)Z"))
+		@ModifyArg(method = "shootAll", at = @At(value = "INVOKE", target = "L net/minecraft/server/world/ServerWorld;spawnEntity(L net/minecraft/entity/Entity;)Z"))
 		private Entity getEntity(Entity entity) {
 			RangedKilledEntityCriterion.setRangedWeapon(entity, stack);
 			return entity;
