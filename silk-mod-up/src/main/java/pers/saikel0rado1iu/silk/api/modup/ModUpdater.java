@@ -134,7 +134,7 @@ public final class ModUpdater extends Thread {
 	
 	private void manualDownload(URL downloadLink) {
 		// 使用默认浏览器打开模组官网
-		Util.getOperatingSystem().open(downloadLink);
+		Util.getOperatingSystem().open(downloadLink.toString());
 	}
 	
 	private void autoDownload(URL downloadLink) {
