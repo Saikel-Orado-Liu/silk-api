@@ -17,7 +17,6 @@ transitive-accessible	field  	net/minecraft/world/gen/WorldPresets$Registrar	str
 transitive-accessible	field  	net/minecraft/world/gen/WorldPresets$Registrar	multiNoisePresetLookup	Lnet/minecraft/registry/RegistryEntryLookup;
 transitive-accessible	field  	net/minecraft/data/client/BlockStateModelGenerator	simpleItemModelExemptionCollector	Ljava/util/function/Consumer;
 transitive-accessible	field  	net/minecraft/item/ItemStack	ITEM_CODEC	Lcom/mojang/serialization/Codec;
-transitive-accessible	field  	net/minecraft/data/server/loottable/EntityLootTableGenerator	NEEDS_ENTITY_ON_FIRE	Lnet/minecraft/predicate/entity/EntityPredicate$Builder;
 transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	criteria	Ljava/util/Map;
 transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	category	Lnet/minecraft/recipe/book/RecipeCategory;
 transitive-accessible	field  	net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder	group	Ljava/lang/String;

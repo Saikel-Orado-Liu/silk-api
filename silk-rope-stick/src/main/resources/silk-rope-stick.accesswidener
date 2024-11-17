@@ -5,4 +5,3 @@ transitive-accessible	field	net/minecraft/item/CrossbowItem	loaded	Z
 transitive-extendable	method	net/minecraft/item/CrossbowItem	calcVelocity	(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/util/math/Vec3d;F)Lorg/joml/Vector3f;
 transitive-extendable	method	net/minecraft/item/CrossbowItem	getSoundPitch	(Lnet/minecraft/util/math/random/Random;I)F
 transitive-extendable	method	net/minecraft/item/CrossbowItem	loadProjectiles	(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/item/ItemStack;)Z
-transitive-extendable	method	net/minecraft/item/CrossbowItem	getQuickChargeSound	(I)Lnet/minecraft/sound/SoundEvent;
