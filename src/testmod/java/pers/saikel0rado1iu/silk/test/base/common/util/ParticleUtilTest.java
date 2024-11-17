@@ -50,8 +50,8 @@ public interface ParticleUtilTest {
 	 * 测试
 	 */
 	static void test() {
-		Registry.register(Registries.BLOCK, new Identifier("test", "block"), BLOCK);
-		Registry.register(Registries.ITEM, new Identifier("test", "block_item"), BLOCK_ITEM);
+		Registry.register(Registries.BLOCK, Identifier.of("test", "block"), BLOCK);
+		Registry.register(Registries.ITEM, Identifier.of("test", "block_item"), BLOCK_ITEM);
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> content.add(BLOCK_ITEM));
 	}
 	
