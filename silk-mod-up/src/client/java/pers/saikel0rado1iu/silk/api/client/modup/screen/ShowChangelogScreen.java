@@ -64,11 +64,12 @@ public class ShowChangelogScreen extends UpdateScreen {
 		SimplePositioningWidget.setPos(gridWidget, 1, screenHeight - BUTTON_SPACING - gridWidget.getHeight() + (height - screenHeight) / 2, width, height, 0.5F, 0);
 		gridWidget.forEachChild(this::addDrawableChild);
 		// 添加提示消息文本
-		addSelectableChild(changelogWidget = new TextListWidget(client,
-				screenWidth - INTERVAL,
+		addSelectableChild(changelogWidget = new TextListWidget(
+				(width - screenWidth + INTERVAL) / 2,
 				(int) ((height - screenHeight) / 2F + (textRenderer.fontHeight + INTERVAL) * 2) + ICON_SIZE / 2,
-				(height + screenHeight) / 2 - gridWidget.getHeight() - BUTTON_SPACING,
-				textRenderer.fontHeight, Changelog.read(updateData.modData(), MinecraftClient.getInstance().getLanguageManager().getLanguage())));
+				screenWidth - INTERVAL,
+				screenHeight - gridWidget.getHeight() - BUTTON_SPACING - ((textRenderer.fontHeight + INTERVAL) * 2 + ICON_SIZE / 2),
+				textRenderer, Changelog.read(updateData.modData(), MinecraftClient.getInstance().getLanguageManager().getLanguage())));
 		changelogWidget.setX((width - changelogWidget.getWidth()) / 2);
 	}
 }
