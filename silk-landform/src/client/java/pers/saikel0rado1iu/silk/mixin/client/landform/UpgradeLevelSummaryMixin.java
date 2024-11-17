@@ -80,17 +80,17 @@ interface UpgradeLevelSummaryMixin {
 	@Mixin(WorldListWidget.WorldEntry.class)
 	abstract class AddWorldEntryWarning extends WorldListWidget.Entry {
 		@Unique
-		private static final Identifier ERROR_HIGHLIGHTED_TEXTURE = new Identifier("world_list/error_highlighted");
+		private static final Identifier ERROR_HIGHLIGHTED_TEXTURE = Identifier.of("world_list/error_highlighted");
 		@Unique
-		private static final Identifier WARNING_HIGHLIGHTED_TEXTURE = new Identifier("world_list/warning_highlighted");
+		private static final Identifier WARNING_HIGHLIGHTED_TEXTURE = Identifier.of("world_list/warning_highlighted");
 		@Unique
-		private static final Identifier WARNING_TEXTURE = new Identifier("world_list/warning");
+		private static final Identifier WARNING_TEXTURE = Identifier.of("world_list/warning");
 		@Unique
-		private static final Identifier ERROR_TEXTURE = new Identifier("world_list/error");
+		private static final Identifier ERROR_TEXTURE = Identifier.of("world_list/error");
 		@Unique
-		private static final Identifier MARKED_JOIN_HIGHLIGHTED_TEXTURE = new Identifier("world_list/marked_join_highlighted");
+		private static final Identifier MARKED_JOIN_HIGHLIGHTED_TEXTURE = Identifier.of("world_list/marked_join_highlighted");
 		@Unique
-		private static final Identifier MARKED_JOIN_TEXTURE = new Identifier("world_list/marked_join");
+		private static final Identifier MARKED_JOIN_TEXTURE = Identifier.of("world_list/marked_join");
 		@Shadow
 		@Final
 		LevelSummary level;
