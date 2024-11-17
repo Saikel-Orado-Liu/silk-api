@@ -15,7 +15,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.registry.entry.RegistryEntry;
 import pers.saikel0rado1iu.silk.api.spinningjenny.StatusEffectRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkApi;
 
 /**
  * Test {@link StatusEffectRegistry}
@@ -25,8 +27,8 @@ public interface StatusEffectRegistryTest extends StatusEffectRegistry {
 	 * test_status_effect
 	 */
 	@SuppressWarnings("unused")
-	TestStatusEffect TEST_STATUS_EFFECT = StatusEffectRegistry.registrar(TestStatusEffect::new)
-			.register("test_status_effect");
+	RegistryEntry<TestStatusEffect> TEST_STATUS_EFFECT = StatusEffectRegistry.registrar(TestStatusEffect::new)
+			.registerReference(SilkApi.getInternal().ofId("test_status_effect"));
 	
 	/**
 	 * TestStatusEffect
