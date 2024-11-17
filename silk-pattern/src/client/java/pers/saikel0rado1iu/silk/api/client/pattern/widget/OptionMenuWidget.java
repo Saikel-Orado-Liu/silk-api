@@ -33,11 +33,10 @@ public class OptionMenuWidget extends OptionListWidget implements CustomBackgrou
 	/**
 	 * @param minecraftClient 客户端实例
 	 * @param width           宽度
-	 * @param height          高度
 	 * @param optionsScreen   选项屏幕
 	 */
-	public OptionMenuWidget(MinecraftClient minecraftClient, int width, int height, GameOptionsScreen optionsScreen) {
-		super(minecraftClient, width, height, optionsScreen);
+	public OptionMenuWidget(MinecraftClient minecraftClient, int width, GameOptionsScreen optionsScreen) {
+		super(minecraftClient, width, optionsScreen);
 	}
 	
 	@Override
