@@ -19,27 +19,22 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.condition.EntityPropertiesLootCondition;
-import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.EnchantedCountIncreaseLootFunction;
 import net.minecraft.loot.function.FurnaceSmeltLootFunction;
-import net.minecraft.loot.function.LootingEnchantLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
-import pers.saikel0rado1iu.silk.api.generate.data.AdvancementGenUtil;
 import pers.saikel0rado1iu.silk.api.generate.data.LootTableGenUtil;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import static net.minecraft.data.server.loottable.EntityLootTableGenerator.NEEDS_ENTITY_ON_FIRE;
-
 /**
- * Test {@link AdvancementGenUtil}
+ * Test {@link LootTableGenUtil}
  */
 public interface LootTableGenUtilTest {
 	/**
@@ -64,26 +59,29 @@ public interface LootTableGenUtilTest {
 	 * Entity
 	 */
 	final class Entity extends SimpleFabricLootTableProvider {
+		private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup;
+		
 		/**
 		 * @param output         数据输出
 		 * @param registryLookup 注册表 Future
 		 */
 		public Entity(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
 			super(output, registryLookup, LootContextTypes.ENTITY);
+			this.registryLookup = registryLookup;
 		}
 		
 		@Override
-		public void accept(RegistryWrapper.WrapperLookup registryLookup, BiConsumer<RegistryKey<LootTable>, LootTable.Builder> consumer) {
-			consumer.accept(EntityType.PIG.getLootTableId(), LootTable.builder()
+		public void accept(BiConsumer<RegistryKey<LootTable>, LootTable.Builder> lootTableBiConsumer) {
+			lootTableBiConsumer.accept(EntityType.PIG.getLootTableId(), LootTable.builder()
 					.pool(LootPool.builder().rolls(ConstantLootNumberProvider.create(1))
 							.with(ItemEntry.builder(Items.BEEF)
 									.apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 2)))
-									.apply(FurnaceSmeltLootFunction.builder().conditionally(EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, NEEDS_ENTITY_ON_FIRE))))
-							.apply(LootingEnchantLootFunction.builder(UniformLootNumberProvider.create(0, 1))))
+									.apply(FurnaceSmeltLootFunction.builder().conditionally(LootTableGenUtil.createSmeltLootCondition(registryLookup.join())))
+									.apply(EnchantedCountIncreaseLootFunction.builder(registryLookup.join(), UniformLootNumberProvider.create(1, 1)))))
 					.pool(LootPool.builder().rolls(ConstantLootNumberProvider.create(1))
 							.with(ItemEntry.builder(Items.ACACIA_BOAT)
-									.apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(-1, 1))))
-							.apply(LootingEnchantLootFunction.builder(UniformLootNumberProvider.create(0, 1)))));
+									.apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(-1, 1)))
+									.apply(EnchantedCountIncreaseLootFunction.builder(registryLookup.join(), UniformLootNumberProvider.create(1, 1))))));
 		}
 	}
 }
