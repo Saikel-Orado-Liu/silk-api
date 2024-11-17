@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 
 /**
  * <h2 style="color:FFC800">在持有时修改移动组件</h2>
@@ -63,6 +63,6 @@ public record ModifyMoveWhileHoldComponent(ModifyMoveData modifyMove, boolean ca
 	 * @return 是否冲突
 	 */
 	public boolean isConflictItem(ItemStack checkItem) {
-		return checkItem.contains(DataComponentTypes.ADJUST_FOV_WHILE_HOLD);
+		return checkItem.contains(ComponentTypes.ADJUST_FOV_WHILE_HOLD);
 	}
 }
