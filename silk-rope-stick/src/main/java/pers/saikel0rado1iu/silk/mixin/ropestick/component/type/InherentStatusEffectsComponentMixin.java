@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectsComponent;
@@ -86,7 +86,9 @@ abstract class InherentStatusEffectsComponentMixin extends Entity implements Att
 		} else {
 			stackBuilder.addAll(getArmorItems());
 		}
-		List<ItemStack> stacks = stackBuilder.build();
+		ImmutableList.Builder<ItemStack> stackCobyBuilder = ImmutableList.builder();
+		stackBuilder.build().forEach(stack -> stackCobyBuilder.add(stack.copy()));
+		List<ItemStack> stacks = stackCobyBuilder.build();
 		// 将物品堆栈转换为物品与物品数量图表
 		HashMap<Item, Integer> itemsBuilder = new HashMap<>();
 		for (ItemStack stack : stacks) {
@@ -98,7 +100,7 @@ abstract class InherentStatusEffectsComponentMixin extends Entity implements Att
 		// 获取物品中所有的自带状态效果组件
 		HashMap<InherentStatusEffectData, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
 		for (ItemStack stack : stacks) {
-			Optional<InherentStatusEffectsComponent> component = Optional.ofNullable(stack.get(DataComponentTypes.INHERENT_STATUS_EFFECTS));
+			Optional<InherentStatusEffectsComponent> component = Optional.ofNullable(stack.get(ComponentTypes.INHERENT_STATUS_EFFECTS));
 			component.ifPresent(p -> p.inherentStatusEffects().forEach(effect -> effectItemsBuilder.put(effect, stack.getItem())));
 		}
 		ImmutableMap<InherentStatusEffectData, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
