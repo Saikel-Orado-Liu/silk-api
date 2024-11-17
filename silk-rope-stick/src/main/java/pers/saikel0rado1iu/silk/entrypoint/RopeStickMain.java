@@ -16,7 +16,7 @@ import pers.saikel0rado1iu.silk.api.modpass.ModData;
 import pers.saikel0rado1iu.silk.api.modpass.ModMain;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
-import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 
 import java.util.Set;
@@ -35,7 +35,7 @@ public final class RopeStickMain implements ModMain {
 	
 	@Override
 	public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
-		return ImmutableSet.of(DataComponentTypes.class);
+		return ImmutableSet.of(ComponentTypes.class);
 	}
 	
 	@Override
