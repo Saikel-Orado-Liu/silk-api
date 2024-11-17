@@ -43,7 +43,7 @@ public final class AdvancementGenUtilTest extends FabricAdvancementProvider {
 	 */
 	public static final AdvancementEntry ROOT = AdvancementGenUtil.builder(SilkGenerate.getInstance(), "root")
 			.display(Items.CRAFTING_TABLE,
-					new Identifier("textures/block/andesite.png"),
+					Identifier.of("textures/block/andesite.png"),
 					AdvancementFrame.TASK,
 					true,
 					true,
@@ -59,7 +59,7 @@ public final class AdvancementGenUtilTest extends FabricAdvancementProvider {
 	public static final AdvancementEntry TEST = AdvancementGenUtil.builder(SilkGenerate.getInstance(), "vanilla", "test")
 			.parent(ROOT)
 			.display(Items.CRAFTING_TABLE,
-					new Identifier("textures/block/andesite.png"),
+					Identifier.of("textures/block/andesite.png"),
 					AdvancementFrame.TASK,
 					true,
 					true,
@@ -76,7 +76,7 @@ public final class AdvancementGenUtilTest extends FabricAdvancementProvider {
 	public static final AdvancementEntry TEST_1 = AdvancementGenUtil.builder(SilkGenerate.getInstance(), "vanilla", "test_1")
 			.parent(ROOT)
 			.display(Items.CRAFTING_TABLE,
-					new Identifier("textures/block/andesite.png"),
+					Identifier.of("textures/block/andesite.png"),
 					AdvancementFrame.TASK,
 					true,
 					true,
