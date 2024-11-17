@@ -12,13 +12,29 @@
 package pers.saikel0rado1iu.silk.api.generate.data;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.condition.AnyOfLootCondition;
+import net.minecraft.loot.condition.EntityPropertiesLootCondition;
+import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.predicate.NumberRange;
+import net.minecraft.predicate.entity.EntityEquipmentPredicate;
+import net.minecraft.predicate.entity.EntityFlagsPredicate;
+import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.item.EnchantmentPredicate;
+import net.minecraft.predicate.item.EnchantmentsPredicate;
+import net.minecraft.predicate.item.ItemPredicate;
+import net.minecraft.predicate.item.ItemSubPredicateTypes;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.EnchantmentTags;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -42,5 +58,21 @@ public interface LootTableGenUtil {
 					.with(ItemEntry.builder(drop).apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))));
 		}
 		addDrop.accept(block, lootTableBuilder);
+	}
+	
+	/**
+	 * 用于复刻 {@code EntityLootTableGenerator.createSmeltLootCondition()} 方法
+	 *
+	 * @param registryLookup 包装器查找
+	 * @return 任意战利品条件构建器
+	 */
+	static AnyOfLootCondition.Builder createSmeltLootCondition(RegistryWrapper.WrapperLookup registryLookup) {
+		RegistryWrapper.Impl<Enchantment> impl = registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+		return AnyOfLootCondition.builder(
+				EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true))),
+				EntityPropertiesLootCondition.builder(LootContext.EntityTarget.DIRECT_ATTACKER,
+						EntityPredicate.Builder.create().equipment(EntityEquipmentPredicate.Builder.create().mainhand(ItemPredicate.Builder.create().subPredicate(
+								ItemSubPredicateTypes.ENCHANTMENTS,
+								EnchantmentsPredicate.enchantments(List.of(new EnchantmentPredicate(impl.getOrThrow(EnchantmentTags.SMELTS_LOOT), NumberRange.IntRange.ANY))))))));
 	}
 }
