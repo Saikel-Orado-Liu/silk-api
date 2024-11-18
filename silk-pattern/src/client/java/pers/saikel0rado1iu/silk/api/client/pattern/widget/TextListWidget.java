@@ -89,17 +89,19 @@ public class TextListWidget extends ScrollableWidget implements CustomBackground
 	
 	@Environment(EnvType.CLIENT)
 	static class ContentsBuilder {
+		private final int gridWidth;
 		private final DirectionalLayoutWidget layout;
 		private final MutableText narration = Text.empty();
 		
 		public ContentsBuilder(int gridWidth) {
+			this.gridWidth = gridWidth;
 			this.layout = DirectionalLayoutWidget.vertical();
 			this.layout.getMainPositioner().alignLeft();
 			this.layout.add(EmptyWidget.ofWidth(gridWidth));
 		}
 		
 		public void appendText(TextRenderer textRenderer, Text text) {
-			layout.add(new MultilineTextWidget(text, textRenderer));
+			layout.add(new MultilineTextWidget(text, textRenderer).setMaxWidth(gridWidth));
 			narration.append(text).append("\n");
 		}
 		
