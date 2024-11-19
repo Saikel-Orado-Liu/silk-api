@@ -106,6 +106,7 @@ public class SettingScreen extends GameOptionsScreen implements LinkTrusted {
 		if (settingData.type() == SettingType.DEVELOPMENT) return;
 		SettingOptionHelper.initOptions(optionListWidget, gameOptions, settingData, this, isDouble, linkTrusted(), save);
 		layout.addBody(optionListWidget);
+		layout.forEachChild(this::addSelectableChild);
 	}
 	
 	@Override
