@@ -9,27 +9,15 @@
  * You should have received a copy of the GNU General Public License along with Silk API. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package pers.saikel0rado1iu.silk.test.base.common.util;
+package pers.saikel0rado1iu.silk.test;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import pers.saikel0rado1iu.silk.api.base.common.util.PlayerUtil;
+import net.fabricmc.api.ModInitializer;
 
 /**
- * Test {@link PlayerUtil}
+ * 测试
  */
-public interface PlayerUtilTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingPlayerUtil");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		LOGGER.info("PlayerUtil.getHealthRatio(0.5F) = {}", PlayerUtil.getHealthRatio(0.5F));
-		LOGGER.info("PlayerUtil.getHungerRatio(0.5F) = {}", PlayerUtil.getHungerRatio(0.5F));
-		LOGGER.info("PlayerUtil.getSaturationRatio(0.5F) = {}", PlayerUtil.getSaturationRatio(0.5F));
+public final class Test implements ModInitializer {
+	@Override
+	public void onInitialize() {
 	}
 }
