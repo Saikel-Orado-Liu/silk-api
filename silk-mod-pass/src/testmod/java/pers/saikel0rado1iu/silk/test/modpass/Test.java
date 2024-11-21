@@ -50,7 +50,7 @@ public final class Test implements ModMain {
 			
 			@Override
 			public Optional<URL> community() throws MalformedURLException, URISyntaxException {
-				return Optional.of(new URI("").toURL());
+				return Optional.of(new URI("https://www.minecraft.net").toURL());
 			}
 		}.link(ModData.LinkType.COMMUNITY);
 	}
