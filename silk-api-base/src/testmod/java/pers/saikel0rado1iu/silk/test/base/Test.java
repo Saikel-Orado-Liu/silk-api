@@ -28,7 +28,6 @@ public final class Test implements ModInitializer {
 		WhiteNoiseTest.test();
 		JarUtilTest.test();
 		MathUtilTest.test();
-		ParticleUtilTest.test();
 		PlayerUtilTest.test();
 		SpawnUtilTest.test();
 		TickUtilTest.test();
