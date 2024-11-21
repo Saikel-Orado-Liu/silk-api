@@ -31,6 +31,6 @@ public interface SilkApiBase extends SilkApi {
 	
 	@Override
 	default String id() {
-		return "assets/silk-api-base";
+		return "silk-api-base";
 	}
 }
