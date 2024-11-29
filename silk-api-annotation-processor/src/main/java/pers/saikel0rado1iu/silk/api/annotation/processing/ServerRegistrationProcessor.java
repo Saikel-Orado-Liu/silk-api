@@ -36,88 +36,128 @@ import java.util.function.Supplier;
 import static pers.saikel0rado1iu.silk.api.annotation.processing.ProcessorUtil.getTypeElement;
 
 /**
- * <h2 style="color:FFC800">服务端注册处理器</h2>
+ * <h2>服务端注册处理器</h2>
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @SupportedAnnotationTypes("pers.saikel0rado1iu.silk.api.annotation.ServerRegistration")
 public final class ServerRegistrationProcessor extends AbstractProcessor {
-	static Optional<TypeSpec.Builder> generateMethod(Optional<TypeSpec.Builder> optionalBuilder, Element element, ProcessingEnvironment processingEnv, ServerRegistration serverRegistration) {
-		TypeElement registrar = getTypeElement(processingEnv, serverRegistration::registrar);
-		if (registrar == null) {
-			processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("未找到注册器：%s", serverRegistration.registrar()), element);
-			return Optional.empty();
-		}
-		TypeElement type = getTypeElement(processingEnv, serverRegistration::type);
-		if (type == null) {
-			processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("未找到注册类型：%s", serverRegistration.type()), element);
-			return Optional.empty();
-		}
-		TypeSpec.Builder builder = optionalBuilder.orElse(ProcessorUtil.createTypeBuilder(type, element));
-		// 获取类的类型信息
-		TypeMirror typeMirror = type.asType();
-		TypeName typeName = TypeName.get(typeMirror);
-		// 处理泛型类型
-		if (typeMirror instanceof DeclaredType declaredType) {
-			List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
-			if (!typeArguments.isEmpty()) {
-				typeName = ParameterizedTypeName.get(ClassName.get((TypeElement) declaredType.asElement()), typeArguments.stream()
-						.map(typeArg -> WildcardTypeName.subtypeOf(Object.class)).toArray(TypeName[]::new));
-			}
-		}
-		// 注册方法
-		MethodSpec registrarMethod = MethodSpec.methodBuilder("registrar")
-				.addJavadoc("""
-						服务端注册方法<br>
-						此方法返回一个服务端注册器，注册器注册返回注册对象<br>
-						\t
-						@param $N   注册对象的提供器
-						@return     服务端注册器""", type.getSimpleName().toString().toLowerCase())
-				.addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-				.addTypeVariable(TypeVariableName.get("T", typeName))
-				.addParameter(ParameterizedTypeName.get(ClassName.get(Supplier.class), TypeVariableName.get("T")), type.getSimpleName().toString().toLowerCase())
-				.addStatement("return new $T($N)", registrar, type.getSimpleName().toString().toLowerCase())
-				.returns(TypeName.get(registrar.asType()))
-				.build();
-		// 添加服务端注册方法
-		builder.addMethod(registrarMethod);
-		return Optional.of(builder);
-	}
-	
-	@Override
-	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-		Elements elementUtils = processingEnv.getElementUtils();
-		for (Element element : roundEnv.getElementsAnnotatedWith(ServerRegistration.class)) {
-			if (!ProcessorUtil.checkAnnotation(ServerRegistration.class, roundEnv, processingEnv, (TypeElement) element)) return true;
-			ServerRegistration serverRegistration = element.getAnnotation(ServerRegistration.class);
-			if ("java.lang.Class".equals(getTypeElement(processingEnv, serverRegistration::registrar).getQualifiedName().toString())
-					&& "java.lang.Class".equals(getTypeElement(processingEnv, serverRegistration::type).getQualifiedName().toString())) continue;
-			// 写入文件
-			String packageName = elementUtils.getPackageOf(element).getQualifiedName().toString();
-			Optional<TypeSpec.Builder> optionalBuilder = ServerRegistrationProcessor.generateMethod(Optional.empty(), element, processingEnv, serverRegistration);
-			if (optionalBuilder.isEmpty()) return false;
-			TypeSpec.Builder builder = optionalBuilder.get();
-			ClientRegistration clientRegistration = element.getAnnotation(ClientRegistration.class);
-			if (clientRegistration != null) ClientRegistrationProcessor.generateMethod(Optional.of(builder), element, processingEnv, clientRegistration);
-			TypeSpec typeSpec = builder.build();
-			// 创建一个文件
-			try {
-				FileObject existingFile = processingEnv.getFiler().getResource(StandardLocation.SOURCE_OUTPUT, packageName, typeSpec.name + ".java");
-				if (existingFile != null && existingFile.getLastModified() > 0) return true;
-				JavaFile javaFile = JavaFile.builder(packageName, typeSpec).build();
-				try {
-					javaFile.writeTo(processingEnv.getFiler());
-				} catch (IOException e) {
-					processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("无法生成源码：%s", e.getMessage()));
-					return false;
-				}
-			} catch (IOException e) {
-				processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format("%s 生成文件被占用，可能是代码正在生成中：%s", element, e.getMessage()));
-			}
-		}
-		return true;
-	}
+    static Optional<TypeSpec.Builder> generateMethod(TypeSpec.Builder builder, Element element,
+                                                     ProcessingEnvironment processingEnv,
+                                                     ServerRegistration serverRegistration) {
+        final TypeElement registrar = getTypeElement(processingEnv, serverRegistration::registrar);
+        final TypeElement type = getTypeElement(processingEnv, serverRegistration::type);
+
+        if (registrar == null) {
+            String msg = String.format("未找到注册器：%s", serverRegistration.registrar());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg, element);
+            return Optional.empty();
+        }
+        if (type == null) {
+            String msg = String.format("未找到注册类型：%s", serverRegistration.type());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg, element);
+            return Optional.empty();
+        }
+        builder = builder != null ? builder : ProcessorUtil.createTypeBuilder(type, element);
+        // 获取类的类型信息
+        TypeMirror typeMirror = type.asType();
+        TypeName typeName = TypeName.get(typeMirror);
+        // 处理泛型类型
+        if (typeMirror instanceof DeclaredType declaredType) {
+            List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
+            if (!typeArguments.isEmpty()) {
+                TypeName[] names = typeArguments
+                        .stream()
+                        .map(typeArg -> WildcardTypeName.subtypeOf(Object.class))
+                        .toArray(TypeName[]::new);
+                typeName = ParameterizedTypeName.get(ClassName.get((TypeElement) declaredType.asElement()), names);
+            }
+        }
+        // 注册方法
+        String javadoc = """
+                服务端注册方法<br>
+                此方法返回一个服务端注册器，注册器注册返回注册对象<br>
+                
+                @param $N   注册对象的提供器
+                @return     服务端注册器
+                """;
+        String argName = type.getSimpleName().toString().toLowerCase();
+        MethodSpec registrarMethod = MethodSpec
+                .methodBuilder("registrar")
+                .addJavadoc(javadoc, argName)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addTypeVariable(TypeVariableName.get("T", typeName))
+                .addParameter(
+                        ParameterizedTypeName.get(ClassName.get(Supplier.class), TypeVariableName.get("T")),
+                        argName)
+                .addStatement("return new $T($N)", registrar, argName)
+                .returns(TypeName.get(registrar.asType()))
+                .build();
+        // 添加服务端注册方法
+        builder.addMethod(registrarMethod);
+        return Optional.of(builder);
+    }
+
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        final Elements elementUtils = processingEnv.getElementUtils();
+
+        for (Element element : roundEnv.getElementsAnnotatedWith(ServerRegistration.class)) {
+            if (!ProcessorUtil.checkAnnotation(ServerRegistration.class, roundEnv,
+                    processingEnv, (TypeElement) element)) {
+                return true;
+            }
+            ServerRegistration serverRegistration = element.getAnnotation(ServerRegistration.class);
+            boolean registrarEqualsClass = "java.lang.Class".equals(getTypeElement(processingEnv,
+                    serverRegistration::registrar)
+                    .getQualifiedName()
+                    .toString());
+            boolean typeEqualsClass = "java.lang.Class".equals(getTypeElement(processingEnv,
+                    serverRegistration::type)
+                    .getQualifiedName()
+                    .toString());
+            if (registrarEqualsClass && typeEqualsClass) {
+                continue;
+            }
+            // 写入文件
+            String packageName = elementUtils.getPackageOf(element).getQualifiedName().toString();
+            Optional<TypeSpec.Builder> optionalBuilder = ServerRegistrationProcessor
+                    .generateMethod(null, element, processingEnv, serverRegistration);
+            if (optionalBuilder.isEmpty()) {
+                return false;
+            }
+            TypeSpec.Builder builder = optionalBuilder.get();
+            ClientRegistration clientRegistration = element.getAnnotation(ClientRegistration.class);
+            if (clientRegistration != null) {
+                ClientRegistrationProcessor.generateMethod(builder, element, processingEnv, clientRegistration);
+            }
+            // 创建一个文件
+            try {
+                TypeSpec typeSpec = builder.build();
+                FileObject existingFile = processingEnv.getFiler().getResource(
+                        StandardLocation.SOURCE_OUTPUT, packageName, typeSpec.name + ".java");
+                if (existingFile != null && existingFile.getLastModified() > 0) {
+                    return true;
+                }
+                try {
+                    JavaFile.builder(packageName, typeSpec)
+                            .build()
+                            .writeTo(processingEnv.getFiler());
+                } catch (IOException e) {
+                    String msg = String.format("无法生成源码：%s", e.getMessage());
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg);
+                    return false;
+                }
+            } catch (IOException e) {
+                String msg = String.format("%s 生成文件被占用，可能是代码正在生成中：%s", element, e.getMessage());
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, msg);
+            }
+        }
+        return true;
+    }
 }

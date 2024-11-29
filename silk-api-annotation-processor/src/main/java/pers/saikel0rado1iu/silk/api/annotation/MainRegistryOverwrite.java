@@ -17,41 +17,43 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <h2 style="color:FFC800">主要注册表覆写</h2>
- * 此注解只能使用于使用 {@code MainRegistrationProvider} 了进行注册的注册表项，且无法修改注册的标识符<br>
- * 此注解用于重写已被声明的可注册内容，可以快速实现类似于物品或方块的动态修改而不需要混入各种方法<br>
+ * <h2>主要注册表覆写</h2>
+ * 此注解只能使用于使用 {@code MainRegistrationProvider} 了进行注册的注册表项，且无法修改注册的标识符。
+ * 此注解用于重写已被声明的可注册内容，可以快速实现类似于物品或方块的动态修改而不需要混入各种方法。
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.CLASS)
 public @interface MainRegistryOverwrite {
-	/**
-	 * 提供混入包名，生成的混入类会自动放入该包中
-	 *
-	 * @return 混入包名；
-	 */
-	String pack();
-	
-	/**
-	 * 提供注册器用于从中修改注册项
-	 *
-	 * @return 注册项所在的注册器
-	 */
-	Class<?> registrar();
-	
-	/**
-	 * 提供注册项在注册器中的字段名称
-	 *
-	 * @return 注册项的字段
-	 */
-	String field();
-	
-	/**
-	 * 提供注册项的其余注册方法的覆写，如 {@code group()} 方法等
-	 *
-	 * @return 注册方法
-	 */
-	Register[] registers() default {};
+    /**
+     * 提供混入包名，生成的混入类会自动放入该包中
+     *
+     * @return 混入包名；
+     */
+    String pack();
+
+    /**
+     * 提供注册器用于从中修改注册项
+     *
+     * @return 注册项所在的注册器
+     */
+    Class<?> registrar();
+
+    /**
+     * 提供注册项在注册器中的字段名称
+     *
+     * @return 注册项的字段
+     */
+    String field();
+
+    /**
+     * 提供注册项的其余注册方法的覆写，如 {@code group()} 方法等
+     *
+     * @return 注册方法
+     */
+    Register[] registers() default {};
 }

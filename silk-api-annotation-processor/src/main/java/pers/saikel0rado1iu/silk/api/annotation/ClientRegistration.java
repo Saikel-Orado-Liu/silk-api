@@ -17,27 +17,28 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <h2 style="color:FFC800">客户端注册</h2>
- * 这个注解用于在注册器中自动创建静态注册方法<br>
- * 以便所有注册器都能够使用同一种方法注册
+ * <h2>客户端注册</h2>
+ * 这个注解用于在注册器中自动创建静态注册方法，以便所有注册器都能够使用同一种方法注册。
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface ClientRegistration {
-	/**
-	 * 提供注册器用于生成注册方法
-	 *
-	 * @return 注册器的类
-	 */
-	Class<?> registrar();
-	
-	/**
-	 * 提供注册类型用于生成注册方法<br>
-	 *
-	 * @return 注册类型的类
-	 */
-	Class<?> type();
+    /**
+     * 提供注册器用于生成注册方法
+     *
+     * @return 注册器的类
+     */
+    Class<?> registrar();
+
+    /**
+     * 提供注册类型用于生成注册方法
+     *
+     * @return 注册类型的类
+     */
+    Class<?> type();
 }
