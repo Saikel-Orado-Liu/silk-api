@@ -23,6 +23,8 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -44,6 +46,9 @@ import java.util.function.Function;
  * @since 0.1.0
  */
 public interface SpawnUtil {
+    /** {@link SpawnUtil} 的日志记录器 */
+    Logger LOGGER = LoggerFactory.getLogger(SpawnUtil.class);
+
     /**
      * 设置 {@link SpawnRestriction.SpawnPredicate} 的生成方法构建器
      *
@@ -164,6 +169,8 @@ public interface SpawnUtil {
                             && lightChecker.apply(Math.max(world.getLightLevel(LightType.SKY, pos), world.getLightLevel(LightType.BLOCK, pos)))
                             && otherChecker.test(type, world, spawnReason, pos, random);
                 } catch (IOException e) {
+                    String msg = "Generate exception: The world is not the server-side world.";
+                    LOGGER.error(msg, e);
                     throw new RuntimeException(e);
                 }
             };
