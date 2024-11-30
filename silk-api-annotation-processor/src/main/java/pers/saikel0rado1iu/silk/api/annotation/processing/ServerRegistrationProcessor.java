@@ -80,8 +80,9 @@ public final class ServerRegistrationProcessor extends AbstractProcessor {
         }
         // 注册方法
         String javadoc = """
-                服务端注册方法<br>
-                此方法返回一个服务端注册器，注册器注册返回注册对象<br>
+                服务端注册方法
+                <p>
+                此方法返回一个服务端注册器，注册器注册返回注册对象
                 
                 @param $N   注册对象的提供器
                 @return     服务端注册器

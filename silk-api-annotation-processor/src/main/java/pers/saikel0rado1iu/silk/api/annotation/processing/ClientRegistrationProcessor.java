@@ -101,8 +101,9 @@ public final class ClientRegistrationProcessor extends AbstractProcessor {
                                  .getFirst())
                     .build();
             String javadoc = """
-                    客户端注册方法<br>
-                    提供 {@link Runnable} 进行注册，您应该以如下方式进行客户端注册：<br>
+                    客户端注册方法<p>
+                    提供 {@link Runnable} 进行注册，您应该以如下方式进行客户端注册：
+                    <p>
                     <pre>{@code
                     abstract class ClientFoo implements ClientItemRegistry {
                         static {
