@@ -15,19 +15,21 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 /**
- * <h2 style="color:FFC800">数据生成器</h2>
+ * <h2>数据生成器</h2>
  * 用于 Silk API: Base 的数据生成器
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public final class BaseDataGen implements DataGeneratorEntrypoint {
-	@Override
-	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-		pack.addProvider(BaseI18nProvider.EN_US::provider);
-		pack.addProvider(BaseI18nProvider.ZH_CN::provider);
-		pack.addProvider(BaseI18nProvider.ZH_HK::provider);
-		pack.addProvider(BaseI18nProvider.ZH_TW::provider);
-	}
+    @Override
+    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+        pack.addProvider(BaseI18nProvider.EN_US::provider);
+        pack.addProvider(BaseI18nProvider.ZH_CN::provider);
+        pack.addProvider(BaseI18nProvider.ZH_HK::provider);
+        pack.addProvider(BaseI18nProvider.ZH_TW::provider);
+    }
 }

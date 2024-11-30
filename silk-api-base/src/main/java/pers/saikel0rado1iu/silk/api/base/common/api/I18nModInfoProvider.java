@@ -19,87 +19,79 @@ import net.minecraft.registry.RegistryWrapper;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * <h2 style="color:FFC800">国际化模组信息提供器</h2>
- * 用于国际化模组的基本信息，如模组名称、摘要和简介的提供器<br>
+ * <h2>国际化模组信息提供器</h2>
+ * 用于国际化模组的基本信息，如模组名称、摘要和简介的提供器
+ * <p>
  * 国际化词条基于 ModMenu 模组
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public class I18nModInfoProvider {
-	/**
-	 * ModMenu 全球化名称键前缀
-	 */
-	public static final String MOD_MENU_I18N_NAME_KEY_PREFIX = "modmenu.nameTranslation.";
-	/**
-	 * ModMenu 全球化摘要键前缀
-	 */
-	public static final String MOD_MENU_I18N_SUMMARY_KEY_PREFIX = "modmenu.summaryTranslation.";
-	/**
-	 * ModMenu 全球化简介键前缀
-	 */
-	public static final String MOD_MENU_I18N_DESC_KEY_PREFIX = "modmenu.descriptionTranslation.";
-	/**
-	 * 语言代码，如 en_us
-	 */
-	protected final String langCode;
-	/**
-	 * 模组的唯一标识符
-	 */
-	protected final String modId;
-	/**
-	 * 模组在此语言代码中的翻译名称
-	 */
-	protected final String name;
-	/**
-	 * 模组在此语言代码中的翻译摘要
-	 */
-	protected final String summary;
-	/**
-	 * 模组在此语言代码中的翻译简介
-	 */
-	protected final String description;
-	
-	/**
-	 * @param langCode    语言代码
-	 * @param modId       模组 ID
-	 * @param name        模组在此语言代码中的翻译名称
-	 * @param summary     模组在此语言代码中的翻译摘要
-	 * @param description 模组在此语言代码中的翻译简介
-	 */
-	public I18nModInfoProvider(String langCode, String modId, String name, String summary, String description) {
-		this.langCode = langCode;
-		this.modId = modId;
-		this.name = name;
-		this.summary = summary;
-		this.description = description;
-	}
-	
-	/**
-	 * 本地化数据生成
-	 *
-	 * @param translationBuilder {@link FabricLanguageProvider.TranslationBuilder}
-	 */
-	protected void generate(FabricLanguageProvider.TranslationBuilder translationBuilder) {
-		translationBuilder.add(MOD_MENU_I18N_NAME_KEY_PREFIX + modId, name);
-		translationBuilder.add(MOD_MENU_I18N_SUMMARY_KEY_PREFIX + modId, summary);
-		translationBuilder.add(MOD_MENU_I18N_DESC_KEY_PREFIX + modId, description);
-	}
-	
-	/**
-	 * 用于 {@link net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator.Pack#addProvider(FabricDataGenerator.Pack.Factory)} 注册 <br>
-	 * 覆盖 {@link I18nModInfoProvider#generate(FabricLanguageProvider.TranslationBuilder)} 以修改全球化数据生成
-	 *
-	 * @param fabricDataOutput {@link FabricDataOutput}
-	 * @param registryLookup {@link CompletableFuture}
-	 * @return {@link FabricLanguageProvider}
-	 */
-	public FabricLanguageProvider provider(FabricDataOutput fabricDataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
-		return new FabricLanguageProvider(fabricDataOutput, langCode, registryLookup) {
-			@Override
-			public void generateTranslations(RegistryWrapper.WrapperLookup wrapperLookup, TranslationBuilder translationBuilder) {
-				generate(translationBuilder);
-			}
-		};
-	}
+    /** ModMenu 全球化名称键前缀 */
+    public static final String MOD_MENU_I18N_NAME_KEY_PREFIX = "modmenu.nameTranslation.";
+    /** ModMenu 全球化摘要键前缀 */
+    public static final String MOD_MENU_I18N_SUMMARY_KEY_PREFIX = "modmenu.summaryTranslation.";
+    /** ModMenu 全球化简介键前缀 */
+    public static final String MOD_MENU_I18N_DESC_KEY_PREFIX = "modmenu.descriptionTranslation.";
+    /** 语言代码，如 en_us */
+    protected final String langCode;
+    /** 模组的唯一标识符 */
+    protected final String modId;
+    /** 模组在此语言代码中的翻译名称 */
+    protected final String name;
+    /** 模组在此语言代码中的翻译摘要 */
+    protected final String summary;
+    /** 模组在此语言代码中的翻译简介 */
+    protected final String description;
+
+    /**
+     * @param langCode    语言代码
+     * @param modId       模组 ID
+     * @param name        模组在此语言代码中的翻译名称
+     * @param summary     模组在此语言代码中的翻译摘要
+     * @param description 模组在此语言代码中的翻译简介
+     */
+    public I18nModInfoProvider(String langCode, String modId, String name, String summary,
+                               String description) {
+        this.langCode = langCode;
+        this.modId = modId;
+        this.name = name;
+        this.summary = summary;
+        this.description = description;
+    }
+
+    /**
+     * 本地化数据生成
+     *
+     * @param translationBuilder {@link FabricLanguageProvider.TranslationBuilder}
+     */
+    protected void generate(FabricLanguageProvider.TranslationBuilder translationBuilder) {
+        translationBuilder.add(MOD_MENU_I18N_NAME_KEY_PREFIX + modId, name);
+        translationBuilder.add(MOD_MENU_I18N_SUMMARY_KEY_PREFIX + modId, summary);
+        translationBuilder.add(MOD_MENU_I18N_DESC_KEY_PREFIX + modId, description);
+    }
+
+    /**
+     * 用于 {@link FabricDataGenerator.Pack#addProvider(FabricDataGenerator.Pack.Factory)} 注册。
+     * <p>
+     * 覆盖 {@link I18nModInfoProvider#generate(FabricLanguageProvider.TranslationBuilder)}
+     * 以修改全球化数据生成
+     *
+     * @param fabricDataOutput {@link FabricDataOutput}
+     * @param registryLookup   {@link CompletableFuture}
+     * @return {@link FabricLanguageProvider}
+     */
+    public FabricLanguageProvider provider(FabricDataOutput fabricDataOutput,
+                                           CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+        return new FabricLanguageProvider(fabricDataOutput, langCode, registryLookup) {
+            @Override
+            public void generateTranslations(RegistryWrapper.WrapperLookup wrapperLookup,
+                                             TranslationBuilder translationBuilder) {
+                generate(translationBuilder);
+            }
+        };
+    }
 }

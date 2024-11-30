@@ -12,53 +12,49 @@
 package pers.saikel0rado1iu.silk.api.base.common.util;
 
 /**
- * <h2 style="color:FFC800">玩家实用工具</h2>
+ * <h2>玩家实用工具</h2>
  * 有关玩家数据的部分数值与实用方法
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface PlayerUtil {
-	/**
-	 * 玩家生命值
-	 */
-	int HEALTH = 20;
-	/**
-	 * 玩家饥饿值
-	 */
-	int HUNGER = 20;
-	/**
-	 * 玩家饱和值
-	 */
-	int SATURATION = 20;
-	
-	/**
-	 * 获取生命值比例
-	 *
-	 * @param health 生命值
-	 * @return 比例
-	 */
-	static float getHealthRatio(float health) {
-		return HEALTH / health;
-	}
-	
-	/**
-	 * 获取饥饿值比例
-	 *
-	 * @param hunger 饥饿值
-	 * @return 比例
-	 */
-	static int getHungerRatio(float hunger) {
-		return (int) (HUNGER / hunger);
-	}
-	
-	/**
-	 * 获取饱和值比例
-	 *
-	 * @param saturation 饱和值
-	 * @return 比例
-	 */
-	static float getSaturationRatio(float saturation) {
-		return SATURATION / saturation;
-	}
+    /** 玩家生命值 */
+    int HEALTH = 20;
+    /** 玩家饥饿值 */
+    int HUNGER = 20;
+    /** 玩家饱和值 */
+    int SATURATION = 20;
+
+    /**
+     * 获取生命值比例
+     *
+     * @param health 生命值
+     * @return 比例
+     */
+    static float getHealthRatio(float health) {
+        return HEALTH / health;
+    }
+
+    /**
+     * 获取饥饿值比例
+     *
+     * @param hunger 饥饿值
+     * @return 比例
+     */
+    static int getHungerRatio(float hunger) {
+        return (int) (HUNGER / hunger);
+    }
+
+    /**
+     * 获取饱和值比例
+     *
+     * @param saturation 饱和值
+     * @return 比例
+     */
+    static float getSaturationRatio(float saturation) {
+        return SATURATION / saturation;
+    }
 }
