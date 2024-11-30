@@ -119,7 +119,7 @@ public interface SpawnUtil {
         }
 
         /**
-         * 此光照等级是从当前位置选取天空光照与方块光照中最高的作为参数<br> 如果要进行更精细地控制可以使用
+         * 此光照等级是从当前位置选取天空光照与方块光照中最高的作为参数<p> 如果要进行更精细地控制可以使用
          * {@link Builder#otherChecker(SpawnRestriction.SpawnPredicate)}
          *
          * @param lightChecker 光照检测函数
