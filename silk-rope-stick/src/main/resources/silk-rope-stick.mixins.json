@@ -1,16 +1,16 @@
 {
-	"required": true,
-	"package": "pers.saikel0rado1iu.silk.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"ropestick.component.DynamicComponentMixin",
-		"ropestick.component.type.CustomEntityHurtComponentMixin",
-		"ropestick.component.type.EnchantmentTraitsComponentMixin$SetAcceptEnchantment",
-		"ropestick.component.type.EnchantmentTraitsComponentMixin$SetTableEnchantment",
-		"ropestick.component.type.InherentStatusEffectsComponentMixin",
-		"ropestick.weapon.BreakingShieldMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "pers.saikel0rado1iu.silk.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ropestick.component.DynamicComponentMixin",
+    "ropestick.component.type.CustomEntityHurtComponentMixin",
+    "ropestick.component.type.EnchantmentTraitsComponentMixin$SetAcceptEnchantment",
+    "ropestick.component.type.EnchantmentTraitsComponentMixin$SetTableEnchantment",
+    "ropestick.component.type.InherentStatusEffectsComponentMixin",
+    "ropestick.weapon.BreakingShieldMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

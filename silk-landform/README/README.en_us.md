@@ -4,7 +4,8 @@
 
 <img src="../../img/icon.png" alt="Logo" width="160" height="160"/>
 
-**This system includes Silk API used to implement vanilla noise chunk generator modifications, terrain, biome modifications, and world upgrader and other functions related to world generation.**
+**This system includes Silk API used to implement vanilla noise chunk generator modifications,
+terrain, biome modifications, and world upgrader and other functions related to world generation.**
 
 [<img alt="Wiki" height="64" src="https://cdn.simpleicons.org/wikipedia/000000/FFFFFF]" width="64"/>](https://silk-mc.gitbook.io/silk-api)
 [<img alt="Discord" height="64" src="https://cdn.simpleicons.org/discord" width="64"/>](https://discord.com/invite/ZJuQyH2RBz)

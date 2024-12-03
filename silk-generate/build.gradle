@@ -3,14 +3,14 @@
 version = project.silk_generate_version + "+" + rootProject.version
 
 loom {
-	accessWidenerPath = file("src/main/resources/${project.name}.accesswidener")
+    accessWidenerPath = file("src/main/resources/${project.name}.accesswidener")
 }
 
 dependencies {
-	api project(path: ":silk-api-base", configuration: "namedElements")
-	api project(path: ":silk-mod-pass", configuration: "namedElements")
-	api project(path: ":silk-spinning-jenny", configuration: "namedElements")
-	api project(path: ":silk-rope-stick", configuration: "namedElements")
-	api project(path: ":silk-magic-cube", configuration: "namedElements")
-	api project(path: ":silk-spore", configuration: "namedElements")
+    api project(path: ":silk-api-base", configuration: "namedElements")
+    api project(path: ":silk-mod-pass", configuration: "namedElements")
+    api project(path: ":silk-spinning-jenny", configuration: "namedElements")
+    api project(path: ":silk-rope-stick", configuration: "namedElements")
+    api project(path: ":silk-magic-cube", configuration: "namedElements")
+    api project(path: ":silk-spore", configuration: "namedElements")
 }

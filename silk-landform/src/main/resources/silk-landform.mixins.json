@@ -1,16 +1,16 @@
 {
-	"required": true,
-	"package": "pers.saikel0rado1iu.silk.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"landform.gen.chunk.ChunkGeneratorCustomMixin$GetSeed$Chunk",
-		"landform.gen.chunk.ChunkGeneratorCustomMixin$GetSeed$Server",
-		"landform.gen.chunk.ChunkGeneratorCustomMixin$LocateBiome",
-		"landform.gen.chunk.ChunkGeneratorCustomMixin$PopulateBiomes",
-		"landform.gen.chunk.ChunkGeneratorCustomMixin$PopulateNoise",
-		"landform.gen.chunk.ChunkGeneratorCustomMixin$RepairStructureGen"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "pers.saikel0rado1iu.silk.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "landform.gen.chunk.ChunkGeneratorCustomMixin$GetSeed$Chunk",
+    "landform.gen.chunk.ChunkGeneratorCustomMixin$GetSeed$Server",
+    "landform.gen.chunk.ChunkGeneratorCustomMixin$LocateBiome",
+    "landform.gen.chunk.ChunkGeneratorCustomMixin$PopulateBiomes",
+    "landform.gen.chunk.ChunkGeneratorCustomMixin$PopulateNoise",
+    "landform.gen.chunk.ChunkGeneratorCustomMixin$RepairStructureGen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

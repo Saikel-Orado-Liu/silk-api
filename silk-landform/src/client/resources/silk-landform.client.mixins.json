@@ -1,23 +1,23 @@
 {
-	"required": true,
-	"package": "pers.saikel0rado1iu.silk.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"client": [
-		"client.event.landform.WorldPresetCustomButtonCallbackMixin$AddButton",
-		"client.event.landform.WorldPresetCustomButtonCallbackMixin$ShowCustom",
-		"client.event.landform.WorldPresetSetDefaultCallbackMixin",
-		"client.landform.UpgradeLevelSummaryMixin$AddWorldEntryWarning",
-		"client.landform.UpgradeLevelSummaryMixin$FixSummaryShow",
-		"client.landform.screen.UpgradePromptScreenMixin",
-		"client.landform.screen.UpgradeWarningScreenMixin$GetParentScreen",
-		"client.landform.screen.UpgradeWarningScreenMixin$ShowScreen"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"mixins": [
-		"client.event.landform.ClientWorldUpgradeManagerCallbackMixin$LevelListEvent",
-		"client.event.landform.ClientWorldUpgradeManagerCallbackMixin$SessionEvent",
-		"client.landform.UpgradeLevelSummaryMixin$CreateDetails"
-	]
+  "required": true,
+  "package": "pers.saikel0rado1iu.silk.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "client.event.landform.WorldPresetCustomButtonCallbackMixin$AddButton",
+    "client.event.landform.WorldPresetCustomButtonCallbackMixin$ShowCustom",
+    "client.event.landform.WorldPresetSetDefaultCallbackMixin",
+    "client.landform.UpgradeLevelSummaryMixin$AddWorldEntryWarning",
+    "client.landform.UpgradeLevelSummaryMixin$FixSummaryShow",
+    "client.landform.screen.UpgradePromptScreenMixin",
+    "client.landform.screen.UpgradeWarningScreenMixin$GetParentScreen",
+    "client.landform.screen.UpgradeWarningScreenMixin$ShowScreen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "client.event.landform.ClientWorldUpgradeManagerCallbackMixin$LevelListEvent",
+    "client.event.landform.ClientWorldUpgradeManagerCallbackMixin$SessionEvent",
+    "client.landform.UpgradeLevelSummaryMixin$CreateDetails"
+  ]
 }

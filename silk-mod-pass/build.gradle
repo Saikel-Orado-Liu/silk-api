@@ -3,10 +3,10 @@
 version = project.silk_mod_pass_version + "+" + rootProject.version
 
 loom {
-	accessWidenerPath = file("src/main/resources/${project.name}.accesswidener")
+    accessWidenerPath = file("src/main/resources/${project.name}.accesswidener")
 }
 
 dependencies {
-	api project(path: ":silk-api-base", configuration: "namedElements")
-	annotationProcessor project(path: ":silk-api-annotation-processor", configuration: "namedElements")
+    api project(path: ":silk-api-base", configuration: "namedElements")
+    annotationProcessor project(path: ":silk-api-annotation-processor", configuration: "namedElements")
 }

@@ -3,6 +3,6 @@
 version = project.silk_pattern_version + "+" + rootProject.version
 
 dependencies {
-	api project(path: ":silk-api-base", configuration: "namedElements")
-	api project(path: ":silk-mod-pass", configuration: "namedElements")
+    api project(path: ":silk-api-base", configuration: "namedElements")
+    api project(path: ":silk-mod-pass", configuration: "namedElements")
 }

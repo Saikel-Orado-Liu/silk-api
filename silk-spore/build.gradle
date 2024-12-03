@@ -3,11 +3,11 @@
 version = project.silk_spore_version + "+" + rootProject.version
 
 loom {
-	accessWidenerPath = file("src/main/resources/${project.name}.accesswidener")
+    accessWidenerPath = file("src/main/resources/${project.name}.accesswidener")
 }
 
 dependencies {
-	api project(path: ":silk-api-base", configuration: "namedElements")
-	api project(path: ":silk-mod-pass", configuration: "namedElements")
-	testmodImplementation project(path: ":silk-spinning-jenny", configuration: "namedElements")
+    api project(path: ":silk-api-base", configuration: "namedElements")
+    api project(path: ":silk-mod-pass", configuration: "namedElements")
+    testmodImplementation project(path: ":silk-spinning-jenny", configuration: "namedElements")
 }

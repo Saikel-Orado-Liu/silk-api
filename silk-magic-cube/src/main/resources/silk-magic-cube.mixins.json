@@ -1,14 +1,14 @@
 {
-	"required": true,
-	"package": "pers.saikel0rado1iu.silk.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"event.magiccube.FireIgniteBlockCallbackMixin",
-		"event.magiccube.FlintAndSteelIgniteBlockCallbackMixin",
-		"magiccube.infect.InfectMushroomMixin",
-		"magiccube.infect.InfectSaplingMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "pers.saikel0rado1iu.silk.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "event.magiccube.FireIgniteBlockCallbackMixin",
+    "event.magiccube.FlintAndSteelIgniteBlockCallbackMixin",
+    "magiccube.infect.InfectMushroomMixin",
+    "magiccube.infect.InfectSaplingMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

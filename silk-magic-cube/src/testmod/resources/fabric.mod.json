@@ -1,16 +1,16 @@
 {
-	"schemaVersion": 1,
-	"id": "silk-magic-cube-test",
-	"version": "1.0.0",
-	"entrypoints": {
-		"main": [
-			"pers.saikel0rado1iu.silk.test.magiccube.Test"
-		],
-		"client": [
-			"pers.saikel0rado1iu.silk.test.magiccube.client.Test"
-		],
-		"fabric-datagen": [
-			"pers.saikel0rado1iu.silk.test.magiccube.DataGen"
-		]
-	}
+  "schemaVersion": 1,
+  "id": "silk-magic-cube-test",
+  "version": "1.0.0",
+  "entrypoints": {
+    "main": [
+      "pers.saikel0rado1iu.silk.test.magiccube.Test"
+    ],
+    "client": [
+      "pers.saikel0rado1iu.silk.test.magiccube.client.Test"
+    ],
+    "fabric-datagen": [
+      "pers.saikel0rado1iu.silk.test.magiccube.DataGen"
+    ]
+  }
 }

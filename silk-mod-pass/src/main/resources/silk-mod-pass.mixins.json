@@ -1,14 +1,14 @@
 {
-	"required": true,
-	"package": "pers.saikel0rado1iu.silk.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"client": [
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"mixins": [
-		"event.registry.RegisterModResourcePackCallbackMixin",
-		"modpass.pack.GroupResourcePackMixin"
-	]
+  "required": true,
+  "package": "pers.saikel0rado1iu.silk.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "event.registry.RegisterModResourcePackCallbackMixin",
+    "modpass.pack.GroupResourcePackMixin"
+  ]
 }
