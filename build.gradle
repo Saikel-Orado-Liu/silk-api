@@ -3,271 +3,271 @@
 import groovy.json.JsonSlurper
 
 plugins {
-	id 'fabric-loom' version '1.8-SNAPSHOT'
-	id 'maven-publish'
+    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'maven-publish'
 }
 
 allprojects {
-	apply plugin: 'fabric-loom'
-	apply plugin: 'maven-publish'
-	
-	version = project.mod_version + "+" + project.mc_main_version
-	group = project.maven_group
-	
-	base {
-		archivesName = project.name
-	}
-	
-	loom {
-		splitEnvironmentSourceSets()
-	}
-	
-	sourceSets {
-		main {
-			resources {
-				srcDirs += ['src/main/generated']
-			}
-		}
-		
-		testmod {
-			compileClasspath += main.compileClasspath
-			runtimeClasspath += main.runtimeClasspath
-			
-			resources {
-				srcDirs += ['src/testmod/generated']
-			}
-		}
-		
-		testmodClient {
-			compileClasspath += main.compileClasspath
-			runtimeClasspath += main.runtimeClasspath
-			compileClasspath += client.compileClasspath
-			runtimeClasspath += client.runtimeClasspath
-			
-			compileClasspath += testmod.compileClasspath
-			runtimeClasspath += testmod.runtimeClasspath
-		}
-		
-		test {
-			compileClasspath += testmodClient.compileClasspath
-			runtimeClasspath += testmodClient.runtimeClasspath
-		}
-	}
-	
-	loom {
-		runs {
-			testmodClient {
-				client()
-				ideConfigGenerated project.rootProject == project
-				name = "Testmod Client"
-				source sourceSets.testmodClient
-			}
-			testmodServer {
-				server()
-				ideConfigGenerated project.rootProject == project
-				name = "Testmod Server"
-				source sourceSets.testmod
-			}
-			// 添加一个新的 gradle 任务，会运行数据生成 API：“gradlew runTestmodDatagen”
-			testmodDatagen {
-				inherit client
-				name "Test Mod DataGen"
-				vmArg "-Dfabric-api.datagen"
-				vmArg "-Dfabric-api.datagen.output-dir=${file("src/testmod/generated")}"
-				vmArg "-Dfabric-api.datagen.modid=${project.name}-test"
-				
-				runDir "build/datagen"
-				source = sourceSets.testmodClient
-			}
-		}
-		
-		runConfigs.configureEach {
-			ideConfigGenerated = true
-		}
-	}
-	
-	allprojects.each { p ->
-		loom.mods.register(p.name) {
-			sourceSet p.sourceSets.main
-			sourceSet p.sourceSets.client
-		}
-		
-		loom.mods.register(p.name + "-testmod") {
-			sourceSet p.sourceSets.testmod
-			sourceSet p.sourceSets.testmodClient
-		}
-	}
-	
-	dependencies {
-		// 要更改版本, 请参阅 gradle.properties 文件
-		minecraft "com.mojang:minecraft:${project.minecraft_version}"
-		mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-		// Fabric Loader
-		modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-		// Fabric API. 这在理论上是可选的, 但无论如何您都可能需要它.
-		modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-		
-		// 注册注解处理器
-		testmodAnnotationProcessor sourceSets.main.output
-		testmodClientAnnotationProcessor sourceSets.main.output, sourceSets.client.output, sourceSets.testmod.output
-		
-		// 添加 testmod 测试模组服务端依赖
-		testmodImplementation sourceSets.main.output
-		testmodClientImplementation sourceSets.main.output
-		testmodClientImplementation sourceSets.client.output
-		testmodClientImplementation sourceSets.testmod.output
-		testImplementation sourceSets.testmodClient.output
-		
-		// 取消注释以下行以启用已弃用的 Fabric API 模块.
-		// 这些包含在 Fabric API 发布版本中, 允许您在以后更方便的时候将您的模块更新为最新的模块.
-		// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-	}
-	
-	fabricApi {
-		configureDataGeneration {
-			modId = project.name
-		}
-	}
-	
-	processResources {
-		inputs.property "version", project.version
-		
-		filesMatching("fabric.mod.json") {
-			expand "version": project.version
-		}
-	}
-	
-	tasks.withType(JavaCompile).configureEach {
-		// Minecraft 1.20.5 及以上使用 Java 21.
-		it.options.release = 21
-		// 使用 UTF-8 编码
-		options.encoding = 'UTF-8'
-	}
-	
-	javadoc {
-		options {
-			source = "21"
-			encoding = "UTF-8"
-			charSet = "UTF-8"
-		}
-	}
-	
-	java {
-		// Loom 会自动将 sourcesJar 附加到 RemapSourcesJar 任务和 “build” 任务
-		// 如果其存在.
-		// 如果删除此行，则不会生成源.
-		withSourcesJar()
-		// 生成文档
-		// withJavadocJar()
-		
-		sourceCompatibility = JavaVersion.VERSION_21
-		targetCompatibility = JavaVersion.VERSION_21
-	}
-	
-	jar {
-		from("LICENSE") {
-			rename { "${it}_${project.base.archivesName.get()}" }
-		}
-	}
-	
-	tasks.register('deleteRemoteArtifact', Delete) {
-		doLast {
-			// 使用 GitHub Packages API 获取特定包的所有版本
-			def versionsUrl = "https://api.github.com/users/${project.organizations_name}/packages/maven/${project.maven_group}.${archivesBaseName}/versions"
-			def headers = ['Authorization': "token ${System.getenv("GITHUB_TOKEN")}"]
-			
-			def versionsResponse
-			def connection = new URI(versionsUrl).toURL().openConnection() as HttpURLConnection
-			headers.each { k, v -> connection.setRequestProperty(k, v) }
-			
-			if (connection.responseCode == 200) {
-				versionsResponse = connection.inputStream.text
-			} else {
-				println "Failed to fetch versions. Response code: ${connection.responseCode}"
-				return
-			}
-			
-			// 解析 JSON 响应以获取版本列表
-			def versions = new JsonSlurper().parseText versionsResponse
-			
-			// 遍历版本列表并执行删除操作
-			versions.each { ver ->
-				def versionId = ver.id // 获取版本的标识符
-				def versionName = ver.name // 获取版本的名称
-				
-				if (versionName != version) return
-				
-				// 执行删除操作
-				def deleteUrl = "https://api.github.com/users/${project.organizations_name}/packages/maven/${project.maven_group}.${archivesBaseName}/versions/${versionId}"
-				def deleteResponse = new URI(deleteUrl).toURL().openConnection()
-						.with {
-							requestMethod = 'DELETE'
-							headers.each { k, v -> setRequestProperty(k, v) }
-							connect()
-							getResponseCode()
-						}
-				
-				// 打印操作结果
-				if (deleteResponse == 204) {
-					println "Successfully deleted version ${versionName} (${versionId}) of package ${deleteUrl} from GitHub Packages."
-				} else {
-					println "Failed to delete version ${versionName} (${versionId}) of package ${deleteUrl} from GitHub Packages. Response code: ${deleteResponse}"
-				}
-			}
-		}
-	}
-	
-	// 配置 Maven 发布
-	publishing {
-		publications {
-			create("mavenJava", MavenPublication) {
-				artifactId = project.archivesBaseName
-				from components.java
-				// 发布源码
-				// artifact sourcesJar
-			}
-		}
-		
-		// 有关如何设置发布的信息, 请参阅 https://docs.gradle.org/current/userguide/publishing_maven.html
-		repositories {
-			// 添加要发布到此处的存储库.
-			// 注意: 这个语句块与顶层的块功能不同.
-			// 这里的存储库将用于发布您的工件, 而不是用于检索依赖项.
-			maven {
-				name = "GitHubPackages"
-				url = "https://maven.pkg.github.com/${project.organizations_name}/${project.archives_base_name}"
-				credentials {
-					username = System.getenv("GITHUB_ACTOR")
-					password = System.getenv("GITHUB_TOKEN")
-				}
-			}
-		}
-	}
-	
-	tasks.configureEach { task ->
-		if (task.name.startsWith('publish')) {
-			task.dependsOn 'deleteRemoteArtifact'
-		}
-	}
+    apply plugin: 'fabric-loom'
+    apply plugin: 'maven-publish'
+
+    version = project.mod_version + "+" + project.mc_main_version
+    group = project.maven_group
+
+    base {
+        archivesName = project.name
+    }
+
+    loom {
+        splitEnvironmentSourceSets()
+    }
+
+    sourceSets {
+        main {
+            resources {
+                srcDirs += ['src/main/generated']
+            }
+        }
+
+        testmod {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+
+            resources {
+                srcDirs += ['src/testmod/generated']
+            }
+        }
+
+        testmodClient {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+            compileClasspath += client.compileClasspath
+            runtimeClasspath += client.runtimeClasspath
+
+            compileClasspath += testmod.compileClasspath
+            runtimeClasspath += testmod.runtimeClasspath
+        }
+
+        test {
+            compileClasspath += testmodClient.compileClasspath
+            runtimeClasspath += testmodClient.runtimeClasspath
+        }
+    }
+
+    loom {
+        runs {
+            testmodClient {
+                client()
+                ideConfigGenerated project.rootProject == project
+                name = "Testmod Client"
+                source sourceSets.testmodClient
+            }
+            testmodServer {
+                server()
+                ideConfigGenerated project.rootProject == project
+                name = "Testmod Server"
+                source sourceSets.testmod
+            }
+            // 添加一个新的 gradle 任务，会运行数据生成 API：“gradlew runTestmodDatagen”
+            testmodDatagen {
+                inherit client
+                name "Test Mod DataGen"
+                vmArg "-Dfabric-api.datagen"
+                vmArg "-Dfabric-api.datagen.output-dir=${file("src/testmod/generated")}"
+                vmArg "-Dfabric-api.datagen.modid=${project.name}-test"
+
+                runDir "build/datagen"
+                source = sourceSets.testmodClient
+            }
+        }
+
+        runConfigs.configureEach {
+            ideConfigGenerated = true
+        }
+    }
+
+    allprojects.each { p ->
+        loom.mods.register(p.name) {
+            sourceSet p.sourceSets.main
+            sourceSet p.sourceSets.client
+        }
+
+        loom.mods.register(p.name + "-testmod") {
+            sourceSet p.sourceSets.testmod
+            sourceSet p.sourceSets.testmodClient
+        }
+    }
+
+    dependencies {
+        // 要更改版本, 请参阅 gradle.properties 文件
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
+        mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+        // Fabric Loader
+        modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+        // Fabric API. 这在理论上是可选的, 但无论如何您都可能需要它.
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+        // 注册注解处理器
+        testmodAnnotationProcessor sourceSets.main.output
+        testmodClientAnnotationProcessor sourceSets.main.output, sourceSets.client.output, sourceSets.testmod.output
+
+        // 添加 testmod 测试模组服务端依赖
+        testmodImplementation sourceSets.main.output
+        testmodClientImplementation sourceSets.main.output
+        testmodClientImplementation sourceSets.client.output
+        testmodClientImplementation sourceSets.testmod.output
+        testImplementation sourceSets.testmodClient.output
+
+        // 取消注释以下行以启用已弃用的 Fabric API 模块.
+        // 这些包含在 Fabric API 发布版本中, 允许您在以后更方便的时候将您的模块更新为最新的模块.
+        // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+    }
+
+    fabricApi {
+        configureDataGeneration {
+            modId = project.name
+        }
+    }
+
+    processResources {
+        inputs.property "version", project.version
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        // Minecraft 1.20.5 及以上使用 Java 21.
+        it.options.release = 21
+        // 使用 UTF-8 编码
+        options.encoding = 'UTF-8'
+    }
+
+    javadoc {
+        options {
+            source = "21"
+            encoding = "UTF-8"
+            charSet = "UTF-8"
+        }
+    }
+
+    java {
+        // Loom 会自动将 sourcesJar 附加到 RemapSourcesJar 任务和 “build” 任务
+        // 如果其存在.
+        // 如果删除此行，则不会生成源.
+        withSourcesJar()
+        // 生成文档
+        // withJavadocJar()
+
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    jar {
+        from("LICENSE") {
+            rename { "${it}_${project.base.archivesName.get()}" }
+        }
+    }
+
+    tasks.register('deleteRemoteArtifact', Delete) {
+        doLast {
+            // 使用 GitHub Packages API 获取特定包的所有版本
+            def versionsUrl = "https://api.github.com/users/${project.organizations_name}/packages/maven/${project.maven_group}.${archivesBaseName}/versions"
+            def headers = ['Authorization': "token ${System.getenv("GITHUB_TOKEN")}"]
+
+            def versionsResponse
+            def connection = new URI(versionsUrl).toURL().openConnection() as HttpURLConnection
+            headers.each { k, v -> connection.setRequestProperty(k, v) }
+
+            if (connection.responseCode == 200) {
+                versionsResponse = connection.inputStream.text
+            } else {
+                println "Failed to fetch versions. Response code: ${connection.responseCode}"
+                return
+            }
+
+            // 解析 JSON 响应以获取版本列表
+            def versions = new JsonSlurper().parseText versionsResponse
+
+            // 遍历版本列表并执行删除操作
+            versions.each { ver ->
+                def versionId = ver.id // 获取版本的标识符
+                def versionName = ver.name // 获取版本的名称
+
+                if (versionName != version) return
+
+                // 执行删除操作
+                def deleteUrl = "https://api.github.com/users/${project.organizations_name}/packages/maven/${project.maven_group}.${archivesBaseName}/versions/${versionId}"
+                def deleteResponse = new URI(deleteUrl).toURL().openConnection()
+                        .with {
+                            requestMethod = 'DELETE'
+                            headers.each { k, v -> setRequestProperty(k, v) }
+                            connect()
+                            getResponseCode()
+                        }
+
+                // 打印操作结果
+                if (deleteResponse == 204) {
+                    println "Successfully deleted version ${versionName} (${versionId}) of package ${deleteUrl} from GitHub Packages."
+                } else {
+                    println "Failed to delete version ${versionName} (${versionId}) of package ${deleteUrl} from GitHub Packages. Response code: ${deleteResponse}"
+                }
+            }
+        }
+    }
+
+    // 配置 Maven 发布
+    publishing {
+        publications {
+            create("mavenJava", MavenPublication) {
+                artifactId = project.archivesBaseName
+                from components.java
+                // 发布源码
+                // artifact sourcesJar
+            }
+        }
+
+        // 有关如何设置发布的信息, 请参阅 https://docs.gradle.org/current/userguide/publishing_maven.html
+        repositories {
+            // 添加要发布到此处的存储库.
+            // 注意: 这个语句块与顶层的块功能不同.
+            // 这里的存储库将用于发布您的工件, 而不是用于检索依赖项.
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/${project.organizations_name}/${project.archives_base_name}"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+    }
+
+    tasks.configureEach { task ->
+        if (task.name.startsWith('publish')) {
+            task.dependsOn 'deleteRemoteArtifact'
+        }
+    }
 }
 
 repositories {
-	// 添加存储库以从此处检索工件.
-	// 你应该只在依赖其他模组时使用它，因为
-	// Loom 添加必要的 maven 存储库以自动下载 Minecraft 和库.
-	// 见 https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// 有关存储库的更多信息.
+    // 添加存储库以从此处检索工件.
+    // 你应该只在依赖其他模组时使用它，因为
+    // Loom 添加必要的 maven 存储库以自动下载 Minecraft 和库.
+    // 见 https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // 有关存储库的更多信息.
 }
 
 dependencies {
-	// 本模组的子 API 模块
-	subprojects.each {
-		include project("${it.path}")
-		api project(path: "${it.path}", configuration: "namedElements")
-		annotationProcessor project(path: "${it.path}", configuration: "namedElements")
-		clientImplementation project("${it.path}").sourceSets.client.output
-	}
-	
-	// 本模组所需要添加使用的本地模组库
-	modImplementation fileTree(dir: 'libs', includes: ['*.jar'])
+    // 本模组的子 API 模块
+    subprojects.each {
+        include project("${it.path}")
+        api project(path: "${it.path}", configuration: "namedElements")
+        annotationProcessor project(path: "${it.path}", configuration: "namedElements")
+        clientImplementation project("${it.path}").sourceSets.client.output
+    }
+
+    // 本模组所需要添加使用的本地模组库
+    modImplementation fileTree(dir: 'libs', includes: ['*.jar'])
 }

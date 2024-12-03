@@ -72,19 +72,19 @@
 ### 功能：
 
 - 逻辑端
-	- 重构了 API 架构，使 API 更加先进与健壮，同时修复多个已知漏洞。
+    - 重构了 API 架构，使 API 更加先进与健壮，同时修复多个已知漏洞。
 
 ## 0.3.1---2024/03/04
 
 ### 修复：
 
 - 逻辑端
-	- 修复了 ChunkStorageData 中 getBiome() 返回 null 导致游戏崩溃的问题。
+    - 修复了 ChunkStorageData 中 getBiome() 返回 null 导致游戏崩溃的问题。
 - 客户端
-	- 修复了 1.20 ~ 1.20.1 版本中与世界升级相关的屏幕没有背景的问题。
-	- 修复了 1.20 ~ 1.20.1 版本中需要升级的世界加载会崩溃的问题。
-	- 修复了一个模组中的所有世界生成器共用一个名字的问题。
-	- 修复了有概率升级世界使用其他世界生成器升级方法的问题。
+    - 修复了 1.20 ~ 1.20.1 版本中与世界升级相关的屏幕没有背景的问题。
+    - 修复了 1.20 ~ 1.20.1 版本中需要升级的世界加载会崩溃的问题。
+    - 修复了一个模组中的所有世界生成器共用一个名字的问题。
+    - 修复了有概率升级世界使用其他世界生成器升级方法的问题。
 
 ## 0.3.0---2024/02/25
 
@@ -98,58 +98,58 @@
 ### 修复：
 
 - 逻辑端
-	- 修复了 UpgradeChunkGenerator 中由 getCodec() 重名导致的问题。
+    - 修复了 UpgradeChunkGenerator 中由 getCodec() 重名导致的问题。
 - 客户端
-	- 修复了 UpgradeWarningScreenMixin$ShowScreen 中 getSession() 混入在客户端失败导致的 remap 崩溃问题。
+    - 修复了 UpgradeWarningScreenMixin$ShowScreen 中 getSession() 混入在客户端失败导致的 remap 崩溃问题。
 
 ## 0.2.0---2024/01/24
 
 ### 功能：
 
 - 逻辑端
-	- 添加了“世界升级系统”，可注册世界升级器让玩家能升级世界
-	- 添加了区块生成器解编码器注册器（ChunkGeneratorCodecRegistry）
-	- 添加了可自定义区块生成器接口（CustomChunkGenerator）
-	- 添加了可修改的原版噪声区块生成器（SilkNoiseChunkGenerator）
+    - 添加了“世界升级系统”，可注册世界升级器让玩家能升级世界
+    - 添加了区块生成器解编码器注册器（ChunkGeneratorCodecRegistry）
+    - 添加了可自定义区块生成器接口（CustomChunkGenerator）
+    - 添加了可修改的原版噪声区块生成器（SilkNoiseChunkGenerator）
 
 ### 更改：
 
 - 逻辑端
-	- 添加了 SilkVanillaBiomeParameters 的方法，使其更易使用。
+    - 添加了 SilkVanillaBiomeParameters 的方法，使其更易使用。
 
 - 客户端
-	- 修复了 WorldPresetCustomButtonCallbackMixin 的按钮显示问题，现在世界预设的自定义按钮可以正确的覆盖默认按钮了。
+    - 修复了 WorldPresetCustomButtonCallbackMixin 的按钮显示问题，现在世界预设的自定义按钮可以正确的覆盖默认按钮了。
 
 ## 0.1.3---2023/12/16
 
 ### 功能：
 
 - 逻辑端
-	- 添加了伤害类型数据生成器。
+    - 添加了伤害类型数据生成器。
 
 ### 更改：
 
 - 逻辑端
-	- 修改了 ModDataGeneration 与 SilkWorldGenerator 的方法，使其更易懂.
+    - 修改了 ModDataGeneration 与 SilkWorldGenerator 的方法，使其更易懂.
 
 - 客户端
-	- 模组日志使用 Markdown 文本格式，添加标题与列表格式支持，推荐只使用标题与列表格式编写日志。
+    - 模组日志使用 Markdown 文本格式，添加标题与列表格式支持，推荐只使用标题与列表格式编写日志。
 
 v0.1.2 2023/12/09
 
 ## 0.1.2 漏洞修复
 
 - 客户端
-	- 再次修复模组日志读取被 API 日志覆盖的问题，并修改日志路径和日志模板。
+    - 再次修复模组日志读取被 API 日志覆盖的问题，并修改日志路径和日志模板。
 
 v0.1.1 2023/12/08
 
 ## 0.1.1 漏洞修复
 
 - 逻辑端
-	- 修复 Minecraft 原版物品只能附魔「耐久」的严重问题
+    - 修复 Minecraft 原版物品只能附魔「耐久」的严重问题
 - 客户端
-	- 修复模组日志读取被 API 日志覆盖的问题
+    - 修复模组日志读取被 API 日志覆盖的问题
 
 v1.20.2-0.1.0 2023/12/01
 1.「丝绸开发库」正式发布！

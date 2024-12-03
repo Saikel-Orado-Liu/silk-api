@@ -1,9 +1,9 @@
 version = project.silk_api_base_version + "+" + rootProject.version
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	api project(path: ":silk-api-annotation-processor", configuration: "namedElements")
+    api project(path: ":silk-api-annotation-processor", configuration: "namedElements")
 }

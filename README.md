@@ -25,16 +25,20 @@
 
 ## What is Silk API
 
-**Advanced Fabric API extensions for adding fancy mod items, blocks, mobs and features. The goal is to make it easy for
+**Advanced Fabric API extensions for adding fancy mod items, blocks, mobs and features. The goal is
+to make it easy for
 fabric mod developers to produce a
 variety of advanced operations**
 
-- Silk API is a Fabric API-based extension core library that contains classes, methods, and interfaces that implement
+- Silk API is a Fabric API-based extension core library that contains classes, methods, and
+  interfaces that implement
   advanced Mod tools, blocks, entities,
   or features.
-- Silk API is rapid and straightforward to develop, and you can add unparalleled new items to your Mod by simply
+- Silk API is rapid and straightforward to develop, and you can add unparalleled new items to your
+  Mod by simply
   implementing a few interfaces.
-- The goal of Silk API is to become an advanced Mod development template, which can greatly facilitate the call,
+- The goal of Silk API is to become an advanced Mod development template, which can greatly
+  facilitate the call,
   extension and linkage between different
   Mod. Bring a different ecological experience to the Fabric Mod environment.
 - Silk API is available to everyone, e~~~~ven if you only want to use some of it!

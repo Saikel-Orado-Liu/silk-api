@@ -1,12 +1,12 @@
 version = project.silk_api_annotation_processor_version + "+" + rootProject.version
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	api "com.squareup:javapoet:1.13.0"
-	include "com.squareup:javapoet:1.13.0"
-	implementation 'com.google.auto.service:auto-service:1.1.1'
-	annotationProcessor 'com.google.auto.service:auto-service:1.1.1'
+    api "com.squareup:javapoet:1.13.0"
+    include "com.squareup:javapoet:1.13.0"
+    implementation 'com.google.auto.service:auto-service:1.1.1'
+    annotationProcessor 'com.google.auto.service:auto-service:1.1.1'
 }
