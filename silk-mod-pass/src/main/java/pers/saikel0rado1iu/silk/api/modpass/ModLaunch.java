@@ -17,20 +17,25 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
 
 /**
- * <h2 style="color:FFC800">模组启动主类</h2>
+ * <h2>模组启动主类</h2>
  * 继承自 {@link PreLaunchEntrypoint}。用于在模组启动时就执行某些操作，部分注册任务会要求在启动时注册。
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface ModLaunch extends PreLaunchEntrypoint, ModEntry<LaunchRegistrationProvider<?>> {
-	@Override
-	default void onPreLaunch() {
-		if (isExecuted()) return;
-		ENTRYPOINT_EXECUTED.put(getClass(), true);
-		main(this);
-		for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-			LaunchRegistrationProvider.loggingRegistration(registrationNamespace(), clazz, RegistrationType.PRE_LAUNCH);
-		}
-	}
+    @Override
+    default void onPreLaunch() {
+        if (isExecuted()) {
+            return;
+        }
+        ENTRYPOINT_EXECUTED.put(getClass(), true);
+        main(this);
+        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
+            LaunchRegistrationProvider.loggingRegistration(registrationNamespace(),
+                    clazz, RegistrationType.PRE_LAUNCH);
+        }
+    }
 }

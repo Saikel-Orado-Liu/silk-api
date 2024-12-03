@@ -12,18 +12,20 @@
 package pers.saikel0rado1iu.silk.api.modpass;
 
 /**
- * <h2 style="color:FFC800">模组通</h2>
+ * <h2>模组通</h2>
  * 所有实现了 {@link ModPass} 的类都可以取出 {@link ModData} 以供使用
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @FunctionalInterface
 public interface ModPass {
-	/**
-	 * 用于提供模组数据以基于模组数据实现功能
-	 *
-	 * @return 模组数据
-	 */
-	ModData modData();
+    /**
+     * 用于提供模组数据以基于模组数据实现功能
+     *
+     * @return 模组数据
+     */
+    ModData modData();
 }

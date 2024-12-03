@@ -17,18 +17,26 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
 import pers.saikel0rado1iu.silk.api.modpass.registry.ServerRegistrationProvider;
 
 /**
- * <h2 style="color:FFC800">模组服务端主类</h2>
+ * <h2>模组服务端主类</h2>
  * 继承自 {@link DedicatedServerModInitializer}。提供服务端主函数
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
-public interface ModServer extends DedicatedServerModInitializer, ModEntry<ServerRegistrationProvider<?>> {
-	@Override
-	default void onInitializeServer() {
-		main(this);
-		for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-			RegisterableModPass.loggingRegistration(registrationNamespace(), clazz, RegistrationType.SERVER_ONLY);
-		}
-	}
+public interface ModServer
+        extends DedicatedServerModInitializer, ModEntry<ServerRegistrationProvider<?>> {
+    @Override
+    default void onInitializeServer() {
+        if (isExecuted()) {
+            return;
+        }
+        ENTRYPOINT_EXECUTED.put(getClass(), true);
+        main(this);
+        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
+            RegisterableModPass.loggingRegistration(registrationNamespace(),
+                    clazz, RegistrationType.SERVER_ONLY);
+        }
+    }
 }

@@ -22,74 +22,87 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <h2 style="color:FFC800">Minecraft 数据</h2>
+ * <h2>Minecraft 数据</h2>
  * 独立的 Minecraft 数据集
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface Minecraft extends ModData {
-	/**
-	 * 提供实例
-	 *
-	 * @return 模组数据实例
-	 */
-	static Minecraft getInstance() {
-		return new Minecraft() {
-		};
-	}
-	
-	/**
-	 * 比较 MC 版本
-	 *
-	 * @param version        原始版本
-	 * @param compareVersion 需要比较的版本
-	 * @return -1 为小于；0 为等于；1 为大于
-	 */
-	static int compareVersion(String version, String compareVersion) {
-		version = StringUtils.substringBefore(version, "-");
-		compareVersion = StringUtils.substringBefore(compareVersion, "-");
-		if (version.contains("w") || version.contains("a") || compareVersion.contains("w") || compareVersion.contains("a")) return 0;
-		
-		ArrayList<String> originalVerList = new ArrayList<>(Arrays.asList(version.split("\\.")));
-		version = version.replaceAll("\\.", "");
-		if (originalVerList.size() < 3) version += "0";
-		ArrayList<String> compareVerList = new ArrayList<>(Arrays.asList(compareVersion.split("\\.")));
-		compareVersion = compareVersion.replaceAll("\\.", "");
-		if (compareVerList.size() < 3) compareVersion += "0";
-		
-		return Integer.compare(Integer.parseInt(compareVersion), Integer.parseInt(version));
-	}
-	
-	/**
-	 * 获取 Modrinth API 中模组对象的最新 MC 版本
-	 *
-	 * @param data Modrinth API 中模组对象
-	 * @return 模组的最新 MC 版本
-	 */
-	static String getLatestVersion(JsonObject data) {
-		List<String> verList = new ArrayList<>(4);
-		JsonArray verArray = data.getAsJsonArray("game_versions");
-		for (JsonElement object : verArray) verList.add(object.getAsString());
-		String latestMinecraftVer = verList.get(0);
-		for (int count = 0; count < verList.size() - 1; count++) {
-			latestMinecraftVer = compareVersion(verList.get(count), verList.get(count + 1)) < 0 ? verList.get(count) : verList.get(count + 1);
-		}
-		return latestMinecraftVer;
-	}
-	
-	/**
-	 * 比较 MC 版本
-	 *
-	 * @param compareVersion 需要比较的版本
-	 * @return -1 为小于；0 为等于；1 为大于
-	 */
-	default int compareVersion(String compareVersion) {
-		return compareVersion(version(), compareVersion);
-	}
-	
-	@Override
-	default String id() {
-		return "minecraft";
-	}
+    /**
+     * 提供实例
+     *
+     * @return 模组数据实例
+     */
+    static Minecraft getInstance() {
+        return new Minecraft() {
+        };
+    }
+
+    /**
+     * 比较 MC 版本
+     *
+     * @param version        原始版本
+     * @param compareVersion 需要比较的版本
+     * @return -1 为小于；0 为等于；1 为大于
+     */
+    static int compareVersion(String version, String compareVersion) {
+        version = StringUtils.substringBefore(version, "-");
+        compareVersion = StringUtils.substringBefore(compareVersion, "-");
+        if (version.contains("w") || version.contains("a")
+                || compareVersion.contains("w") || compareVersion.contains("a")) {
+            return 0;
+        }
+
+        ArrayList<String> originalVerList = new ArrayList<>(Arrays.asList(version.split("\\.")));
+        version = version.replaceAll("\\.", "");
+        if (originalVerList.size() < 3) {
+            version += "0";
+        }
+        ArrayList<String> compareVerList = new ArrayList<>(Arrays.asList(compareVersion.split("\\.")));
+        compareVersion = compareVersion.replaceAll("\\.", "");
+        if (compareVerList.size() < 3) {
+            compareVersion += "0";
+        }
+
+        return Integer.compare(Integer.parseInt(compareVersion), Integer.parseInt(version));
+    }
+
+    /**
+     * 获取 Modrinth API 中模组对象的最新 MC 版本
+     *
+     * @param data Modrinth API 中模组对象
+     * @return 模组的最新 MC 版本
+     */
+    static String getLatestVersion(JsonObject data) {
+        List<String> verList = new ArrayList<>(4);
+        JsonArray verArray = data.getAsJsonArray("game_versions");
+        for (JsonElement object : verArray) {
+            verList.add(object.getAsString());
+        }
+        String latestMinecraftVer = verList.getFirst();
+        for (int count = 0; count < verList.size() - 1; count++) {
+            latestMinecraftVer = compareVersion(verList.get(count), verList.get(count + 1)) < 0
+                    ? verList.get(count)
+                    : verList.get(count + 1);
+        }
+        return latestMinecraftVer;
+    }
+
+    /**
+     * 比较 MC 版本
+     *
+     * @param compareVersion 需要比较的版本
+     * @return -1 为小于；0 为等于；1 为大于
+     */
+    default int compareVersion(String compareVersion) {
+        return compareVersion(version(), compareVersion);
+    }
+
+    @Override
+    default String id() {
+        return "minecraft";
+    }
 }

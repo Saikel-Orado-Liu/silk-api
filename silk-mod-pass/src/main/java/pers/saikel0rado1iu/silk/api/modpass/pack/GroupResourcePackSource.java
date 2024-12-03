@@ -18,29 +18,36 @@ import pers.saikel0rado1iu.silk.api.modpass.ModDataExpansion;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 
 /**
- * <h2 style="color:FFC800">组资源包源</h2>
+ * <h2>组资源包源</h2>
  * 用于组资源包的源
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 public class GroupResourcePackSource implements ResourcePackSource {
-	private final ModPass modPass;
-	
-	/**
-	 * @param modPass 模组名称
-	 */
-	public GroupResourcePackSource(ModPass modPass) {
-		this.modPass = modPass;
-	}
-	
-	@Override
-	public boolean canBeEnabledLater() {
-		return true;
-	}
-	
-	@Override
-	public Text decorate(Text packName) {
-		return Text.translatable("pack.nameAndSource", packName, Text.translatable("pack.source.builtinMod", (modPass.modData() instanceof ModDataExpansion e ? e.i18nName() : Text.literal(modPass.modData().name())))).formatted(Formatting.GRAY);
-	}
+    private final ModPass modPass;
+
+    /**
+     * @param modPass 模组名称
+     */
+    public GroupResourcePackSource(ModPass modPass) {
+        this.modPass = modPass;
+    }
+
+    @Override
+    public Text decorate(Text packName) {
+        Text name = modPass.modData() instanceof ModDataExpansion e
+                ? e.i18nName()
+                : Text.literal(modPass.modData().name());
+        return Text.translatable("pack.nameAndSource", packName,
+                           Text.translatable("pack.source.builtinMod", name))
+                   .formatted(Formatting.GRAY);
+    }
+
+    @Override
+    public boolean canBeEnabledLater() {
+        return true;
+    }
 }

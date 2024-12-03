@@ -12,31 +12,36 @@
 package pers.saikel0rado1iu.silk.api.modpass;
 
 import net.fabricmc.api.ModInitializer;
-import pers.saikel0rado1iu.silk.api.modpass.pack.DataPack;
-import pers.saikel0rado1iu.silk.api.modpass.pack.ResourcePack;
+import pers.saikel0rado1iu.silk.api.modpass.pack.ModDataPack;
+import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcePack;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
 
 /**
- * <h2 style="color:FFC800">模组主类</h2>
+ * <h2>模组主类</h2>
  * 继承自 {@link ModInitializer}。所有模组注册或操作由此开始
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface ModMain extends ModInitializer, ModEntry<MainRegistrationProvider<?>> {
-	@Override
-	default void onInitialize() {
-		if (isExecuted()) return;
-		ENTRYPOINT_EXECUTED.put(getClass(), true);
-		main(this);
-		if (modData() instanceof ModDataExpansion modDataExpansion) {
-			modDataExpansion.dataPack().ifPresent(DataPack::registry);
-			modDataExpansion.resourcePack().ifPresent(ResourcePack::registry);
-		}
-		for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-			MainRegistrationProvider.loggingRegistration(registrationNamespace(), clazz, RegistrationType.VANILLA_MAIN);
-		}
-	}
+    @Override
+    default void onInitialize() {
+        if (isExecuted()) {
+            return;
+        }
+        ENTRYPOINT_EXECUTED.put(getClass(), true);
+        main(this);
+        if (modData() instanceof ModDataExpansion modDataExpansion) {
+            modDataExpansion.dataPack().ifPresent(ModDataPack::registry);
+            modDataExpansion.resourcePack().ifPresent(ModResourcePack::registry);
+        }
+        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
+            MainRegistrationProvider.loggingRegistration(registrationNamespace(),
+                    clazz, RegistrationType.VANILLA_MAIN);
+        }
+    }
 }

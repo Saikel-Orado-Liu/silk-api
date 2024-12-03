@@ -26,25 +26,31 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * <h2 style="color:FFC800">{@link GroupResourcePack} 混入</h2>
+ * <h2>{@link GroupResourcePack} 混入</h2>
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @Mixin(NamespaceResourceManager.class)
 abstract class GroupResourcePackMixin {
-	@Unique
-	private final ThreadLocal<List<Resource>> resources = new ThreadLocal<>();
-	
-	@Inject(method = "getAllResources", at = @At(value = "INVOKE", target = "L java/util/List;size()I"))
-	private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir, @Local List<Resource> resources) {
-		this.resources.set(resources);
-	}
-	
-	@Redirect(method = "getAllResources", at = @At(value = "INVOKE", target = "L net/minecraft/ resource/ResourcePack;open(L net/minecraft/resource/ResourceType;L net/minecraft/util/Identifier;)L net/minecraft/resource/InputSupplier;"))
-	private InputSupplier<InputStream> onResourceAdd(ResourcePack pack, ResourceType type, Identifier id) {
-		if (!(pack instanceof GroupResourcePack resourcePack)) return pack.open(type, id);
-		resourcePack.appendResources(type, id, resources.get());
-		return null;
-	}
+    @Unique
+    private final ThreadLocal<List<Resource>> resources = new ThreadLocal<>();
+
+    @Inject(method = "getAllResources", at = @At(value = "INVOKE", target = "L java/util/List;size()I"))
+    private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir,
+                                   @Local List<Resource> resources) {
+        this.resources.set(resources);
+    }
+
+    @Redirect(method = "getAllResources", at = @At(value = "INVOKE", target = "L net/minecraft/ resource/ResourcePack;open(L net/minecraft/resource/ResourceType;L net/minecraft/util/Identifier;)L net/minecraft/resource/InputSupplier;"))
+    private InputSupplier<InputStream> onResourceAdd(ResourcePack pack, ResourceType type,
+                                                     Identifier id) {
+        if (!(pack instanceof GroupResourcePack resourcePack)) {
+            return pack.open(type, id);
+        }
+        resourcePack.appendResources(type, id, resources.get());
+        return null;
+    }
 }

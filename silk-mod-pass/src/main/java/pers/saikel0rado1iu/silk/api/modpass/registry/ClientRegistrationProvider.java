@@ -16,37 +16,40 @@ import pers.saikel0rado1iu.silk.api.annotation.ClientRegistration;
 import pers.saikel0rado1iu.silk.api.modpass.ModData;
 
 /**
- * <h2 style="color:FFC800">客户端注册提供器</h2>
+ * <h2>客户端注册提供器</h2>
  * 用于显式说明是客户端注册并提供客户端方法
  *
  * @param <T> 注册的数据类
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @ClientRegistration(registrar = Class.class, type = Class.class)
 public interface ClientRegistrationProvider<T> extends RegisterableModPass<T> {
-	/**
-	 * 客户端注册器<br>
-	 *
-	 * @param <T> 注册的数据类
-	 */
-	abstract class Registrar<T> {
-		protected final Runnable run;
-		
-		protected Registrar(Runnable run) {
-			this.run = run;
-		}
-		
-		protected abstract Identifier getIdentifier(T t);
-		
-		/**
-		 * 进行注册
-		 *
-		 * @param t 需要注册的项目
-		 */
-		public void register(T t) {
-			run.run();
-			RegisterableModPass.loggingRegistration(((ModData) () -> getIdentifier(t).getNamespace()), t, getIdentifier(t), RegistrationType.CLIENT_ONLY);
-		}
-	}
+    /**
+     * 客户端注册器
+     *
+     * @param <T> 注册的数据类
+     */
+    abstract class Registrar<T> {
+        protected final Runnable run;
+
+        protected Registrar(Runnable run) {
+            this.run = run;
+        }
+
+        protected abstract Identifier getIdentifier(T t);
+
+        /**
+         * 进行注册
+         *
+         * @param t 需要注册的项目
+         */
+        public void register(T t) {
+            run.run();
+            RegisterableModPass.loggingRegistration(((ModData) () -> getIdentifier(t).getNamespace()),
+                    t, getIdentifier(t), RegistrationType.CLIENT_ONLY);
+        }
+    }
 }

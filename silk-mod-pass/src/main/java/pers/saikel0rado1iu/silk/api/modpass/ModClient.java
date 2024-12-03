@@ -17,20 +17,25 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
 
 /**
- * <h2 style="color:FFC800">模组客户端主类</h2>
+ * <h2>模组客户端主类</h2>
  * 继承自 {@link ClientModInitializer}。所有模组客户端注册或操作由此开始
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface ModClient extends ClientModInitializer, ModEntry<ClientRegistrationProvider<?>> {
-	@Override
-	default void onInitializeClient() {
-		if (isExecuted()) return;
-		ENTRYPOINT_EXECUTED.put(getClass(), true);
-		main(this);
-		for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-			RegisterableModPass.loggingRegistration(registrationNamespace(), clazz, RegistrationType.CLIENT_ONLY);
-		}
-	}
+    @Override
+    default void onInitializeClient() {
+        if (isExecuted()) {
+            return;
+        }
+        ENTRYPOINT_EXECUTED.put(getClass(), true);
+        main(this);
+        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
+            RegisterableModPass.loggingRegistration(registrationNamespace(),
+                    clazz, RegistrationType.CLIENT_ONLY);
+        }
+    }
 }
