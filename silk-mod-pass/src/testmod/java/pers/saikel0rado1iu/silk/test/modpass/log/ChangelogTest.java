@@ -20,15 +20,15 @@ import pers.saikel0rado1iu.silk.impl.SilkApi;
  * Test {@link Changelog}
  */
 public interface ChangelogTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkModPass/TestingChangelog");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		LOGGER.info(Changelog.read(SilkApi.getInternal(), "zh_cn"));
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkModPass/TestingChangelog");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        LOGGER.info(Changelog.read(SilkApi.getInternal(), "zh_cn"));
+    }
 }

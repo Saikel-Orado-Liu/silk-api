@@ -29,49 +29,49 @@ import java.util.Set;
  * 测试
  */
 public final class Test implements ModMain {
-	/**
-	 * 模组主函数
-	 *
-	 * @param mod 提供的模组通
-	 */
-	@Override
-	public void main(ModPass mod) {
-		ModDataTest.test();
-		ModDataExpansionTest.test();
-		ChangelogTest.test();
-		// test mod() exception
-		// SilkApi.DATA.mod();
-		// test link exception
-		new ModData() {
-			@Override
-			public String id() {
-				return "silk-mod-pass-test";
-			}
-			
-			@Override
-			public Optional<URL> community() throws MalformedURLException, URISyntaxException {
-				return Optional.of(new URI("https://www.minecraft.net").toURL());
-			}
-		}.link(ModData.LinkType.COMMUNITY);
-	}
-	
-	/**
-	 * 注册表方法，提供注册表以供注册
-	 *
-	 * @return 注册表的类型集合
-	 */
-	@Override
-	public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
-		return Set.of();
-	}
-	
-	/**
-	 * 用于提供模组数据以基于模组数据实现功能
-	 *
-	 * @return 模组数据
-	 */
-	@Override
-	public ModData modData() {
-		return SilkModPass.getInstance();
-	}
+    /**
+     * 模组主函数
+     *
+     * @param mod 提供的模组通
+     */
+    @Override
+    public void main(ModPass mod) {
+        ModDataTest.test();
+        ModDataExpansionTest.test();
+        ChangelogTest.test();
+        // test mod() exception
+        // SilkApi.DATA.mod();
+        // test link exception
+        new ModData() {
+            @Override
+            public String id() {
+                return "silk-mod-pass-test";
+            }
+
+            @Override
+            public Optional<URL> community() throws MalformedURLException, URISyntaxException {
+                return Optional.of(new URI("https://www.minecraft.net").toURL());
+            }
+        }.link(ModData.LinkType.COMMUNITY);
+    }
+
+    /**
+     * 注册表方法，提供注册表以供注册
+     *
+     * @return 注册表的类型集合
+     */
+    @Override
+    public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
+        return Set.of();
+    }
+
+    /**
+     * 用于提供模组数据以基于模组数据实现功能
+     *
+     * @return 模组数据
+     */
+    @Override
+    public ModData modData() {
+        return SilkModPass.getInstance();
+    }
 }

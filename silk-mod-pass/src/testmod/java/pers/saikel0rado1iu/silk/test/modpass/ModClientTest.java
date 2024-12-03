@@ -23,33 +23,33 @@ import java.util.Set;
  * Test {@link ModClient}
  */
 public final class ModClientTest implements ModClient {
-	/**
-	 * 模组主函数
-	 *
-	 * @param mod 提供的模组通
-	 */
-	@Override
-	public void main(ModPass mod) {
-		modData().logger().info("ModClient");
-	}
-	
-	/**
-	 * 注册表方法，提供注册表以供注册
-	 *
-	 * @return 注册表的类型集合
-	 */
-	@Override
-	public Set<Class<? extends ClientRegistrationProvider<?>>> registry() {
-		return Set.of();
-	}
-	
-	/**
-	 * 用于提供模组数据以基于模组数据实现功能
-	 *
-	 * @return 模组数据
-	 */
-	@Override
-	public ModData modData() {
-		return SilkModPass.getInstance();
-	}
+    /**
+     * 模组主函数
+     *
+     * @param mod 提供的模组通
+     */
+    @Override
+    public void main(ModPass mod) {
+        modData().logger().info("ModClient");
+    }
+
+    /**
+     * 注册表方法，提供注册表以供注册
+     *
+     * @return 注册表的类型集合
+     */
+    @Override
+    public Set<Class<? extends ClientRegistrationProvider<?>>> registry() {
+        return Set.of();
+    }
+
+    /**
+     * 用于提供模组数据以基于模组数据实现功能
+     *
+     * @return 模组数据
+     */
+    @Override
+    public ModData modData() {
+        return SilkModPass.getInstance();
+    }
 }

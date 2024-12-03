@@ -20,30 +20,40 @@ import pers.saikel0rado1iu.silk.impl.SilkModPass;
  * Test {@link ModData}
  */
 public interface ModDataTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkModPass/TestingModBasicData");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		LOGGER.info("SilkModPass.getInstance().id() = {}", SilkModPass.getInstance().id());
-		LOGGER.info("SilkModPass.getInstance().debugName() = {}", SilkModPass.getInstance().debugName());
-		LOGGER.info("SilkModPass.getInstance().mod() = {}", SilkModPass.getInstance().mod());
-		LOGGER.info("SilkModPass.getInstance().logger() = {}", SilkModPass.getInstance().logger());
-		LOGGER.info("SilkModPass.getInstance().name() = {}", SilkModPass.getInstance().name());
-		LOGGER.info("SilkModPass.getInstance().description() = {}", SilkModPass.getInstance().description());
-		LOGGER.info("SilkModPass.getInstance().version() = {}", SilkModPass.getInstance().version());
-		LOGGER.info("SilkModPass.getInstance().slug() = {}", SilkModPass.getInstance().slug());
-		LOGGER.info("SilkModPass.getInstance().authors() = {}", SilkModPass.getInstance().authors());
-		LOGGER.info("SilkModPass.getInstance().licenses() = {}", SilkModPass.getInstance().licenses());
-		LOGGER.info("SilkModPass.getInstance().icon() = {}", SilkModPass.getInstance().icon());
-		LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.HOMEPAGE) = {}", SilkModPass.getInstance().link(ModData.LinkType.HOMEPAGE));
-		LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.SOURCES) = {}", SilkModPass.getInstance().link(ModData.LinkType.SOURCES));
-		LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.ISSUES) = {}", SilkModPass.getInstance().link(ModData.LinkType.ISSUES));
-		LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.COMMUNITY) = {}", SilkModPass.getInstance().link(ModData.LinkType.COMMUNITY));
-		LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.SUPPORT) = {}", SilkModPass.getInstance().link(ModData.LinkType.SUPPORT));
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkModPass/TestingModBasicData");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        LOGGER.info("SilkModPass.getInstance().id() = {}", SilkModPass.getInstance().id());
+        LOGGER.info("SilkModPass.getInstance().debugName() = {}",
+                SilkModPass.getInstance().debugName());
+        LOGGER.info("SilkModPass.getInstance().mod() = {}", SilkModPass.getInstance().mod());
+        LOGGER.info("SilkModPass.getInstance().logger() = {}", SilkModPass.getInstance().logger());
+        LOGGER.info("SilkModPass.getInstance().name() = {}", SilkModPass.getInstance().name());
+        LOGGER.info("SilkModPass.getInstance().description() = {}",
+                SilkModPass.getInstance().description());
+        LOGGER.info("SilkModPass.getInstance().version() = {}",
+                SilkModPass.getInstance().version());
+        LOGGER.info("SilkModPass.getInstance().slug() = {}", SilkModPass.getInstance().slug());
+        LOGGER.info("SilkModPass.getInstance().authors() = {}",
+                SilkModPass.getInstance().authors());
+        LOGGER.info("SilkModPass.getInstance().licenses() = {}",
+                SilkModPass.getInstance().licenses());
+        LOGGER.info("SilkModPass.getInstance().icon() = {}", SilkModPass.getInstance().icon());
+        LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.HOMEPAGE) = {}",
+                SilkModPass.getInstance().link(ModData.LinkType.HOMEPAGE));
+        LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.SOURCES) = {}",
+                SilkModPass.getInstance().link(ModData.LinkType.SOURCES));
+        LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.ISSUES) = {}",
+                SilkModPass.getInstance().link(ModData.LinkType.ISSUES));
+        LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.COMMUNITY) = {}",
+                SilkModPass.getInstance().link(ModData.LinkType.COMMUNITY));
+        LOGGER.info("SilkModPass.getInstance().link(ModData.LinkType.SUPPORT) = {}",
+                SilkModPass.getInstance().link(ModData.LinkType.SUPPORT));
+    }
 }
