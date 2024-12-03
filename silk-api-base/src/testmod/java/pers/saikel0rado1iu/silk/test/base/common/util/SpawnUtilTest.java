@@ -20,24 +20,24 @@ import pers.saikel0rado1iu.silk.api.base.common.util.SpawnUtil;
  * Test SpawnUtil
  */
 public interface SpawnUtilTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingSpawnUtil");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		LOGGER.info("SpawnUtil.builder(SpiderEntity.class)... = {}",
-				SpawnUtil.builder(SpiderEntity.class)
-						.day()
-						.night()
-						.monster()
-						.time(time -> true)
-						.light(light -> true)
-						.biome(biome -> true)
-						.otherChecker((type, world, spawnReason, pos, random) -> true)
-						.build());
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingSpawnUtil");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        LOGGER.info("SpawnUtil.builder(SpiderEntity.class)... = {}",
+                SpawnUtil.builder(SpiderEntity.class)
+                         .day()
+                         .night()
+                         .monster()
+                         .time(time -> true)
+                         .light(light -> true)
+                         .biome(biome -> true)
+                         .otherChecker((type, world, spawnReason, pos, random) -> true)
+                         .build());
+    }
 }

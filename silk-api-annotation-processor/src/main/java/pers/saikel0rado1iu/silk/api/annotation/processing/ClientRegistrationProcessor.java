@@ -176,7 +176,9 @@ public final class ClientRegistrationProcessor extends AbstractProcessor {
             String packageName = elementUtils.getPackageOf(element).getQualifiedName().toString();
             Optional<TypeSpec.Builder> optionalBuilder = ClientRegistrationProcessor
                     .generateMethod(null, element, processingEnv, clientRegistration);
-            if (optionalBuilder.isEmpty()) return false;
+            if (optionalBuilder.isEmpty()) {
+                return false;
+            }
             TypeSpec.Builder builder = optionalBuilder.get();
             ServerRegistration serverRegistration = element.getAnnotation(ServerRegistration.class);
             if (serverRegistration != null) {

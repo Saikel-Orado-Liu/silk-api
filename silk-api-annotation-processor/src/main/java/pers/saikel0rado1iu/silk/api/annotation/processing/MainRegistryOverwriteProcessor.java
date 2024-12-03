@@ -61,6 +61,136 @@ public final class MainRegistryOverwriteProcessor extends AbstractProcessor {
     private static final String FIELD_NOT_USE_METHOD = "字段声明未使用方法：字段 %s 的注册过程中并未调用名为 %s 的方法";
     private static final String OVERWRITE_NOT_FIND = "覆盖字段未找到：覆盖字段 %s 并与字段 %s 在同个类或接口中声明";
 
+    static TypeSpec.Builder generateRegister(TypeSpec.Builder builder, Element element,
+                                             ProcessingEnvironment processingEnv,
+                                             TypeElement registrar, String field,
+                                             Register register) {
+        if ("register".equals(register.method())) {
+            throw new IllegalArgumentException("非法方法：用户永远也不应该尝试修改 register() 注册方法的注册 ID");
+        }
+        List<? extends TypeMirror> interfaces = registrar.getInterfaces();
+        if (interfaces.isEmpty()) {
+            throw new IllegalArgumentException(String.format(REGISTRAR_ERROR, registrar));
+        }
+        TypeMirror parameter = null;
+        for (Element e : element.getEnclosingElement().getEnclosedElements()) {
+            if (e.getKind() != ElementKind.FIELD) {
+                continue;
+            }
+            VariableElement variableElement = (VariableElement) e;
+            // 检查字段名称是否匹配
+            if (!variableElement.getSimpleName().toString().equals(register.overwrite())) {
+                continue;
+            }
+            parameter = variableElement.asType();
+        }
+        if (parameter == null) {
+            String msg = String.format(OVERWRITE_NOT_FIND, register.overwrite(), field);
+            throw new IllegalArgumentException(msg);
+        }
+        String prefix = ((TypeElement) processingEnv.getTypeUtils()
+                                                    .asElement(interfaces.getFirst()))
+                .getQualifiedName()
+                .toString()
+                .replaceAll("\\.", "/")
+                .replaceAll("Registry", "");
+        TypeVariableName t = TypeVariableName.get("T");
+        TypeName type = TypeName.get(parameter);
+        String targetFormat = "other".equals(register.method())
+                ? String.format("%s%s",
+                "L%1$sRegistrationProvider$MainRegistrar;%2$s(%3$s)",
+                "L pers/saikel0rado1iu/silk/api/modpass/registry/MainRegistrationProvider$Registrar;")
+                : "L%1$sRegistrationProvider$MainRegistrar;%2$s(%3$s)L%1$sRegistrationProvider$MainRegistrar;";
+        String javadoc = """
+                此混入方法由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成<p>
+                用于修改注册项的其他注册方法
+                """;
+        AnnotationSpec atAnno = AnnotationSpec
+                .builder(At.class)
+                .addMember("value", "$S", "INVOKE")
+                .addMember("target", "$S", String.format(
+                        targetFormat,
+                        prefix,
+                        register.method(),
+                        getParameterDesc(processingEnv.getFiler(), registrar, register.method())))
+                .addMember("ordinal", "$L", findMethodOrdinal(
+                        processingEnv.getFiler(), registrar, field, register.method()))
+                .build();
+        MethodSpec method = MethodSpec
+                .methodBuilder(register.method())
+                .addJavadoc(javadoc)
+                .addAnnotation(AnnotationSpec
+                        .builder(ModifyArg.class)
+                        .addMember("method", "$S", "<clinit>")
+                        .addMember("at", "$L", atAnno)
+                        .addMember("remap", "$L", register.remap())
+                        .build())
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .addTypeVariable(t)
+                .addParameter(type, "type")
+                .addCode(CodeBlock
+                        .builder()
+                        .addStatement("return $L.$L",
+                                element.getEnclosingElement(),
+                                register.overwrite())
+                        .build())
+                .returns(type)
+                .build();
+        return builder.addMethod(method);
+    }
+
+    static TypeSpec.Builder generateOverwrite(TypeSpec.Builder builder, Element element,
+                                              ProcessingEnvironment processingEnv,
+                                              TypeElement registrar,
+                                              String field) {
+        final List<? extends TypeMirror> interfaces = registrar.getInterfaces();
+        if (interfaces.isEmpty()) {
+            throw new IllegalArgumentException(String.format(REGISTRAR_ERROR, registrar));
+        }
+        String target = ((TypeElement) processingEnv.getTypeUtils()
+                                                    .asElement(interfaces.getFirst()))
+                .getQualifiedName()
+                .toString()
+                .replaceAll("\\.", "/")
+                .replaceAll("Registry", "");
+        TypeVariableName t = TypeVariableName.get("T");
+        ParameterizedTypeName supplier = ParameterizedTypeName.get(ClassName.get(Supplier.class), t);
+        String javadoc = """
+                此混入方法由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成<p>
+                用于修改注册项注册的实例
+                """;
+        AnnotationSpec atAnno = AnnotationSpec
+                .builder(At.class)
+                .addMember("value", "$S", "INVOKE")
+                .addMember("target", "$S", String.format(
+                        "L%1$sRegistry;registrar(Ljava/util/function/Supplier;)L%1$sRegistrationProvider$MainRegistrar;",
+                        target))
+                .addMember("ordinal", "$L",
+                        findFieldOrdinal(processingEnv.getFiler(), registrar, field))
+                .build();
+        MethodSpec overwrite = MethodSpec
+                .methodBuilder("overwrite")
+                .addJavadoc(javadoc)
+                .addAnnotation(AnnotationSpec
+                        .builder(ModifyArg.class)
+                        .addMember("method", "$S", "<clinit>")
+                        .addMember("at", "$L", atAnno)
+                        .addMember("remap", "$L", false)
+                        .build())
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .addTypeVariable(t)
+                .addParameter(supplier, "type")
+                .addCode(CodeBlock
+                        .builder()
+                        .addStatement("return () -> (T) $L.$L",
+                                element.getEnclosingElement(),
+                                element.getSimpleName())
+                        .build())
+                .returns(supplier)
+                .build();
+        return builder.addMethod(overwrite);
+    }
+
     private static String getParameterDesc(Filer filer, TypeElement registrar, String methodName) {
         final String className = registrar
                 .getQualifiedName().toString().replace('.', '/') + ".class";
@@ -198,136 +328,6 @@ public final class MainRegistryOverwriteProcessor extends AbstractProcessor {
             throw new RuntimeException(String.format(IO_ERROR, registrar), e);
         }
         throw new IllegalArgumentException(String.format(FIELD_NOT_FIND, registrar, fieldName));
-    }
-
-    static TypeSpec.Builder generateRegister(TypeSpec.Builder builder, Element element,
-                                             ProcessingEnvironment processingEnv,
-                                             TypeElement registrar, String field,
-                                             Register register) {
-        if ("register".equals(register.method())) {
-            throw new IllegalArgumentException("非法方法：用户永远也不应该尝试修改 register() 注册方法的注册 ID");
-        }
-        List<? extends TypeMirror> interfaces = registrar.getInterfaces();
-        if (interfaces.isEmpty()) {
-            throw new IllegalArgumentException(String.format(REGISTRAR_ERROR, registrar));
-        }
-        TypeMirror parameter = null;
-        for (Element e : element.getEnclosingElement().getEnclosedElements()) {
-            if (e.getKind() != ElementKind.FIELD) {
-                continue;
-            }
-            VariableElement variableElement = (VariableElement) e;
-            // 检查字段名称是否匹配
-            if (!variableElement.getSimpleName().toString().equals(register.overwrite())) {
-                continue;
-            }
-            parameter = variableElement.asType();
-        }
-        if (parameter == null) {
-            String msg = String.format(OVERWRITE_NOT_FIND, register.overwrite(), field);
-            throw new IllegalArgumentException(msg);
-        }
-        String prefix = ((TypeElement) processingEnv.getTypeUtils()
-                                                    .asElement(interfaces.getFirst()))
-                .getQualifiedName()
-                .toString()
-                .replaceAll("\\.", "/")
-                .replaceAll("Registry", "");
-        TypeVariableName t = TypeVariableName.get("T");
-        TypeName type = TypeName.get(parameter);
-        String targetFormat = "other".equals(register.method())
-                ? String.format("%s%s",
-                "L%1$sRegistrationProvider$MainRegistrar;%2$s(%3$s)",
-                "L pers/saikel0rado1iu/silk/api/modpass/registry/MainRegistrationProvider$Registrar;")
-                : "L%1$sRegistrationProvider$MainRegistrar;%2$s(%3$s)L%1$sRegistrationProvider$MainRegistrar;";
-        String javadoc = """
-                此混入方法由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成<p>
-                用于修改注册项的其他注册方法
-                """;
-        AnnotationSpec atAnno = AnnotationSpec
-                .builder(At.class)
-                .addMember("value", "$S", "INVOKE")
-                .addMember("target", "$S", String.format(
-                        targetFormat,
-                        prefix,
-                        register.method(),
-                        getParameterDesc(processingEnv.getFiler(), registrar, register.method())))
-                .addMember("ordinal", "$L", findMethodOrdinal(
-                        processingEnv.getFiler(), registrar, field, register.method()))
-                .build();
-        MethodSpec method = MethodSpec
-                .methodBuilder(register.method())
-                .addJavadoc(javadoc)
-                .addAnnotation(AnnotationSpec
-                        .builder(ModifyArg.class)
-                        .addMember("method", "$S", "<clinit>")
-                        .addMember("at", "$L", atAnno)
-                        .addMember("remap", "$L", register.remap())
-                        .build())
-                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .addTypeVariable(t)
-                .addParameter(type, "type")
-                .addCode(CodeBlock
-                        .builder()
-                        .addStatement("return $L.$L",
-                                element.getEnclosingElement(),
-                                register.overwrite())
-                        .build())
-                .returns(type)
-                .build();
-        return builder.addMethod(method);
-    }
-
-    static TypeSpec.Builder generateOverwrite(TypeSpec.Builder builder, Element element,
-                                              ProcessingEnvironment processingEnv,
-                                              TypeElement registrar,
-                                              String field) {
-        final List<? extends TypeMirror> interfaces = registrar.getInterfaces();
-        if (interfaces.isEmpty()) {
-            throw new IllegalArgumentException(String.format(REGISTRAR_ERROR, registrar));
-        }
-        String target = ((TypeElement) processingEnv.getTypeUtils()
-                                                    .asElement(interfaces.getFirst()))
-                .getQualifiedName()
-                .toString()
-                .replaceAll("\\.", "/")
-                .replaceAll("Registry", "");
-        TypeVariableName t = TypeVariableName.get("T");
-        ParameterizedTypeName supplier = ParameterizedTypeName.get(ClassName.get(Supplier.class), t);
-        String javadoc = """
-                此混入方法由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成<p>
-                用于修改注册项注册的实例
-                """;
-        AnnotationSpec atAnno = AnnotationSpec
-                .builder(At.class)
-                .addMember("value", "$S", "INVOKE")
-                .addMember("target", "$S", String.format(
-                        "L%1$sRegistry;registrar(Ljava/util/function/Supplier;)L%1$sRegistrationProvider$MainRegistrar;",
-                        target))
-                .addMember("ordinal", "$L",
-                        findFieldOrdinal(processingEnv.getFiler(), registrar, field))
-                .build();
-        MethodSpec overwrite = MethodSpec
-                .methodBuilder("overwrite")
-                .addJavadoc(javadoc)
-                .addAnnotation(AnnotationSpec
-                        .builder(ModifyArg.class)
-                        .addMember("method", "$S", "<clinit>")
-                        .addMember("at", "$L", atAnno)
-                        .addMember("remap", "$L", false)
-                        .build())
-                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .addTypeVariable(t)
-                .addParameter(supplier, "type")
-                .addCode(CodeBlock
-                        .builder()
-                        .addStatement("return () -> (T) $L.$L",
-                                element.getEnclosingElement(),
-                                element.getSimpleName())
-                        .build())
-                .returns(supplier)
-                .build();
-        return builder.addMethod(overwrite);
     }
 
     @Override

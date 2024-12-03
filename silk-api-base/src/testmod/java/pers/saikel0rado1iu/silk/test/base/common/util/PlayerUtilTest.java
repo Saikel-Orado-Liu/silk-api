@@ -19,17 +19,17 @@ import pers.saikel0rado1iu.silk.api.base.common.util.PlayerUtil;
  * Test PlayerUtil
  */
 public interface PlayerUtilTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingPlayerUtil");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		LOGGER.info("PlayerUtil.getHealthRatio(0.5F) = {}", PlayerUtil.getHealthRatio(0.5F));
-		LOGGER.info("PlayerUtil.getHungerRatio(0.5F) = {}", PlayerUtil.getHungerRatio(0.5F));
-		LOGGER.info("PlayerUtil.getSaturationRatio(0.5F) = {}", PlayerUtil.getSaturationRatio(0.5F));
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingPlayerUtil");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        LOGGER.info("PlayerUtil.getHealthRatio(0.5F) = {}", PlayerUtil.getHealthRatio(0.5F));
+        LOGGER.info("PlayerUtil.getHungerRatio(0.5F) = {}", PlayerUtil.getHungerRatio(0.5F));
+        LOGGER.info("PlayerUtil.getSaturationRatio(0.5F) = {}", PlayerUtil.getSaturationRatio(0.5F));
+    }
 }

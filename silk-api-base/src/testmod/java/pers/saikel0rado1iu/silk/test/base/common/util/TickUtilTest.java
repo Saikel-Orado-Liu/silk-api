@@ -21,18 +21,18 @@ import java.util.concurrent.TimeUnit;
  * Test TickUtil
  */
 public interface TickUtilTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingTickUtil");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		LOGGER.info("TickUtil.getTick(1) = {}", TickUtil.getTick(1));
-		LOGGER.info("TickUtil.getTick(1, TickUtil.Type.NATURAL, TimeUnit.MINUTES) = {}", TickUtil.getTick(1, TickUtil.Type.NATURAL, TimeUnit.MINUTES));
-		LOGGER.info("TickUtil.getTime(20) = {}", TickUtil.getTime(20));
-		LOGGER.info("TickUtil.getTime(1200, TickUtil.Type.NATURAL, TimeUnit.MINUTES) = {}", TickUtil.getTime(1200, TickUtil.Type.NATURAL, TimeUnit.MINUTES));
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingTickUtil");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        LOGGER.info("TickUtil.getTick(1) = {}", TickUtil.getTick(1));
+        LOGGER.info("TickUtil.getTick(1, TickUtil.Type.NATURAL, TimeUnit.MINUTES) = {}", TickUtil.getTick(1, TickUtil.Type.NATURAL, TimeUnit.MINUTES));
+        LOGGER.info("TickUtil.getTime(20) = {}", TickUtil.getTime(20));
+        LOGGER.info("TickUtil.getTime(1200, TickUtil.Type.NATURAL, TimeUnit.MINUTES) = {}", TickUtil.getTime(1200, TickUtil.Type.NATURAL, TimeUnit.MINUTES));
+    }
 }

@@ -19,27 +19,31 @@ import pers.saikel0rado1iu.silk.api.base.common.collect.MultiWayTree;
  * Test MultiWayTree
  */
 public interface MultiWayTreeTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingMultiWayTree");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		MultiWayTree<String, Integer> tree = new MultiWayTree<>("root", 0);
-		tree.addChild("first", 1).addChild("second", 2).addChild("third", 3);
-		tree.addChild("monday", 1).addChild("tuesday", 2).addChild("wednesday", 3);
-		tree.addChild("january", 1);
-		tree.addChild(tree.getChild("january"), "february", 2).addChild("march", 3);
-		LOGGER.info("\n{}", tree);
-		LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("january").getChild("february"), tree.getChild("january").getChild("february").getChild("march")), tree);
-		LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("january"), tree.getChild("january").getKey()), tree);
-		LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("monday")), tree);
-		LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("january").getKey()), tree);
-		LOGGER.info("height = {}", tree.getHeight());
-		LOGGER.info("size = {}", tree.getSize());
-		LOGGER.info("root = {}", tree.getRoot());
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingMultiWayTree");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        MultiWayTree<String, Integer> tree = new MultiWayTree<>("root", 0);
+        tree.addChild("first", 1).addChild("second", 2).addChild("third", 3);
+        tree.addChild("monday", 1).addChild("tuesday", 2).addChild("wednesday", 3);
+        tree.addChild("january", 1);
+        tree.addChild(tree.getChild("january"), "february", 2).addChild("march", 3);
+        LOGGER.info("\n{}", tree);
+        LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("january")
+                                                            .getChild("february"), tree.getChild("january")
+                                                                                       .getChild("february")
+                                                                                       .getChild("march")), tree);
+        LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("january"), tree.getChild("january")
+                                                                                      .getKey()), tree);
+        LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("monday")), tree);
+        LOGGER.info("remove = {}\n{}", tree.removeChild(tree.getChild("january").getKey()), tree);
+        LOGGER.info("height = {}", tree.getHeight());
+        LOGGER.info("size = {}", tree.getSize());
+        LOGGER.info("root = {}", tree.getRoot());
+    }
 }

@@ -22,23 +22,23 @@ import java.time.Instant;
  * Test PerlinNoise
  */
 public interface PerlinNoiseTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingPerlinNoise");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		Instant start = Instant.now();
-		PerlinNoise perlinNoise1 = new PerlinNoise(10, 10, 0, 2, 1, 1, 0)
-				.scale(50, 50);
-		LOGGER.info("噪声生成时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
-		LOGGER.info("更为平滑的噪声\n{}", perlinNoise1);
-		start = Instant.now();
-		PerlinNoise perlinNoise2 = new PerlinNoise(50, 50, 1, 10, 8, 0, 0);
-		LOGGER.info("方法执行时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
-		LOGGER.info("更为嘈杂的噪声\n{}", perlinNoise2);
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingPerlinNoise");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        Instant start = Instant.now();
+        PerlinNoise perlinNoise1 = new PerlinNoise(10, 10, 0, 2, 1, 1, 0)
+                .scale(50, 50);
+        LOGGER.info("噪声生成时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
+        LOGGER.info("更为平滑的噪声\n{}", perlinNoise1);
+        start = Instant.now();
+        PerlinNoise perlinNoise2 = new PerlinNoise(50, 50, 1, 10, 8, 0, 0);
+        LOGGER.info("方法执行时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
+        LOGGER.info("更为嘈杂的噪声\n{}", perlinNoise2);
+    }
 }

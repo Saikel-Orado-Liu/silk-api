@@ -19,23 +19,23 @@ import pers.saikel0rado1iu.silk.api.base.common.util.MathUtil;
  * Test MathUtil
  */
 public interface MathUtilTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingMathUtil");
-	
-	/**
-	 * 测试
-	 */
-	@SuppressWarnings("ConstantValue")
-	static void test() {
-		LOGGER.info("MathUtil.compareFloat(1, 1) = {}", MathUtil.compareFloat(1, 1));
-		LOGGER.info("MathUtil.compareFloat(1, 0.5) = {}", MathUtil.compareFloat(1, 0.5));
-		LOGGER.info("MathUtil.compareFloat(1, 1.5) = {}", MathUtil.compareFloat(1, 1.5));
-		LOGGER.info("MathUtil.xor(true, true) = {}", MathUtil.xor(true, true));
-		LOGGER.info("MathUtil.xor(true, false) = {}", MathUtil.xor(true, false));
-		LOGGER.info("MathUtil.xor(false, false) = {}", MathUtil.xor(false, false));
-		LOGGER.info("MathUtil.toFloat(0.123456789) = {}", MathUtil.toFloat(0.123456789));
-		LOGGER.info("MathUtil.toRadians(180) = {}", MathUtil.toRadians(180));
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingMathUtil");
+
+    /**
+     * 测试
+     */
+    @SuppressWarnings("ConstantValue")
+    static void test() {
+        LOGGER.info("MathUtil.compareFloat(1, 1) = {}", MathUtil.compareFloat(1, 1));
+        LOGGER.info("MathUtil.compareFloat(1, 0.5) = {}", MathUtil.compareFloat(1, 0.5));
+        LOGGER.info("MathUtil.compareFloat(1, 1.5) = {}", MathUtil.compareFloat(1, 1.5));
+        LOGGER.info("MathUtil.xor(true, true) = {}", MathUtil.xor(true, true));
+        LOGGER.info("MathUtil.xor(true, false) = {}", MathUtil.xor(true, false));
+        LOGGER.info("MathUtil.xor(false, false) = {}", MathUtil.xor(false, false));
+        LOGGER.info("MathUtil.toFloat(0.123456789) = {}", MathUtil.toFloat(0.123456789));
+        LOGGER.info("MathUtil.toRadians(180) = {}", MathUtil.toRadians(180));
+    }
 }

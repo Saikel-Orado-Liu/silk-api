@@ -31,8 +31,8 @@ public @interface Register {
     /**
      * 提供需注册的覆盖项的字段名称
      * <p>
-     * 此字段必须和 {@link MainRegistryOverwrite} 声明的覆盖项在同一个类或接口中。
-     * 同时，此字段的类型必须与要修改的方法中参数的类型一致，否则会生成的 Mixin 则会无法使用
+     * 此字段必须和 {@link MainRegistryOverwrite} 声明的覆盖项在同一个类或接口中。 同时，此字段的类型必须与要修改的方法中参数的类型一致，否则会生成的 Mixin
+     * 则会无法使用
      *
      * @return 注册的覆盖项的字段名称
      */
@@ -41,8 +41,8 @@ public @interface Register {
     /**
      * 是否应该对方法启用重映射
      * <p>
-     * 通常来说，{@code MainRegistrationProvider} 中提供的方法并没有直接使用 MC 中的类。
-     * 但是，不排除有特殊方法使用了 MC 原版的类。届时，您需要手动启用重映射
+     * 通常来说，{@code MainRegistrationProvider} 中提供的方法并没有直接使用 MC 中的类。 但是，不排除有特殊方法使用了 MC
+     * 原版的类。届时，您需要手动启用重映射
      *
      * @return 是否启用重映射
      */

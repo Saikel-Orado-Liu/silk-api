@@ -21,15 +21,15 @@ import pers.saikel0rado1iu.silk.test.base.common.util.*;
  * 测试
  */
 public final class Test implements ModInitializer {
-	@Override
-	public void onInitialize() {
-		MultiWayTreeTest.test();
-		PerlinNoiseTest.test();
-		WhiteNoiseTest.test();
-		JarUtilTest.test();
-		MathUtilTest.test();
-		PlayerUtilTest.test();
-		SpawnUtilTest.test();
-		TickUtilTest.test();
-	}
+    @Override
+    public void onInitialize() {
+        MultiWayTreeTest.test();
+        PerlinNoiseTest.test();
+        WhiteNoiseTest.test();
+        JarUtilTest.test();
+        MathUtilTest.test();
+        PlayerUtilTest.test();
+        SpawnUtilTest.test();
+        TickUtilTest.test();
+    }
 }

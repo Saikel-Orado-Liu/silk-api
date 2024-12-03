@@ -22,22 +22,22 @@ import java.time.Instant;
  * Test WhiteNoise
  */
 public interface WhiteNoiseTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingWhiteNoise");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		Instant start = Instant.now();
-		WhiteNoise whiteNoise1 = new WhiteNoise(50, 50, 1, 0);
-		LOGGER.info("噪声生成时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
-		LOGGER.info("更为平滑的噪声\n{}", whiteNoise1);
-		start = Instant.now();
-		WhiteNoise whiteNoise2 = new WhiteNoise(50, 50, 2, 0);
-		LOGGER.info("方法执行时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
-		LOGGER.info("更为嘈杂的噪声\n{}", whiteNoise2);
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingWhiteNoise");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        Instant start = Instant.now();
+        WhiteNoise whiteNoise1 = new WhiteNoise(50, 50, 1, 0);
+        LOGGER.info("噪声生成时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
+        LOGGER.info("更为平滑的噪声\n{}", whiteNoise1);
+        start = Instant.now();
+        WhiteNoise whiteNoise2 = new WhiteNoise(50, 50, 2, 0);
+        LOGGER.info("方法执行时间：{} 毫秒", Duration.between(start, Instant.now()).toMillis());
+        LOGGER.info("更为嘈杂的噪声\n{}", whiteNoise2);
+    }
 }

@@ -22,18 +22,21 @@ import java.nio.file.Path;
  * Test {@link JarUtil}
  */
 public interface JarUtilTest {
-	/**
-	 * 日志
-	 */
-	Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingJarUtil");
-	
-	/**
-	 * 测试
-	 */
-	static void test() {
-		try {
-			LOGGER.info("JarUtil.getFileSha1(*) = {}", JarUtil.getFileSha1(Path.of(JarUtilTest.class.getProtectionDomain().getCodeSource().getLocation().toURI())));
-		} catch (URISyntaxException ignored) {
-		}
-	}
+    /**
+     * 日志
+     */
+    Logger LOGGER = LoggerFactory.getLogger("SilkApiBase/TestingJarUtil");
+
+    /**
+     * 测试
+     */
+    static void test() {
+        try {
+            LOGGER.info("JarUtil.getFileSha1(*) = {}", JarUtil.getFileSha1(Path.of(JarUtilTest.class.getProtectionDomain()
+                                                                                                    .getCodeSource()
+                                                                                                    .getLocation()
+                                                                                                    .toURI())));
+        } catch (URISyntaxException ignored) {
+        }
+    }
 }
