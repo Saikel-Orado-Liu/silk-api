@@ -77,7 +77,7 @@ public interface Changelog {
             }
             return Optional.empty();
         } catch (NoSuchElementException | URISyntaxException e) {
-            SilkModPass.getInstance().logger().warn(msg);
+            SilkModPass.INSTANCE.logger().warn(msg);
             return Optional.empty();
         }
     }
