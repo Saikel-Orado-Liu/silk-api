@@ -28,7 +28,7 @@ import java.util.List;
  *         </a>
  * @since 1.2.4
  */
-public interface ModDataPack extends ModPack {
+public non-sealed interface ModDataPack extends ModPack {
     /**
      * 创建一个简单数据包
      *

@@ -40,7 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *         </a>
  * @since 1.2.4
  */
-public interface ModPack extends ModPass {
+public sealed interface ModPack extends ModPass permits ModPack.Group, ModPack.Simple,
+                                                        ModDataPack, ModResourcesPack {
     /** 激活信息 */
     ResourcePackPosition ACTIVATION_INFO = new ResourcePackPosition(true,
             ResourcePackProfile.InsertionPosition.TOP, false);
@@ -89,7 +90,8 @@ public interface ModPack extends ModPass {
      *         </a>
      * @since 1.2.4
      */
-    abstract class Simple implements ModPack {
+    sealed abstract class Simple implements ModPack
+            permits Group, ModDataPack.Simple, ModResourcesPack.Simple {
         protected final String packRoot;
         protected final ResourcePackActivationType type;
         protected final ModPass modPass;
@@ -135,7 +137,8 @@ public interface ModPack extends ModPass {
      *         </a>
      * @since 1.2.4
      */
-    abstract class Group extends Simple implements ModPack {
+    sealed abstract class Group extends Simple implements ModPack
+            permits ModDataPack.Group, ModResourcesPack.Group {
         protected final String nameKey;
         protected final String descKey;
         protected final List<String> orderList;

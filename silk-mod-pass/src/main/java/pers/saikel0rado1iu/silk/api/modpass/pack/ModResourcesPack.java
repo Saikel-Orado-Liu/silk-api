@@ -28,7 +28,7 @@ import java.util.List;
  *         </a>
  * @since 1.2.4
  */
-public interface ModResourcePack extends ModPack {
+public non-sealed interface ModResourcesPack extends ModPack {
     /**
      * 创建一个简单资源包
      *
@@ -106,7 +106,7 @@ public interface ModResourcePack extends ModPack {
      *         </a>
      * @since 1.2.4
      */
-    final class Simple extends ModPack.Simple implements ModResourcePack {
+    final class Simple extends ModPack.Simple implements ModResourcesPack {
         Simple(String packRoot, ResourcePackActivationType type, ModPass modPass) {
             super(packRoot, type, modPass);
         }
@@ -121,7 +121,7 @@ public interface ModResourcePack extends ModPack {
      *         </a>
      * @since 1.2.4
      */
-    final class Group extends ModPack.Group implements ModResourcePack {
+    final class Group extends ModPack.Group implements ModResourcesPack {
         Group(String packRoot, List<String> orderList, ResourcePackActivationType type,
               ModPass modPass) {
             super(packRoot, getNameKey(modPass), getDescKey(modPass), orderList,
