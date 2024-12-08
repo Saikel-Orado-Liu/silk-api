@@ -101,7 +101,8 @@ public final class MainRegistryOverwriteProcessor extends AbstractProcessor {
                 "L%1$sRegistrationProvider$MainRegistrar;%2$s(%3$s)",
                 "L pers/saikel0rado1iu/silk/api/modpass/registry/MainRegistrationProvider$Registrar;")
                 : "L%1$sRegistrationProvider$MainRegistrar;%2$s(%3$s)L%1$sRegistrationProvider$MainRegistrar;";
-        String javadoc = """
+        String javadoc =
+                """
                 此混入方法由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成<p>
                 用于修改注册项的其他注册方法
                 """;
@@ -155,7 +156,8 @@ public final class MainRegistryOverwriteProcessor extends AbstractProcessor {
                 .replaceAll("Registry", "");
         TypeVariableName t = TypeVariableName.get("T");
         ParameterizedTypeName supplier = ParameterizedTypeName.get(ClassName.get(Supplier.class), t);
-        String javadoc = """
+        String javadoc =
+                """
                 此混入方法由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成<p>
                 用于修改注册项注册的实例
                 """;
@@ -339,14 +341,14 @@ public final class MainRegistryOverwriteProcessor extends AbstractProcessor {
             String field = mainRegistryOverwrite.field();
             Register[] registers = mainRegistryOverwrite.registers();
             String className = ProcessorUtil.capitalize(field) + "MainMixin";
-            String javadoc = String.format("""
+            String javadoc = String.format(
+                    """
                     此混入类由 {@link pers.saikel0rado1iu.silk.api.annotation.processing.MainRegistryOverwriteProcessor} 自动生成
                     <p>
                     由 {@link %s#%s} 调用 {@link pers.saikel0rado1iu.silk.api.annotation.MainRegistryOverwrite} 生成
-                    """, element
-                    .getEnclosingElement()
-                    .asType()
-                    .toString(), element.getSimpleName());
+                    """,
+                    element.getEnclosingElement().asType().toString(),
+                    element.getSimpleName());
             TypeSpec.Builder builder = TypeSpec
                     .interfaceBuilder(className)
                     .addJavadoc(javadoc)

@@ -16,6 +16,7 @@ import com.squareup.javapoet.*;
 import pers.saikel0rado1iu.silk.api.annotation.ClientRegistration;
 import pers.saikel0rado1iu.silk.api.annotation.ServerRegistration;
 
+import javax.annotation.Nullable;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -47,11 +48,13 @@ import static pers.saikel0rado1iu.silk.api.annotation.processing.ProcessorUtil.g
 @SupportedSourceVersion(SourceVersion.RELEASE_21)
 @SupportedAnnotationTypes("pers.saikel0rado1iu.silk.api.annotation.ServerRegistration")
 public final class ServerRegistrationProcessor extends AbstractProcessor {
-    static Optional<TypeSpec.Builder> generateMethod(TypeSpec.Builder builder, Element element,
+    static Optional<TypeSpec.Builder> generateMethod(@Nullable TypeSpec.Builder builder,
+                                                     Element element,
                                                      ProcessingEnvironment processingEnv,
                                                      ServerRegistration serverRegistration) {
         final TypeElement registrar = getTypeElement(processingEnv, serverRegistration::registrar);
         final TypeElement type = getTypeElement(processingEnv, serverRegistration::type);
+        final TypeElement generics = getTypeElement(processingEnv, serverRegistration::generics);
 
         if (registrar == null) {
             String msg = String.format("未找到注册器：%s", serverRegistration.registrar());
@@ -63,23 +66,31 @@ public final class ServerRegistrationProcessor extends AbstractProcessor {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg, element);
             return Optional.empty();
         }
-        builder = builder != null ? builder : ProcessorUtil.createTypeBuilder(type, element);
+        if (generics == null) {
+            String msg = String.format("未找到注册泛型：%s", serverRegistration.type());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg, element);
+            return Optional.empty();
+        }
+        builder = builder != null
+                ? builder
+                : ProcessorUtil.createTypeBuilder(type, element);
         // 获取类的类型信息
-        TypeMirror typeMirror = type.asType();
-        TypeName typeName = TypeName.get(typeMirror);
+        TypeMirror genericsMirror = generics.asType();
+        TypeName genericsName = TypeName.get(genericsMirror);
         // 处理泛型类型
-        if (typeMirror instanceof DeclaredType declaredType) {
+        if (genericsMirror instanceof DeclaredType declaredType) {
             List<? extends TypeMirror> typeArguments = declaredType.getTypeArguments();
             if (!typeArguments.isEmpty()) {
                 TypeName[] names = typeArguments
                         .stream()
                         .map(typeArg -> WildcardTypeName.subtypeOf(Object.class))
                         .toArray(TypeName[]::new);
-                typeName = ParameterizedTypeName.get(ClassName.get((TypeElement) declaredType.asElement()), names);
+                genericsName = ParameterizedTypeName.get(ClassName.get((TypeElement) declaredType.asElement()), names);
             }
         }
         // 注册方法
-        String javadoc = """
+        String javadoc =
+                """
                 服务端注册方法
                 <p>
                 此方法返回一个服务端注册器，注册器注册返回注册对象
@@ -88,14 +99,17 @@ public final class ServerRegistrationProcessor extends AbstractProcessor {
                 @return     服务端注册器
                 """;
         String argName = type.getSimpleName().toString().toLowerCase();
+        ParameterizedTypeName paramTypeName = processingEnv
+                .getTypeUtils().isSameType(type.asType(), generics.asType())
+                ? ParameterizedTypeName.get(ClassName.get(Supplier.class), TypeVariableName.get("T"))
+                : ParameterizedTypeName.get(ClassName.get(Supplier.class),
+                ParameterizedTypeName.get(ClassName.get(type), TypeVariableName.get("T")));
         MethodSpec registrarMethod = MethodSpec
                 .methodBuilder("registrar")
                 .addJavadoc(javadoc, argName)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addTypeVariable(TypeVariableName.get("T", typeName))
-                .addParameter(
-                        ParameterizedTypeName.get(ClassName.get(Supplier.class), TypeVariableName.get("T")),
-                        argName)
+                .addTypeVariable(TypeVariableName.get("T", genericsName))
+                .addParameter(paramTypeName, argName)
                 .addStatement("return new $T($N)", registrar, argName)
                 .returns(TypeName.get(registrar.asType()))
                 .build();

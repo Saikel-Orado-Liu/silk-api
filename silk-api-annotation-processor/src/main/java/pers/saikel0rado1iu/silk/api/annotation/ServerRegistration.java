@@ -37,8 +37,37 @@ public @interface ServerRegistration {
 
     /**
      * 提供注册类型用于生成注册方法
+     * <p>
+     * 此泛型提供如果与 {@link ServerRegistration#generics()} 相同则直接泛型实现为：<pre>{@code
+     * static <T extends 'type()'> RegistrationProvider.MainRegistrar<T> registrar(Supplier<T> item) {
+     *     return new RegistrationProvider.MainRegistrar<T>(item);
+     * }
+     * }</pre>
+     * 如果不相同则为：<pre>{@code
+     * static <T extends 'generics()'> RegistrationProvider.MainRegistrar<T> registrar(Supplier<'type()'<T>> item) {
+     *     return new RegistrationProvider.MainRegistrar<T>(item);
+     * }
+     * }</pre>
      *
      * @return 注册类型的类
      */
     Class<?> type();
+
+    /**
+     * 提供注册泛型用于生成注册方法
+     * <p>
+     * 此泛型提供如果与 {@link ServerRegistration#type()} 相同则直接泛型实现为：<pre>{@code
+     * static <T extends 'generics()'> RegistrationProvider.MainRegistrar<T> registrar(Supplier<T> item) {
+     *     return new RegistrationProvider.MainRegistrar<T>(item);
+     * }
+     * }</pre>
+     * 如果不相同则为：<pre>{@code
+     * static <T extends 'generics()'> RegistrationProvider.MainRegistrar<T> registrar(Supplier<'type()'<T>> item) {
+     *     return new RegistrationProvider.MainRegistrar<T>(item);
+     * }
+     * }</pre>
+     *
+     * @return 注册类型的泛型
+     */
+    Class<?> generics();
 }
