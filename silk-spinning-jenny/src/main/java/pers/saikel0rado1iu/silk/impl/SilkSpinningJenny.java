@@ -14,25 +14,21 @@ package pers.saikel0rado1iu.silk.impl;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * <h2 style="color:FFC800">Silk API: Spinning Jenny</h2>
+ * <h2>Silk API: Spinning Jenny</h2>
  * Silk API: Spinning Jenny 的模组数据
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface SilkSpinningJenny extends SilkApi {
-	/**
-	 * 提供实例
-	 *
-	 * @return 模组数据实例
-	 */
-	static SilkSpinningJenny getInstance() {
-		return new SilkSpinningJenny() {
-		};
-	}
-	
-	@Override
-	default @NotNull String id() {
-		return "silk-spinning-jenny";
-	}
+    /** 实例 */
+    SilkSpinningJenny INSTANCE = new SilkSpinningJenny() {
+    };
+
+    @Override
+    default @NotNull String id() {
+        return SilkId.SILK_SPINNING_JENNY;
+    }
 }
