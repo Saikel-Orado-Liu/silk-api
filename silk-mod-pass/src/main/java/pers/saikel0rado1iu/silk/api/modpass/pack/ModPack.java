@@ -23,7 +23,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.commons.compress.utils.Lists;
 import pers.saikel0rado1iu.silk.api.event.registry.RegisterModResourcePackCallback;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 
 import java.util.ArrayList;
@@ -123,7 +123,7 @@ public sealed interface ModPack extends ModPass permits ModPack.Group, ModPack.S
         }
 
         @Override
-        public ModData modData() {
+        public ModBasicData modData() {
             return modPass.modData();
         }
     }

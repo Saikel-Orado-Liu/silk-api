@@ -15,7 +15,7 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModDependency;
 import net.minecraft.text.Text;
 import pers.saikel0rado1iu.silk.api.modpass.pack.ModDataPack;
-import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcePack;
+import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcesPack;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * <h2>模组数据拓展</h2>
+ * <h2>模组拓展数据</h2>
  * 使用此接口参考 {@link pers.saikel0rado1iu.silk.impl.SilkApi}
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu">
@@ -31,49 +31,7 @@ import java.util.*;
  *         </a>
  * @since 0.1.0
  */
-public interface ModDataExpansion extends ModData {
-    /**
-     * 获取主题颜色
-     *
-     * @return 主题颜色的值
-     */
-    int themeColor();
-
-    /**
-     * 获取模组的国际化名称。
-     *
-     * @return 模组的国际化名称。
-     */
-    Text i18nName();
-
-    /**
-     * 获取模组的国际化摘要。
-     *
-     * @return 模组的国际化摘要。
-     */
-    Text i18nSummary();
-
-    /**
-     * 获取模组的国际化描述信息。
-     *
-     * @return 模组的国际化描述信息。
-     */
-    Text i18nDescription();
-
-    /**
-     * 模组提供的数据包
-     *
-     * @return 可选的数据包
-     */
-    Optional<ModDataPack> dataPack();
-
-    /**
-     * 模组提供的资源包
-     *
-     * @return 可选的资源包
-     */
-    Optional<ModResourcePack> resourcePack();
-
+public interface ModExtendedData extends ModBasicData {
     /**
      * 获取模组的联系邮箱。
      *
@@ -219,4 +177,46 @@ public interface ModDataExpansion extends ModData {
         String[] paths = jar().toString().split(separator);
         return paths[paths.length - 1];
     }
+
+    /**
+     * 获取主题颜色
+     *
+     * @return 主题颜色的值
+     */
+    int themeColor();
+
+    /**
+     * 获取模组的国际化名称。
+     *
+     * @return 模组的国际化名称。
+     */
+    Text i18nName();
+
+    /**
+     * 获取模组的国际化摘要。
+     *
+     * @return 模组的国际化摘要。
+     */
+    Text i18nSummary();
+
+    /**
+     * 获取模组的国际化描述信息。
+     *
+     * @return 模组的国际化描述信息。
+     */
+    Text i18nDescription();
+
+    /**
+     * 模组提供的数据包
+     *
+     * @return 可选的数据包
+     */
+    Optional<ModDataPack> dataPack();
+
+    /**
+     * 模组提供的资源包
+     *
+     * @return 可选的资源包
+     */
+    Optional<ModResourcesPack> resourcePack();
 }

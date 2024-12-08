@@ -14,7 +14,7 @@ package pers.saikel0rado1iu.silk.api.modpass.pack;
 import net.minecraft.resource.ResourcePackSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import pers.saikel0rado1iu.silk.api.modpass.ModDataExpansion;
+import pers.saikel0rado1iu.silk.api.modpass.ModExtendedData;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 
 /**
@@ -38,7 +38,7 @@ public class GroupResourcePackSource implements ResourcePackSource {
 
     @Override
     public Text decorate(Text packName) {
-        Text name = modPass.modData() instanceof ModDataExpansion e
+        Text name = modPass.modData() instanceof ModExtendedData e
                 ? e.i18nName()
                 : Text.literal(modPass.modData().name());
         return Text.translatable("pack.nameAndSource", packName,

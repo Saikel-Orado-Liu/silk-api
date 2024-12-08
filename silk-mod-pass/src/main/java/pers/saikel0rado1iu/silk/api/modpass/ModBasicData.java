@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * <h2>模组数据</h2>
+ * <h2>模组基础数据</h2>
  * 使用此接口参考 {@link pers.saikel0rado1iu.silk.impl.SilkApi}
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu">
@@ -38,18 +38,11 @@ import java.util.Optional;
  * @since 0.1.0
  */
 @FunctionalInterface
-public interface ModData extends ModPass {
+public interface ModBasicData extends ModPass {
     @Override
-    default ModData modData() {
+    default ModBasicData modData() {
         return this;
     }
-
-    /**
-     * 获取模组的唯一标识符
-     *
-     * @return 模组的唯一标识符
-     */
-    String id();
 
     /**
      * 用于更快捷的创建基于模组的标识符
@@ -73,7 +66,7 @@ public interface ModData extends ModPass {
             String msg = String.format(
                     "The mod was not found: The mod with path '%s' does not exist!",
                     id());
-            SilkModPass.getInstance().logger().error(msg);
+            SilkModPass.INSTANCE.logger().error(msg);
             throw new RuntimeException(msg);
         }
         return modContainerOptional.get();
@@ -192,15 +185,15 @@ public interface ModData extends ModPass {
         } catch (MalformedURLException | URISyntaxException e) {
             String msg = String.format("Mod link error: Mod '%s(%s)' does not have a " +
                     "%s URL or the URL format is incorrect.", name(), id(), type);
-            SilkModPass.getInstance().logger().error(msg);
-            throw new RuntimeException(msg);
+            SilkModPass.INSTANCE.logger().error(msg);
+            throw new RuntimeException(msg, e);
         }
     }
 
     /**
      * 获取模组主页链接
      * <p>
-     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModData#link(LinkType)}
+     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModBasicData#link(LinkType)}
      *
      * @return 模组主页的链接
      * @throws MalformedURLException 如果模组主页链接格式不正确
@@ -218,7 +211,7 @@ public interface ModData extends ModPass {
     /**
      * 获取模组源代码链接
      * <p>
-     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModData#link(LinkType)}
+     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModBasicData#link(LinkType)}
      *
      * @return 模组源代码的链接
      * @throws MalformedURLException 如果模组源代码链接格式不正确
@@ -236,7 +229,7 @@ public interface ModData extends ModPass {
     /**
      * 获取模组问题跟踪链接
      * <p>
-     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModData#link(LinkType)}
+     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModBasicData#link(LinkType)}
      *
      * @return 模组问题跟踪的链接
      * @throws MalformedURLException 如果模组问题跟踪链接格式不正确
@@ -254,7 +247,7 @@ public interface ModData extends ModPass {
     /**
      * 获取模组社区链接
      * <p>
-     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModData#link(LinkType)}
+     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModBasicData#link(LinkType)}
      *
      * @return 模组社区的链接，如果不存在则返回空的 {@link Optional} 对象
      * @throws MalformedURLException 如果模组社区链接格式不正确
@@ -268,7 +261,7 @@ public interface ModData extends ModPass {
     /**
      * 获取模组支持链接
      * <p>
-     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModData#link(LinkType)}
+     * 此方法推荐仅用于重定向链接，推荐使用 {@link ModBasicData#link(LinkType)}
      *
      * @return 模组支持的链接，如果不存在则返回空的 {@link Optional} 对象
      * @throws MalformedURLException 如果模组支持链接格式不正确
@@ -278,6 +271,13 @@ public interface ModData extends ModPass {
     default Optional<URL> support() throws MalformedURLException, URISyntaxException {
         return Optional.empty();
     }
+
+    /**
+     * 获取模组的唯一标识符
+     *
+     * @return 模组的唯一标识符
+     */
+    String id();
 
     /**
      * <h2>链接类型</h2>
