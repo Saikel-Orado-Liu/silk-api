@@ -13,7 +13,7 @@ package pers.saikel0rado1iu.silk.api.modpass;
 
 /**
  * <h2>模组通</h2>
- * 所有实现了 {@link ModPass} 的类都可以取出 {@link ModData} 以供使用
+ * 所有实现了 {@link ModPass} 的类都可以取出 {@link ModBasicData} 以供使用
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu">
  *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
@@ -23,9 +23,19 @@ package pers.saikel0rado1iu.silk.api.modpass;
 @FunctionalInterface
 public interface ModPass {
     /**
+     * 快速创建临时 {@link ModPass} 的方法
+     *
+     * @param id 模组标识符
+     * @return 模组数据
+     */
+    static ModBasicData of(String id) {
+        return () -> id;
+    }
+
+    /**
      * 用于提供模组数据以基于模组数据实现功能
      *
      * @return 模组数据
      */
-    ModData modData();
+    ModBasicData modData();
 }

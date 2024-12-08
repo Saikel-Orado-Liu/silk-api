@@ -31,18 +31,18 @@ import java.lang.reflect.Type;
  *         </a>
  * @since 1.0.0
  */
-public interface LaunchRegistrationProvider<T> extends RegisterableModPass<T> {
+public non-sealed interface LaunchRegistrationProvider<T> extends RegistrationProvider<T> {
     /**
      * 记录注册事件
      *
      * @param modPass          发起注册事件的模组的模组通
-     * @param clazz            {@link RegisterableModPass} 的类参数
+     * @param clazz            {@link RegistrationProvider} 的类参数
      * @param registrationType 注册类型
      */
-    static void loggingRegistration(ModPass modPass, Class<?> clazz,
+    static void loggingRegistration(ModPass modPass, Class<? extends RegistrationProvider<?>> clazz,
                                     RegistrationType registrationType) {
         // 处理当前接口
-        boolean foundTargetType = RegisterableModPass.processInterface(modPass, clazz, registrationType);
+        boolean foundTargetType = RegistrationProvider.processInterface(modPass, clazz, registrationType);
         // 处理父接口
         if (foundTargetType) {
             return;
@@ -50,6 +50,9 @@ public interface LaunchRegistrationProvider<T> extends RegisterableModPass<T> {
         Type[] interfaces = clazz.getGenericInterfaces();
         for (Type type : interfaces) {
             if (!(type instanceof Class<?> classType && classType.isInterface())) {
+                continue;
+            }
+            if (!RegistrationProvider.class.isAssignableFrom(classType)) {
                 continue;
             }
             for (Field field : clazz.getDeclaredFields()) {
@@ -62,20 +65,27 @@ public interface LaunchRegistrationProvider<T> extends RegisterableModPass<T> {
                 } catch (NoSuchMethodException | IllegalAccessException |
                          InvocationTargetException e) {
                     String msg = String.format("%s %s", m, clazz.getInterfaces()[0].getName());
-                    SilkModPass.getInstance().logger().error(msg);
-                    throw new RuntimeException(msg);
+                    SilkModPass.INSTANCE.logger().error(msg);
+                    throw new RuntimeException(msg, e);
                 }
             }
-            loggingRegistration(modPass, classType, registrationType);
+            //noinspection unchecked
+            var c = (Class<? extends RegistrationProvider<?>>) classType;
+            loggingRegistration(modPass, c, registrationType);
         }
     }
 
     /**
-     * 预启动注册器<p> 提供注册项进行注册，注册后返回注册项
+     * <h2>预启动注册器</h2>
+     * 提供注册项进行注册，注册后返回注册项
      *
      * @param <T> 注册的数据类
+     * @author <a href="https://github.com/Saikel-Orado-Liu">
+     *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+     *         </a>
+     * @since 1.0.0
      */
-    abstract class Registrar<T> {
+    non-sealed abstract class Registrar<T> extends RegistrationProvider.Registrar {
         protected final T type;
 
         protected Registrar(T type) {
@@ -90,7 +100,7 @@ public interface LaunchRegistrationProvider<T> extends RegisterableModPass<T> {
          * @return 注册项
          */
         protected T register(ModPass modPass, String id) {
-            RegisterableModPass.loggingRegistration(modPass, type,
+            RegistrationProvider.loggingRegistration(modPass, type,
                     modPass.modData().ofId(id), RegistrationType.PRE_LAUNCH);
             return type;
         }

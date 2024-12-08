@@ -12,7 +12,7 @@
 package pers.saikel0rado1iu.silk.api.modpass;
 
 import com.google.common.collect.Maps;
-import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
+import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationProvider;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,34 +27,10 @@ import java.util.Set;
  *         </a>
  * @since 1.0.0
  */
-public interface ModEntry<T extends RegisterableModPass<?>> extends ModPass {
+public sealed interface ModEntry<T extends RegistrationProvider<?>> extends ModPass
+        permits ModMain, ModServer, ModClient, ModLaunch {
     /** 执行的入口点 */
     Map<Class<?>, Boolean> ENTRYPOINT_EXECUTED = Maps.newHashMap();
-
-    /**
-     * 模组主函数
-     *
-     * @param mod 提供的模组通
-     */
-    void main(ModPass mod);
-
-    /**
-     * 注册表方法，提供注册表以供注册
-     *
-     * @return 注册表的类型集合
-     */
-    Set<Class<? extends T>> registry();
-
-    /**
-     * 注册命名空间
-     * <p>
-     * 默认的注册命名空间为 {@code modData()} 中提供的模组通
-     *
-     * @return 注册命名空间的模组通
-     */
-    default ModPass registrationNamespace() {
-        return modData();
-    }
 
     /**
      * 是否已执行
@@ -70,4 +46,18 @@ public interface ModEntry<T extends RegisterableModPass<?>> extends ModPass {
         }
         return isExecuted;
     }
+
+    /**
+     * 模组主函数
+     *
+     * @param mod 提供的模组通
+     */
+    void main(ModPass mod);
+
+    /**
+     * 注册表方法，提供注册表以供注册
+     *
+     * @return 注册表的类型集合
+     */
+    Set<Class<? extends T>> registries();
 }

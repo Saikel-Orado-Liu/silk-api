@@ -12,9 +12,11 @@
 package pers.saikel0rado1iu.silk.api.modpass;
 
 import net.fabricmc.api.ClientModInitializer;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.modpass.registry.ClientRegistrationProvider;
-import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
+import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationProvider;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
+import pers.saikel0rado1iu.silk.impl.Minecraft;
 
 /**
  * <h2>模组客户端主类</h2>
@@ -25,7 +27,7 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
  *         </a>
  * @since 0.1.0
  */
-public interface ModClient extends ClientModInitializer, ModEntry<ClientRegistrationProvider<?>> {
+public non-sealed interface ModClient extends ClientModInitializer, ModEntry<ClientRegistrationProvider<?>> {
     @Override
     default void onInitializeClient() {
         if (isExecuted()) {
@@ -33,8 +35,10 @@ public interface ModClient extends ClientModInitializer, ModEntry<ClientRegistra
         }
         ENTRYPOINT_EXECUTED.put(getClass(), true);
         main(this);
-        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-            RegisterableModPass.loggingRegistration(registrationNamespace(),
+        for (Class<? extends RegistrationProvider<?>> clazz : registries()) {
+            RegistryNamespace anno = clazz.getAnnotation(RegistryNamespace.class);
+            RegistrationProvider.loggingRegistration(
+                    ModPass.of(anno == null ? Minecraft.ID : anno.value()),
                     clazz, RegistrationType.CLIENT_ONLY);
         }
     }

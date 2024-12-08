@@ -13,7 +13,7 @@ package pers.saikel0rado1iu.silk.api.modpass.registry;
 
 import net.minecraft.util.Identifier;
 import pers.saikel0rado1iu.silk.api.annotation.ClientRegistration;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 
 /**
  * <h2>客户端注册提供器</h2>
@@ -26,20 +26,23 @@ import pers.saikel0rado1iu.silk.api.modpass.ModData;
  * @since 1.0.0
  */
 @ClientRegistration(registrar = Class.class, type = Class.class)
-public interface ClientRegistrationProvider<T> extends RegisterableModPass<T> {
+public non-sealed interface ClientRegistrationProvider<T> extends RegistrationProvider<T> {
     /**
-     * 客户端注册器
+     * <h2>客户端注册器</h2>
+     * 提供 {@link Runnable} 进行注册
      *
      * @param <T> 注册的数据类
+     * @author <a href="https://github.com/Saikel-Orado-Liu">
+     *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+     *         </a>
+     * @since 1.0.0
      */
-    abstract class Registrar<T> {
+    non-sealed abstract class Registrar<T> extends RegistrationProvider.Registrar {
         protected final Runnable run;
 
         protected Registrar(Runnable run) {
             this.run = run;
         }
-
-        protected abstract Identifier getIdentifier(T t);
 
         /**
          * 进行注册
@@ -48,8 +51,10 @@ public interface ClientRegistrationProvider<T> extends RegisterableModPass<T> {
          */
         public void register(T t) {
             run.run();
-            RegisterableModPass.loggingRegistration(((ModData) () -> getIdentifier(t).getNamespace()),
-                    t, getIdentifier(t), RegistrationType.CLIENT_ONLY);
+            RegistrationProvider.loggingRegistration(((ModBasicData) () -> getId(t).getNamespace()),
+                    t, getId(t), RegistrationType.CLIENT_ONLY);
         }
+
+        protected abstract Identifier getId(T t);
     }
 }

@@ -28,21 +28,25 @@ import java.util.function.Supplier;
  *         </a>
  * @since 1.0.0
  */
-@ServerRegistration(registrar = Class.class, type = Class.class)
-public interface ServerRegistrationProvider<T> extends RegisterableModPass<T> {
+@ServerRegistration(registrar = Class.class, type = Class.class, generics = Class.class)
+public non-sealed interface ServerRegistrationProvider<T> extends RegistrationProvider<T> {
     /**
-     * 服务端注册器<p> 提供注册项进行注册，注册后返回注册项
+     * <h2>服务端注册器</h2>
+     * 提供 {@link Supplier} 进行注册，注册后返回注册项
      *
      * @param <T> 注册的数据类
+     * @author <a href="https://github.com/Saikel-Orado-Liu">
+     *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+     *         </a>
+     * @since 1.0.0
      */
-    abstract class Registrar<T, R extends Registrar<T, R>> {
+    non-sealed abstract class Registrar<T, R extends Registrar<T, R>>
+            extends RegistrationProvider.Registrar {
         protected final Supplier<T> type;
 
         protected Registrar(Supplier<T> type) {
             this.type = Suppliers.memoize(type::get);
         }
-
-        protected abstract R self();
 
         /**
          * 其他注册内容
@@ -63,9 +67,11 @@ public interface ServerRegistrationProvider<T> extends RegisterableModPass<T> {
          * @return 注册项
          */
         protected T register(ModPass modPass, String id) {
-            RegisterableModPass.loggingRegistration(modPass, type,
+            RegistrationProvider.loggingRegistration(modPass, type,
                     modPass.modData().ofId(id), RegistrationType.SERVER_ONLY);
             return type.get();
         }
+
+        protected abstract R self();
     }
 }

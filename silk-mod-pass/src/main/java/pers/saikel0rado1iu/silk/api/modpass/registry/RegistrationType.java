@@ -13,7 +13,7 @@ package pers.saikel0rado1iu.silk.api.modpass.registry;
 
 /**
  * <h2>注册类型</h2>
- * 用于给 {@link RegisterableModPass} 进行判断的注册类型
+ * 用于给 {@link RegistrationProvider} 进行判断的注册类型
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu">
  *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">

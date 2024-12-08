@@ -12,11 +12,13 @@
 package pers.saikel0rado1iu.silk.api.modpass;
 
 import net.fabricmc.api.ModInitializer;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.modpass.pack.ModDataPack;
-import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcePack;
+import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcesPack;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
-import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
+import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationProvider;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
+import pers.saikel0rado1iu.silk.impl.Minecraft;
 
 /**
  * <h2>模组主类</h2>
@@ -27,7 +29,7 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
  *         </a>
  * @since 0.1.0
  */
-public interface ModMain extends ModInitializer, ModEntry<MainRegistrationProvider<?>> {
+public non-sealed interface ModMain extends ModInitializer, ModEntry<MainRegistrationProvider<?>> {
     @Override
     default void onInitialize() {
         if (isExecuted()) {
@@ -35,12 +37,14 @@ public interface ModMain extends ModInitializer, ModEntry<MainRegistrationProvid
         }
         ENTRYPOINT_EXECUTED.put(getClass(), true);
         main(this);
-        if (modData() instanceof ModDataExpansion modDataExpansion) {
-            modDataExpansion.dataPack().ifPresent(ModDataPack::registry);
-            modDataExpansion.resourcePack().ifPresent(ModResourcePack::registry);
+        if (modData() instanceof ModExtendedData modExtendedData) {
+            modExtendedData.dataPack().ifPresent(ModDataPack::registry);
+            modExtendedData.resourcePack().ifPresent(ModResourcesPack::registry);
         }
-        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-            MainRegistrationProvider.loggingRegistration(registrationNamespace(),
+        for (Class<? extends RegistrationProvider<?>> clazz : registries()) {
+            RegistryNamespace anno = clazz.getAnnotation(RegistryNamespace.class);
+            RegistrationProvider.loggingRegistration(
+                    ModPass.of(anno == null ? Minecraft.ID : anno.value()),
                     clazz, RegistrationType.VANILLA_MAIN);
         }
     }

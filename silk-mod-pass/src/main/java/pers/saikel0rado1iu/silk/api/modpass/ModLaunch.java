@@ -12,9 +12,11 @@
 package pers.saikel0rado1iu.silk.api.modpass;
 
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.modpass.registry.LaunchRegistrationProvider;
-import pers.saikel0rado1iu.silk.api.modpass.registry.RegisterableModPass;
+import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationProvider;
 import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
+import pers.saikel0rado1iu.silk.impl.Minecraft;
 
 /**
  * <h2>模组启动主类</h2>
@@ -25,7 +27,7 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.RegistrationType;
  *         </a>
  * @since 0.1.0
  */
-public interface ModLaunch extends PreLaunchEntrypoint, ModEntry<LaunchRegistrationProvider<?>> {
+public non-sealed interface ModLaunch extends PreLaunchEntrypoint, ModEntry<LaunchRegistrationProvider<?>> {
     @Override
     default void onPreLaunch() {
         if (isExecuted()) {
@@ -33,8 +35,10 @@ public interface ModLaunch extends PreLaunchEntrypoint, ModEntry<LaunchRegistrat
         }
         ENTRYPOINT_EXECUTED.put(getClass(), true);
         main(this);
-        for (Class<? extends RegisterableModPass<?>> clazz : registry()) {
-            LaunchRegistrationProvider.loggingRegistration(registrationNamespace(),
+        for (Class<? extends RegistrationProvider<?>> clazz : registries()) {
+            RegistryNamespace anno = clazz.getAnnotation(RegistryNamespace.class);
+            LaunchRegistrationProvider.loggingRegistration(
+                    ModPass.of(anno == null ? Minecraft.ID : anno.value()),
                     clazz, RegistrationType.PRE_LAUNCH);
         }
     }
