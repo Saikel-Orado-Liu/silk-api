@@ -17,15 +17,16 @@ import net.minecraft.registry.tag.TagKey;
 import pers.saikel0rado1iu.silk.impl.SilkApi;
 
 /**
- * <h2 style="color:FFC800">实体类型标签</h2>
+ * <h2>实体类型标签</h2>
  * 用于补充原版应有但缺失的标签以便在模组中使用
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface EntityTypeTags {
-	/**
-	 * 在此标签中的实体类型属于怪物
-	 */
-	TagKey<EntityType<?>> MONSTERS = TagKey.of(RegistryKeys.ENTITY_TYPE, SilkApi.getInstance().ofId("monsters"));
+    /** 在此标签中的实体类型属于怪物 */
+    TagKey<EntityType<?>> MONSTERS = TagKey.of(RegistryKeys.ENTITY_TYPE,
+            SilkApi.INTERNAL.ofId("monsters"));
 }

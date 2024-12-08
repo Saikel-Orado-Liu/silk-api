@@ -21,18 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <h2 style="color:FFC800">{@link RegisterBiomeSourceParamListPresetCallback} 混入</h2>
+ * <h2>{@link RegisterBiomeSourceParamListPresetCallback} 混入</h2>
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @Mixin(MultiNoiseBiomeSourceParameterList.Preset.class)
 abstract class RegisterBiomeSourceParamListPresetCallbackMixin {
-	@SuppressWarnings("unchecked")
-	@ModifyArg(method = "<clinit>", at = @At(value = "INVOKE", target = "L java/util/stream/Stream;of([L java/lang/Object;)L java/util/stream/Stream;"))
-	private static <T> T[] register(T[] byId) {
-		List<T> presets = new ArrayList<>(List.of(byId));
-		RegisterBiomeSourceParamListPresetCallback.EVENT.invoker().add((List<MultiNoiseBiomeSourceParameterList.Preset>) presets);
-		return (T[]) presets.toArray(new Object[0]);
-	}
+    @SuppressWarnings("unchecked")
+    @ModifyArg(method = "<clinit>", at = @At(value = "INVOKE",
+                                             target = "L java/util/stream/Stream;of([L java/lang/Object;)L java/util/stream/Stream;"))
+    private static <T> T[] register(T[] byId) {
+        List<T> presets = new ArrayList<>(List.of(byId));
+        RegisterBiomeSourceParamListPresetCallback.EVENT.invoker()
+                                                        .add((List<MultiNoiseBiomeSourceParameterList.Preset>) presets);
+        return (T[]) presets.toArray(new Object[0]);
+    }
 }

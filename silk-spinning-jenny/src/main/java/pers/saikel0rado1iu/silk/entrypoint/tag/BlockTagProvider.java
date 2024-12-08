@@ -20,24 +20,28 @@ import pers.saikel0rado1iu.silk.api.spinningjenny.tag.BlockTags;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * <h2 style="color:FFC800">方块标签提供器</h2>
+ * <h2>方块标签提供器</h2>
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 public final class BlockTagProvider extends FabricTagProvider.BlockTagProvider {
-	/**
-	 * @param output           数据输出
-	 * @param registriesFuture 注册管理器
-	 */
-	public BlockTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
-		super(output, registriesFuture);
-	}
-	
-	@Override
-	protected void configure(RegistryWrapper.WrapperLookup arg) {
-		getOrCreateTagBuilder(BlockTags.SOIL).add(Blocks.COARSE_DIRT, Blocks.ROOTED_DIRT);
-		getOrCreateTagBuilder(BlockTags.TILLABLE_BLOCKS).add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.DIRT_PATH);
-		getOrCreateTagBuilder(BlockTags.COBWEB).add(Blocks.COBWEB);
-	}
+    /**
+     * @param output           数据输出
+     * @param registriesFuture 注册管理器
+     */
+    public BlockTagProvider(FabricDataOutput output,
+                            CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+        super(output, registriesFuture);
+    }
+
+    @Override
+    protected void configure(RegistryWrapper.WrapperLookup arg) {
+        getOrCreateTagBuilder(BlockTags.SOIL).add(Blocks.COARSE_DIRT, Blocks.ROOTED_DIRT);
+        getOrCreateTagBuilder(BlockTags.TILLABLE_BLOCKS).add(Blocks.DIRT, Blocks.GRASS_BLOCK,
+                Blocks.DIRT_PATH);
+        getOrCreateTagBuilder(BlockTags.COBWEB).add(Blocks.COBWEB);
+    }
 }

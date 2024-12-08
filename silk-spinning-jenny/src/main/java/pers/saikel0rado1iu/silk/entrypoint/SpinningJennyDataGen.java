@@ -18,22 +18,24 @@ import pers.saikel0rado1iu.silk.entrypoint.tag.EntityTypeTagProvider;
 import pers.saikel0rado1iu.silk.entrypoint.tag.ItemTagProvider;
 
 /**
- * <h2 style="color:FFC800">数据生成器</h2>
+ * <h2>数据生成器</h2>
  * 用于 Silk API: Spinning Jenny 的数据生成器
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public final class SpinningJennyDataGen implements DataGeneratorEntrypoint {
-	@Override
-	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-		pack.addProvider(ItemTagProvider::new);
-		pack.addProvider(BlockTagProvider::new);
-		pack.addProvider(EntityTypeTagProvider::new);
-		pack.addProvider(SpinningJennyI18nProvider.EN_US::provider);
-		pack.addProvider(SpinningJennyI18nProvider.ZH_CN::provider);
-		pack.addProvider(SpinningJennyI18nProvider.ZH_HK::provider);
-		pack.addProvider(SpinningJennyI18nProvider.ZH_TW::provider);
-	}
+    @Override
+    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+        pack.addProvider(ItemTagProvider::new);
+        pack.addProvider(BlockTagProvider::new);
+        pack.addProvider(EntityTypeTagProvider::new);
+        pack.addProvider(SpinningJennyI18nProvider.EN_US::provider);
+        pack.addProvider(SpinningJennyI18nProvider.ZH_CN::provider);
+        pack.addProvider(SpinningJennyI18nProvider.ZH_HK::provider);
+        pack.addProvider(SpinningJennyI18nProvider.ZH_TW::provider);
+    }
 }

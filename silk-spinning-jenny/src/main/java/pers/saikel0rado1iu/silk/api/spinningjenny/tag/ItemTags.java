@@ -17,15 +17,15 @@ import net.minecraft.registry.tag.TagKey;
 import pers.saikel0rado1iu.silk.impl.SilkApi;
 
 /**
- * <h2 style="color:FFC800">物品标签</h2>
+ * <h2>物品标签</h2>
  * 用于补充原版应有但缺失的标签以便在模组中使用
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface ItemTags {
-	/**
-	 * 在此标签中的物品属于蘑菇
-	 */
-	TagKey<Item> MUSHROOMS = TagKey.of(RegistryKeys.ITEM, SilkApi.getInstance().ofId("mushrooms"));
+    /** 在此标签中的物品属于蘑菇 */
+    TagKey<Item> MUSHROOMS = TagKey.of(RegistryKeys.ITEM, SilkApi.INTERNAL.ofId("mushrooms"));
 }
