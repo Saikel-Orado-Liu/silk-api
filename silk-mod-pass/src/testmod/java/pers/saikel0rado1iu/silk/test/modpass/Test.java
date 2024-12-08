@@ -11,7 +11,7 @@
 
 package pers.saikel0rado1iu.silk.test.modpass;
 
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 import pers.saikel0rado1iu.silk.api.modpass.ModMain;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
@@ -42,17 +42,17 @@ public final class Test implements ModMain {
         // test mod() exception
         // SilkApi.DATA.mod();
         // test link exception
-        new ModData() {
-            @Override
-            public String id() {
-                return "silk-mod-pass-test";
-            }
-
+        new ModBasicData() {
             @Override
             public Optional<URL> community() throws MalformedURLException, URISyntaxException {
                 return Optional.of(new URI("https://www.minecraft.net").toURL());
             }
-        }.link(ModData.LinkType.COMMUNITY);
+
+            @Override
+            public String id() {
+                return "silk-mod-pass-test";
+            }
+        }.link(ModBasicData.LinkType.COMMUNITY);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class Test implements ModMain {
      * @return 注册表的类型集合
      */
     @Override
-    public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
+    public Set<Class<? extends MainRegistrationProvider<?>>> registries() {
         return Set.of();
     }
 
@@ -71,7 +71,7 @@ public final class Test implements ModMain {
      * @return 模组数据
      */
     @Override
-    public ModData modData() {
-        return SilkModPass.getInstance();
+    public ModBasicData modData() {
+        return SilkModPass.INSTANCE;
     }
 }

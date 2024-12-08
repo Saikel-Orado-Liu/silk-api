@@ -38,13 +38,15 @@ abstract class GroupResourcePackMixin {
     @Unique
     private final ThreadLocal<List<Resource>> resources = new ThreadLocal<>();
 
-    @Inject(method = "getAllResources", at = @At(value = "INVOKE", target = "L java/util/List;size()I"))
+    @Inject(method = "getAllResources",
+            at = @At(value = "INVOKE", target = "L java/util/List;size()I"))
     private void onGetAllResources(Identifier id, CallbackInfoReturnable<List<Resource>> cir,
                                    @Local List<Resource> resources) {
         this.resources.set(resources);
     }
 
-    @Redirect(method = "getAllResources", at = @At(value = "INVOKE", target = "L net/minecraft/ resource/ResourcePack;open(L net/minecraft/resource/ResourceType;L net/minecraft/util/Identifier;)L net/minecraft/resource/InputSupplier;"))
+    @Redirect(method = "getAllResources", at = @At(value = "INVOKE",
+                                                   target = "L net/minecraft/ resource/ResourcePack;open(L net/minecraft/resource/ResourceType;L net/minecraft/util/Identifier;)L net/minecraft/resource/InputSupplier;"))
     private InputSupplier<InputStream> onResourceAdd(ResourcePack pack, ResourceType type,
                                                      Identifier id) {
         if (!(pack instanceof GroupResourcePack resourcePack)) {

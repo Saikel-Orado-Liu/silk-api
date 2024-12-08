@@ -47,6 +47,6 @@ final class ModPassI18nProvider extends I18nModInfoProvider {
                     "開發庫中幾乎所有的高階系統都使用了此介面進行開發。");
 
     private ModPassI18nProvider(String langCode, String name, String summary, String description) {
-        super(langCode, SilkModPass.getInstance().id(), name, summary, description);
+        super(langCode, SilkModPass.INSTANCE.id(), name, summary, description);
     }
 }

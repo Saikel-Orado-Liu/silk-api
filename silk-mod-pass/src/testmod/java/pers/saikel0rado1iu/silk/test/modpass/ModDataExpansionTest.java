@@ -15,14 +15,14 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
-import pers.saikel0rado1iu.silk.api.modpass.ModDataExpansion;
+import pers.saikel0rado1iu.silk.api.modpass.ModExtendedData;
 import pers.saikel0rado1iu.silk.api.modpass.pack.ModDataPack;
-import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcePack;
+import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcesPack;
 import pers.saikel0rado1iu.silk.impl.SilkApiBase;
 import pers.saikel0rado1iu.silk.impl.SilkModPass;
 
 /**
- * Test {@link ModDataExpansion}
+ * Test {@link ModExtendedData}
  */
 public interface ModDataExpansionTest {
     /**
@@ -34,50 +34,50 @@ public interface ModDataExpansionTest {
      * 测试
      */
     static void test() {
-        LOGGER.info("SilkModPass.getInstance().themeColor() = {}",
-                SilkModPass.getInstance().themeColor());
-        LOGGER.info("SilkModPass.getInstance().i18nName() = {}",
-                SilkModPass.getInstance().i18nName());
-        LOGGER.info("SilkModPass.getInstance().i18nSummary() = {}",
-                SilkModPass.getInstance().i18nSummary());
-        LOGGER.info("SilkModPass.getInstance().i18nDescription() = {}",
-                SilkModPass.getInstance().i18nDescription());
-        SilkModPass.getInstance().writeFormatLog(Level.DEBUG, SilkApiBase.getInstance(),
+        LOGGER.info("SilkModPass.INSTANCE.themeColor() = {}",
+                SilkModPass.INSTANCE.themeColor());
+        LOGGER.info("SilkModPass.INSTANCE.i18nName() = {}",
+                SilkModPass.INSTANCE.i18nName());
+        LOGGER.info("SilkModPass.INSTANCE.i18nSummary() = {}",
+                SilkModPass.INSTANCE.i18nSummary());
+        LOGGER.info("SilkModPass.INSTANCE.i18nDescription() = {}",
+                SilkModPass.INSTANCE.i18nDescription());
+        SilkModPass.INSTANCE.writeFormatLog(Level.DEBUG, SilkApiBase.INSTANCE,
                 "SilkApiBase/TestingModExtendedData");
-        SilkModPass.getInstance().writeFormatLog(Level.INFO, SilkApiBase.getInstance(),
+        SilkModPass.INSTANCE.writeFormatLog(Level.INFO, SilkApiBase.INSTANCE,
                 "SilkApiBase/TestingModExtendedData");
-        SilkModPass.getInstance().writeFormatLog(Level.WARN, SilkApiBase.getInstance(),
+        SilkModPass.INSTANCE.writeFormatLog(Level.WARN, SilkApiBase.INSTANCE,
                 "SilkApiBase/TestingModExtendedData");
-        SilkModPass.getInstance().writeFormatLog(Level.ERROR, SilkApiBase.getInstance(),
+        SilkModPass.INSTANCE.writeFormatLog(Level.ERROR, SilkApiBase.INSTANCE,
                 "SilkApiBase/TestingModExtendedData");
-        SilkModPass.getInstance().writeFormatLog(Level.TRACE, SilkApiBase.getInstance(),
+        SilkModPass.INSTANCE.writeFormatLog(Level.TRACE, SilkApiBase.INSTANCE,
                 "SilkApiBase/TestingModExtendedData");
         LOGGER.info("DataPack.create() = {}", ModDataPack.createSimple("pack",
-                ResourcePackActivationType.ALWAYS_ENABLED, SilkModPass.getInstance()));
+                ResourcePackActivationType.ALWAYS_ENABLED, SilkModPass.INSTANCE));
         LOGGER.info("DataPack.getDescKey() = {}",
-                ModDataPack.getDescKey(SilkModPass.getInstance()));
-        LOGGER.info("ResourcePack.create() = {}", ModResourcePack.createSimple("pack",
-                ResourcePackActivationType.ALWAYS_ENABLED, SilkModPass.getInstance()));
+                ModDataPack.getDescKey(SilkModPass.INSTANCE));
+        LOGGER.info("ResourcePack.create() = {}", ModResourcesPack.createSimple("pack",
+                ResourcePackActivationType.ALWAYS_ENABLED, SilkModPass.INSTANCE));
         LOGGER.info("ResourcePack.getDescKey() = {}",
-                ModResourcePack.getDescKey(SilkModPass.getInstance()));
-        LOGGER.info("SilkModPass.getInstance().email() = {}", SilkModPass.getInstance().email());
-        LOGGER.info("SilkModPass.getInstance().irc() = {}", SilkModPass.getInstance().irc());
-        LOGGER.info("SilkModPass.getInstance().contributors() = {}",
-                SilkModPass.getInstance().contributors());
-        LOGGER.info("SilkModPass.getInstance().nested() = {}", SilkModPass.getInstance().nested());
-        LOGGER.info("SilkModPass.getInstance().depends() = {}",
-                SilkModPass.getInstance().depends());
-        LOGGER.info("SilkModPass.getInstance().recommends() = {}",
-                SilkModPass.getInstance().recommends());
-        LOGGER.info("SilkModPass.getInstance().suggests() = {}",
-                SilkModPass.getInstance().suggests());
-        LOGGER.info("SilkModPass.getInstance().breaks() = {}", SilkModPass.getInstance().breaks());
-        LOGGER.info("SilkModPass.getInstance().conflicts() = {}",
-                SilkModPass.getInstance().conflicts());
-        LOGGER.info("SilkModPass.getInstance().jar() = {}", SilkModPass.getInstance().jar());
-        LOGGER.info("SilkModPass.getInstance().jarPath() = {}",
-                SilkModPass.getInstance().jarPath());
-        LOGGER.info("SilkModPass.getInstance().jarName() = {}",
-                SilkModPass.getInstance().jarName());
+                ModResourcesPack.getDescKey(SilkModPass.INSTANCE));
+        LOGGER.info("SilkModPass.INSTANCE.email() = {}", SilkModPass.INSTANCE.email());
+        LOGGER.info("SilkModPass.INSTANCE.irc() = {}", SilkModPass.INSTANCE.irc());
+        LOGGER.info("SilkModPass.INSTANCE.contributors() = {}",
+                SilkModPass.INSTANCE.contributors());
+        LOGGER.info("SilkModPass.INSTANCE.nested() = {}", SilkModPass.INSTANCE.nested());
+        LOGGER.info("SilkModPass.INSTANCE.depends() = {}",
+                SilkModPass.INSTANCE.depends());
+        LOGGER.info("SilkModPass.INSTANCE.recommends() = {}",
+                SilkModPass.INSTANCE.recommends());
+        LOGGER.info("SilkModPass.INSTANCE.suggests() = {}",
+                SilkModPass.INSTANCE.suggests());
+        LOGGER.info("SilkModPass.INSTANCE.breaks() = {}", SilkModPass.INSTANCE.breaks());
+        LOGGER.info("SilkModPass.INSTANCE.conflicts() = {}",
+                SilkModPass.INSTANCE.conflicts());
+        LOGGER.info("SilkModPass.INSTANCE.jar() = {}", SilkModPass.INSTANCE.jar());
+        LOGGER.info("SilkModPass.INSTANCE.jarPath() = {}",
+                SilkModPass.INSTANCE.jarPath());
+        LOGGER.info("SilkModPass.INSTANCE.jarName() = {}",
+                SilkModPass.INSTANCE.jarName());
     }
 }

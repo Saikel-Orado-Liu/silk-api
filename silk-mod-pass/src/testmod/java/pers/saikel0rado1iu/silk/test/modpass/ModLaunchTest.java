@@ -11,7 +11,7 @@
 
 package pers.saikel0rado1iu.silk.test.modpass;
 
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 import pers.saikel0rado1iu.silk.api.modpass.ModLaunch;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.LaunchRegistrationProvider;
@@ -39,7 +39,7 @@ public final class ModLaunchTest implements ModLaunch {
      * @return 注册表的类型集合
      */
     @Override
-    public Set<Class<? extends LaunchRegistrationProvider<?>>> registry() {
+    public Set<Class<? extends LaunchRegistrationProvider<?>>> registries() {
         return Set.of();
     }
 
@@ -49,7 +49,7 @@ public final class ModLaunchTest implements ModLaunch {
      * @return 模组数据
      */
     @Override
-    public ModData modData() {
-        return SilkModPass.getInstance();
+    public ModBasicData modData() {
+        return SilkModPass.INSTANCE;
     }
 }

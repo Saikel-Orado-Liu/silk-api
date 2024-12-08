@@ -11,8 +11,8 @@
 
 package pers.saikel0rado1iu.silk.test.modpass;
 
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 import pers.saikel0rado1iu.silk.api.modpass.ModClient;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.ClientRegistrationProvider;
 import pers.saikel0rado1iu.silk.impl.SilkModPass;
@@ -39,7 +39,7 @@ public final class ModClientTest implements ModClient {
      * @return 注册表的类型集合
      */
     @Override
-    public Set<Class<? extends ClientRegistrationProvider<?>>> registry() {
+    public Set<Class<? extends ClientRegistrationProvider<?>>> registries() {
         return Set.of();
     }
 
@@ -49,7 +49,7 @@ public final class ModClientTest implements ModClient {
      * @return 模组数据
      */
     @Override
-    public ModData modData() {
-        return SilkModPass.getInstance();
+    public ModBasicData modData() {
+        return SilkModPass.INSTANCE;
     }
 }
