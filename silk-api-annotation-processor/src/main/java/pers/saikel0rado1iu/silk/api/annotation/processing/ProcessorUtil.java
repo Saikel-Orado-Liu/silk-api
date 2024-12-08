@@ -91,8 +91,9 @@ interface ProcessorUtil {
      * @param roundEnv         环境
      * @param processingEnv    处理环境
      * @param interfaceElement 父接口元素
-     * @return 是否声明了相同注释
+     * @return 是否声明了相同注释。声明了相同注释返回 {@code true}，没声明返回 {@code false}
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean checkAnnotation(Class<? extends Annotation> annotation,
                                    RoundEnvironment roundEnv,
                                    ProcessingEnvironment processingEnv,
@@ -134,7 +135,8 @@ interface ProcessorUtil {
      * @return 预构建的类型构建器
      */
     static TypeSpec.Builder createTypeBuilder(TypeElement type, Element superType) {
-        final String javadoc = """
+        final String javadoc =
+                """
                 <h2>{@link $N} 注册表</h2>
                 用于注册 {@link $N} 的注册表，由 {@link $N} 构建生成
                 
@@ -145,7 +147,9 @@ interface ProcessorUtil {
                 """;
 
         return TypeSpec
-                .interfaceBuilder(type.getSimpleName() + "Registry")
+                .interfaceBuilder(superType
+                        .getSimpleName().toString()
+                        .replaceAll("RegistrationProvider", "") + "Registry")
                 .addJavadoc(javadoc, type.getSimpleName(), type.getSimpleName(), superType.getSimpleName())
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(superType.asType());

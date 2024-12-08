@@ -63,7 +63,9 @@ public final class ClientRegistrationProcessor extends AbstractProcessor {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, msg, element);
             return Optional.empty();
         }
-        builder = builder != null ? builder : ProcessorUtil.createTypeBuilder(type, element);
+        builder = builder != null
+                ? builder
+                : ProcessorUtil.createTypeBuilder(type, element);
         // 注册方法
         // 提取构造方法
         Optional<ExecutableElement> constructorOpt = registrar
@@ -100,7 +102,8 @@ public final class ClientRegistrationProcessor extends AbstractProcessor {
                                  .getEnclosedElements()
                                  .getFirst())
                     .build();
-            String javadoc = """
+            String javadoc =
+                    """
                     客户端注册方法<p>
                     提供 {@link Runnable} 进行注册，您应该以如下方式进行客户端注册：
                     <p>
