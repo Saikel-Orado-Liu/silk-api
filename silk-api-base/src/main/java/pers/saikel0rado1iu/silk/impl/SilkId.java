@@ -25,4 +25,24 @@ public interface SilkId {
     String SILK_API = "silk-api";
     /** Silk API: Base 的 ID */
     String SILK_API_BASE = "silk-api-base";
+    /** Silk API: Mod Pass 的 ID */
+    String SILK_MOD_PASS = "silk-mod-pass";
+    /** Silk API: Mod Up 的 ID */
+    String SILK_MOD_UP = "silk-mod-up";
+    /** Silk API: Spinning-Jenny 的 ID */
+    String SILK_SPINNING_JENNY = "silk-spinning-jenny";
+    /** Silk API: Rope-Stick 的 ID */
+    String SILK_ROPE_STICK = "silk-rope-stick";
+    /** Silk API: Magic Cube 的 ID */
+    String SILK_MAGIC_CUBE = "silk-magic-cube";
+    /** Silk API: Base 的 ID */
+    String SILK_SPORE = "silk-spore";
+    /** Silk API: Generate 的 ID */
+    String SILK_GENERATE = "silk-generate";
+    /** Silk API: Pattern 的 ID */
+    String SILK_PATTERN = "silk-pattern";
+    /** Silk API: Codex 的 ID */
+    String SILK_CODEX = "silk-codex";
+    /** Silk API: Landform 的 ID */
+    String SILK_LANDFORM = "silk-landform";
 }
