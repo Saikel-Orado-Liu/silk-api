@@ -12,12 +12,11 @@
 package pers.saikel0rado1iu.silk.impl;
 
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.event.Level;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
-import pers.saikel0rado1iu.silk.api.modpass.ModDataExpansion;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
+import pers.saikel0rado1iu.silk.api.modpass.ModExtendedData;
 import pers.saikel0rado1iu.silk.api.modpass.pack.ModDataPack;
-import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcePack;
+import pers.saikel0rado1iu.silk.api.modpass.pack.ModResourcesPack;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -35,31 +34,17 @@ import java.util.Optional;
  *         </a>
  * @since 0.1.0
  */
-public interface SilkApi extends ModDataExpansion {
-    /**
-     * 提供实例
-     *
-     * @return 模组数据实例
-     */
-    static SilkApi getInstance() {
-        return new SilkApi() {
-        };
-    }
-
-    /**
-     * 提供内部实例
-     *
-     * @return 模组数据实例
-     */
-    @ApiStatus.Internal
-    static SilkApi getInternal() {
-        return new SilkApi() {
-            @Override
-            public String name() {
-                return "Silk API";
-            }
-        };
-    }
+public interface SilkApi extends ModExtendedData {
+    /** 实例 */
+    SilkApi INSTANCE = new SilkApi() {
+    };
+    /** 内部实例 */
+    SilkApi INTERNAL = new SilkApi() {
+        @Override
+        public String name() {
+            return "Silk API";
+        }
+    };
 
     @Override
     default int themeColor() {
@@ -87,7 +72,7 @@ public interface SilkApi extends ModDataExpansion {
     }
 
     @Override
-    default Optional<ModResourcePack> resourcePack() {
+    default Optional<ModResourcesPack> resourcePack() {
         return Optional.empty();
     }
 
@@ -99,7 +84,7 @@ public interface SilkApi extends ModDataExpansion {
      * @param mes   要写入的格式化日志消息
      * @param args  其他格式化参数
      */
-    default void writeFormatLog(Level level, ModData mod, String mes, Object... args) {
+    default void writeFormatLog(Level level, ModBasicData mod, String mes, Object... args) {
         switch (level) {
         case DEBUG -> logger().debug(String.format("From mod %s: %s", mod.debugName(), mes), args);
         case INFO -> logger().info(String.format("From mod %s: %s", mod.debugName(), mes), args);
@@ -107,11 +92,6 @@ public interface SilkApi extends ModDataExpansion {
         case ERROR -> logger().error(String.format("From mod %s: %s", mod.debugName(), mes), args);
         case TRACE -> logger().trace(String.format("From mod %s: %s", mod.debugName(), mes), args);
         }
-    }
-
-    @Override
-    default String id() {
-        return SilkId.SILK_API;
     }
 
     @Override
@@ -146,5 +126,10 @@ public interface SilkApi extends ModDataExpansion {
                        .getAsString();
         }
         return Optional.of(new URI(url).toURL());
+    }
+
+    @Override
+    default String id() {
+        return SilkId.SILK_API;
     }
 }

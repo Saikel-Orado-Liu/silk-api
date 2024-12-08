@@ -21,18 +21,12 @@ package pers.saikel0rado1iu.silk.impl;
  * @since 0.1.0
  */
 public interface SilkApiBase extends SilkApi {
-    /**
-     * 提供实例
-     *
-     * @return 模组数据实例
-     */
-    static SilkApiBase getInstance() {
-        return new SilkApiBase() {
-        };
-    }
+    /** 实例 */
+    SilkApiBase INSTANCE = new SilkApiBase() {
+    };
 
     @Override
     default String id() {
-        return "silk-api-base";
+        return SilkId.SILK_API_BASE;
     }
 }

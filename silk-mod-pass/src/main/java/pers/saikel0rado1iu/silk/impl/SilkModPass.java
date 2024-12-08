@@ -21,18 +21,12 @@ package pers.saikel0rado1iu.silk.impl;
  * @since 0.1.0
  */
 public interface SilkModPass extends SilkApi {
-    /**
-     * 提供实例
-     *
-     * @return 模组数据实例
-     */
-    static SilkModPass getInstance() {
-        return new SilkModPass() {
-        };
-    }
+    /** 实例 */
+    SilkModPass INSTANCE = new SilkModPass() {
+    };
 
     @Override
     default String id() {
-        return "silk-mod-pass";
+        return SilkId.SILK_MOD_PASS;
     }
 }

@@ -15,7 +15,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,16 +30,12 @@ import java.util.List;
  *         </a>
  * @since 0.1.0
  */
-public interface Minecraft extends ModData {
-    /**
-     * 提供实例
-     *
-     * @return 模组数据实例
-     */
-    static Minecraft getInstance() {
-        return new Minecraft() {
-        };
-    }
+public interface Minecraft extends ModBasicData {
+    /** 模组标识符 */
+    String ID = "minecraft";
+    /** 实例 */
+    Minecraft INSTANCE = new Minecraft() {
+    };
 
     /**
      * 比较 MC 版本
@@ -103,6 +99,6 @@ public interface Minecraft extends ModData {
 
     @Override
     default String id() {
-        return "minecraft";
+        return ID;
     }
 }
