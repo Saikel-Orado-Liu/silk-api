@@ -12,7 +12,7 @@
 package pers.saikel0rado1iu.silk.test.spinningjenny.client;
 
 import pers.saikel0rado1iu.silk.api.modpass.ModClient;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.ClientRegistrationProvider;
 import pers.saikel0rado1iu.silk.impl.SilkSpinningJenny;
@@ -23,37 +23,37 @@ import java.util.Set;
  * 测试
  */
 public final class Test implements ModClient {
-	/**
-	 * 模组主函数
-	 *
-	 * @param mod 提供的模组通
-	 */
-	@Override
-	public void main(ModPass mod) {
-	}
-	
-	/**
-	 * 注册表方法，提供注册表以供注册
-	 *
-	 * @return 注册表的类型集合
-	 */
-	@Override
-	public Set<Class<? extends ClientRegistrationProvider<?>>> registry() {
-		return Set.of(
-				ItemRegistryTest.class,
-				BlockRegistryTest.class,
-				EntityTypeRegistryTest.class,
-				ModelLayerRegistryTest.class,
-				ParticleTypeRegistryTest.class);
-	}
-	
-	/**
-	 * 用于提供模组数据以基于模组数据实现功能
-	 *
-	 * @return 模组数据
-	 */
-	@Override
-	public ModData modData() {
-		return SilkSpinningJenny.getInstance();
-	}
+    /**
+     * 模组主函数
+     *
+     * @param mod 提供的模组通
+     */
+    @Override
+    public void main(ModPass mod) {
+    }
+
+    /**
+     * 注册表方法，提供注册表以供注册
+     *
+     * @return 注册表的类型集合
+     */
+    @Override
+    public Set<Class<? extends ClientRegistrationProvider<?>>> registries() {
+        return Set.of(
+                ItemRegistryTest.class,
+                BlockRegistryTest.class,
+                EntityTypeRegistryTest.class,
+                ModelLayerRegistryTest.class,
+                ParticleTypeRegistryTest.class);
+    }
+
+    /**
+     * 用于提供模组数据以基于模组数据实现功能
+     *
+     * @return 模组数据
+     */
+    @Override
+    public ModBasicData modData() {
+        return SilkSpinningJenny.INSTANCE;
+    }
 }

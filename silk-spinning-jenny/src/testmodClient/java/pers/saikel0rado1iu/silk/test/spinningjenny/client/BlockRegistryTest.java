@@ -21,10 +21,13 @@ import static pers.saikel0rado1iu.silk.test.spinningjenny.BlockRegistryTest.TEST
  * Test {@link BlockRegistry}
  */
 public abstract class BlockRegistryTest implements BlockRegistry {
-	static {
-		BlockRegistry.registrar(() -> BlockRenderLayerMap.INSTANCE.putBlock(TEST_BLOCK, RenderLayer.getCutout())).register(TEST_BLOCK);
-	}
-	
-	private BlockRegistryTest() {
-	}
+    static {
+        BlockRegistry
+                .registrar(() -> BlockRenderLayerMap.INSTANCE.putBlock(
+                        TEST_BLOCK, RenderLayer.getCutout()))
+                .register(TEST_BLOCK);
+    }
+
+    private BlockRegistryTest() {
+    }
 }

@@ -13,16 +13,21 @@ package pers.saikel0rado1iu.silk.test.spinningjenny.world.gen;
 
 import net.minecraft.world.gen.trunk.TrunkPlacer;
 import net.minecraft.world.gen.trunk.TrunkPlacerType;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.TrunkPlacerTypeRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link TrunkPlacerTypeRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface TrunkPlacerTypeRegistryTest extends TrunkPlacerTypeRegistry {
-	/**
-	 * test_trunk_placer_type
-	 */
-	@SuppressWarnings("unused")
-	TrunkPlacerType<TrunkPlacer> TEST_TRUNK_PLACER_TYPE = TrunkPlacerTypeRegistry.registrar(() -> new TrunkPlacerType<>(TrunkPlacer.TYPE_CODEC.fieldOf("test_trunk_placer_type")))
-			.register("test_trunk_placer_type");
+    /**
+     * test_trunk_placer_type
+     */
+    @SuppressWarnings("unused")
+    TrunkPlacerType<TrunkPlacer> TEST_TRUNK_PLACER_TYPE = TrunkPlacerTypeRegistry
+            .registrar(() -> new TrunkPlacerType<>(
+                    TrunkPlacer.TYPE_CODEC.fieldOf("test_trunk_placer_type")))
+            .register("test_trunk_placer_type");
 }

@@ -14,26 +14,36 @@ package pers.saikel0rado1iu.silk.test.spinningjenny;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
+import pers.saikel0rado1iu.silk.api.spinningjenny.ItemRegistrationProvider;
 import pers.saikel0rado1iu.silk.api.spinningjenny.ItemRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 import pers.saikel0rado1iu.silk.impl.SilkSpinningJenny;
 
 /**
  * Test {@link ItemRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface ItemRegistryTest extends ItemRegistry {
-	/**
-	 * test_item
-	 */
-	@SuppressWarnings("deprecation")
-	Item TEST_ITEM = ItemRegistry.registrar(() -> new Item(new Item.Settings().component(ComponentTypeRegistryTest.TEST_DATA_COMPONENT_TYPE, 99)))
-			.group(ItemGroups.BUILDING_BLOCKS)
-			.other(item -> SilkSpinningJenny.getInstance().logger().info("other"))
-			.register();
-	/**
-	 * test_block
-	 */
-	@SuppressWarnings("unused")
-	BlockItem TEST_BLOCK = ItemRegistry.registrar(() -> new BlockItem(BlockRegistryTest.TEST_BLOCK, new Item.Settings()))
-			.group(ItemGroups.BUILDING_BLOCKS)
-			.register(SilkSpinningJenny.getInstance().ofId("test_block"));
+    /**
+     * test_item
+     */
+    Item TEST_ITEM = ItemRegistry
+            .registrar(() -> ItemRegistrationProvider
+                    .builder(Item::new, "test_item")
+                    .setting(new Item.Settings().component(
+                            ComponentTypeRegistryTest.TEST_DATA_COMPONENT_TYPE, 99)))
+            .group(ItemGroups.BUILDING_BLOCKS)
+            .other(item -> SilkSpinningJenny.INSTANCE.logger().info("other"))
+            .register();
+    /**
+     * test_block
+     */
+    @SuppressWarnings("unused")
+    BlockItem TEST_BLOCK = ItemRegistry
+            .registrar(() -> ItemRegistrationProvider
+                    .builder(BlockRegistryTest.TEST_BLOCK,
+                            SilkSpinningJenny.INSTANCE.ofId("test_block")))
+            .group(ItemGroups.BUILDING_BLOCKS)
+            .register();
 }

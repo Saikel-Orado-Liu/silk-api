@@ -13,16 +13,20 @@ package pers.saikel0rado1iu.silk.test.spinningjenny.data.gen;
 
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapedRecipe;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.data.gen.RecipeSerializerRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link RecipeSerializerRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface RecipeSerializerRegistryTest extends RecipeSerializerRegistry {
-	/**
-	 * test_recipe_serializer
-	 */
-	@SuppressWarnings("unused")
-	RecipeSerializer<ShapedRecipe> TEST_RECIPE_SERIALIZER = RecipeSerializerRegistry.registrar(ShapedRecipe.Serializer::new)
-			.register("test_recipe_serializer");
+    /**
+     * test_recipe_serializer
+     */
+    @SuppressWarnings("unused")
+    RecipeSerializer<ShapedRecipe> TEST_RECIPE_SERIALIZER = RecipeSerializerRegistry
+            .registrar(ShapedRecipe.Serializer::new)
+            .register("test_recipe_serializer");
 }

@@ -11,37 +11,42 @@
 
 package pers.saikel0rado1iu.silk.test.spinningjenny;
 
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.world.World;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.EntityTypeRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link EntityTypeRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface EntityTypeRegistryTest extends EntityTypeRegistry {
-	/**
-	 * test_entity_type
-	 */
-	@SuppressWarnings("unused")
-	EntityType<TestEntityType> TEST_ENTITY_TYPE = EntityTypeRegistry.registrar(() -> FabricEntityTypeBuilder.create(SpawnGroup.MISC, TestEntityType::new).build())
-			.register("test_entity_type");
-	
-	/**
-	 * TestEntityType
-	 */
-	class TestEntityType extends ArrowEntity {
-		TestEntityType(EntityType<? extends ArrowEntity> entityType, World world) {
-			super(entityType, world);
-		}
-		
-		@Override
-		public void tick() {
-			if (getWorld().isClient && !inGround) getWorld().addParticle(ParticleTypes.INSTANT_EFFECT, getX(), getY(), getZ(), 0, 0, 0);
-			super.tick();
-		}
-	}
+    /**
+     * test_entity_type
+     */
+    @SuppressWarnings("unused")
+    EntityType<TestEntityType> TEST_ENTITY_TYPE = EntityTypeRegistry
+            .registrar(() -> EntityType.Builder.create(TestEntityType::new, SpawnGroup.MISC))
+            .register("test_entity_type");
+
+    /**
+     * TestEntityType
+     */
+    class TestEntityType extends ArrowEntity {
+        TestEntityType(EntityType<? extends ArrowEntity> entityType, World world) {
+            super(entityType, world);
+        }
+
+        @Override
+        public void tick() {
+            if (getWorld().isClient && !isInGround()) {
+                getWorld().addParticle(ParticleTypes.INSTANT_EFFECT, getX(), getY(), getZ(), 0, 0, 0);
+            }
+            super.tick();
+        }
+    }
 }

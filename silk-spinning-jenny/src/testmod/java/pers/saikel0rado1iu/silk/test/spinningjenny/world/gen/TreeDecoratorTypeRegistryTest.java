@@ -13,16 +13,21 @@ package pers.saikel0rado1iu.silk.test.spinningjenny.world.gen;
 
 import net.minecraft.world.gen.treedecorator.TreeDecorator;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.TreeDecoratorTypeRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link TreeDecoratorTypeRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface TreeDecoratorTypeRegistryTest extends TreeDecoratorTypeRegistry {
-	/**
-	 * test_tree_decorator_type
-	 */
-	@SuppressWarnings("unused")
-	TreeDecoratorType<TreeDecorator> TEST_TREE_DECORATOR_TYPE = TreeDecoratorTypeRegistry.registrar(() -> new TreeDecoratorType<>(TreeDecorator.TYPE_CODEC.fieldOf("tree_decorator")))
-			.register("test_tree_decorator_type");
+    /**
+     * test_tree_decorator_type
+     */
+    @SuppressWarnings("unused")
+    TreeDecoratorType<TreeDecorator> TEST_TREE_DECORATOR_TYPE = TreeDecoratorTypeRegistry
+            .registrar(() -> new TreeDecoratorType<>(
+                    TreeDecorator.TYPE_CODEC.fieldOf("tree_decorator")))
+            .register("test_tree_decorator_type");
 }

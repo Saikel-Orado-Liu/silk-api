@@ -14,16 +14,20 @@ package pers.saikel0rado1iu.silk.test.spinningjenny.world.gen;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IcebergFeature;
 import net.minecraft.world.gen.feature.SingleStateFeatureConfig;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.FeatureRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link FeatureRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface FeatureRegistryTest extends FeatureRegistry {
-	/**
-	 * test_feature
-	 */
-	@SuppressWarnings("unused")
-	Feature<SingleStateFeatureConfig> TEST_FEATURE = FeatureRegistry.registrar(() -> new IcebergFeature(SingleStateFeatureConfig.CODEC))
-			.register("test_feature");
+    /**
+     * test_feature
+     */
+    @SuppressWarnings("unused")
+    Feature<SingleStateFeatureConfig> TEST_FEATURE = FeatureRegistry
+            .registrar(() -> new IcebergFeature(SingleStateFeatureConfig.CODEC))
+            .register("test_feature");
 }

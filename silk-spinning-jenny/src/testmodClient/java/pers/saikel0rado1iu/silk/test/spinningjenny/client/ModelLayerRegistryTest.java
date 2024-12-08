@@ -22,16 +22,20 @@ import static net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegist
  * Test {@link EntityModelLayerRegistry}
  */
 public abstract class ModelLayerRegistryTest implements EntityModelLayerRegistry {
-	/**
-	 * test_entity_model_layer
-	 */
-	@SuppressWarnings("unused")
-	public static final EntityModelLayer TEST_ENTITY_MODEL_LAYER = new EntityModelLayer(SilkSpinningJenny.getInstance().ofId("test_entity_model_layer"), "main");
-	
-	static {
-		EntityModelLayerRegistry.registrar(() -> registerModelLayer(TEST_ENTITY_MODEL_LAYER, SpiderEntityModel::getTexturedModelData)).register(TEST_ENTITY_MODEL_LAYER);
-	}
-	
-	private ModelLayerRegistryTest() {
-	}
+    /**
+     * test_entity_model_layer
+     */
+    @SuppressWarnings("unused")
+    public static final EntityModelLayer TEST_ENTITY_MODEL_LAYER = new EntityModelLayer(
+            SilkSpinningJenny.INSTANCE.ofId("test_entity_model_layer"), "main");
+
+    static {
+        EntityModelLayerRegistry
+                .registrar(() -> registerModelLayer(TEST_ENTITY_MODEL_LAYER,
+                        SpiderEntityModel::getTexturedModelData))
+                .register(TEST_ENTITY_MODEL_LAYER);
+    }
+
+    private ModelLayerRegistryTest() {
+    }
 }

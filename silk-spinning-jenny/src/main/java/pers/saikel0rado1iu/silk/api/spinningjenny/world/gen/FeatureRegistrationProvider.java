@@ -13,42 +13,58 @@ package pers.saikel0rado1iu.silk.api.spinningjenny.world.gen;
 
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.FeatureConfig;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.annotation.ServerRegistration;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * <h2 style="color:FFC800">地物注册提供器</h2>
+ * <h2>地物注册提供器</h2>
  * 用于整合地物并注册地物以供使用
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @ApiStatus.OverrideOnly
-@ServerRegistration(registrar = FeatureRegistrationProvider.MainRegistrar.class, type = Feature.class)
+@ServerRegistration(registrar = FeatureRegistrationProvider.MainRegistrar.class,
+                    type = Feature.class, generics = FeatureConfig.class)
 public interface FeatureRegistrationProvider extends MainRegistrationProvider<Feature<?>> {
-	/**
-	 * 地物主注册器
-	 *
-	 * @param <T> 地物
-	 */
-	final class MainRegistrar<T extends Feature<?>> extends Registrar<T, MainRegistrar<T>> {
-		MainRegistrar(Supplier<T> type) {
-			super(type);
-		}
-		
-		@Override
-		protected MainRegistrar<T> self() {
-			return this;
-		}
-		
-		@Override
-		protected Optional<Registry<?>> registry() {
-			return Optional.of(Registries.FEATURE);
-		}
-	}
+    /**
+     * <h2>地物主注册器</h2>
+     * 请使用 {@link FeatureRegistry#registrar(Supplier)} 注册
+     *
+     * @param <T> 地物配置
+     * @author <a href="https://github.com/Saikel-Orado-Liu">
+     *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+     *         </a>
+     * @since 1.0.0
+     */
+    final class MainRegistrar<T extends FeatureConfig>
+            extends Registrar<Feature<T>, Feature<?>, Feature<T>, MainRegistrar<T>> {
+        MainRegistrar(Supplier<Feature<T>> type) {
+            super(type);
+        }
+
+        @Override
+        protected MainRegistrar<T> self() {
+            return this;
+        }
+
+        @Override
+        protected Feature<T> getReg(@Nullable Identifier id) {
+            return supplier;
+        }
+
+        @Override
+        protected Registry<Feature<?>> registry() {
+            return Registries.FEATURE;
+        }
+    }
 }

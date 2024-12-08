@@ -19,10 +19,10 @@ import static pers.saikel0rado1iu.silk.test.spinningjenny.ItemRegistryTest.TEST_
  * Test {@link ItemRegistry}
  */
 public abstract class ItemRegistryTest implements ItemRegistry {
-	static {
-		ItemRegistry.registrar(() -> System.out.println(" ")).register(TEST_ITEM);
-	}
-	
-	private ItemRegistryTest() {
-	}
+    static {
+        ItemRegistry.registrar(() -> System.out.println(" ")).register(TEST_ITEM);
+    }
+
+    private ItemRegistryTest() {
+    }
 }

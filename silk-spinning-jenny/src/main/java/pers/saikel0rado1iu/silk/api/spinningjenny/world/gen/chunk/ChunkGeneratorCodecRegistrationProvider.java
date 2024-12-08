@@ -9,13 +9,13 @@
  * You should have received a copy of the GNU General Public License along with Silk API. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package pers.saikel0rado1iu.silk.api.spinningjenny.world.gen;
+package pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.chunk;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.gen.foliage.FoliagePlacer;
-import net.minecraft.world.gen.foliage.FoliagePlacerType;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.annotation.ServerRegistration;
@@ -24,33 +24,33 @@ import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
 import java.util.function.Supplier;
 
 /**
- * <h2>树叶放置器类型注册提供器</h2>
- * 用于整合树叶放置器类型并注册树叶放置器类型以供使用
+ * <h2>区块生成器编解码器提供器</h2>
+ * 用于整合区块生成器编解码器并注册区块生成器编解码器以供使用
  *
  * @author <a href="https://github.com/Saikel-Orado-Liu">
  *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
  *         </a>
- * @since 1.0.0
+ * @since 1.2.2
  */
 @ApiStatus.OverrideOnly
-@ServerRegistration(registrar = FoliagePlacerTypeRegistrationProvider.MainRegistrar.class,
-                    type = FoliagePlacerType.class, generics = FoliagePlacer.class)
-public interface FoliagePlacerTypeRegistrationProvider
-        extends MainRegistrationProvider<FoliagePlacerType<?>> {
+@ServerRegistration(registrar = ChunkGeneratorCodecRegistrationProvider.MainRegistrar.class,
+                    type = MapCodec.class, generics = ChunkGenerator.class)
+public interface ChunkGeneratorCodecRegistrationProvider
+        extends MainRegistrationProvider<MapCodec<? extends ChunkGenerator>> {
     /**
-     * <h2>树叶放置器类型主注册器</h2>
-     * 请使用 {@link FoliagePlacerTypeRegistry#registrar(Supplier)} 注册
+     * <h2>区块生成器解编码器主注册器</h2>
+     * 请使用 {@link ChunkGeneratorCodecRegistry#registrar(Supplier)} 注册
      *
-     * @param <T> 树叶放置器
+     * @param <T> 区块生成器
      * @author <a href="https://github.com/Saikel-Orado-Liu">
      *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
      *         </a>
-     * @since 1.0.0
+     * @since 1.2.2
      */
-    final class MainRegistrar<T extends FoliagePlacer>
-            extends Registrar<FoliagePlacerType<T>, FoliagePlacerType<?>,
-            FoliagePlacerType<T>, MainRegistrar<T>> {
-        MainRegistrar(Supplier<FoliagePlacerType<T>> type) {
+    final class MainRegistrar<T extends ChunkGenerator>
+            extends Registrar<MapCodec<T>, MapCodec<? extends ChunkGenerator>,
+            MapCodec<T>, MainRegistrar<T>> {
+        MainRegistrar(Supplier<MapCodec<T>> type) {
             super(type);
         }
 
@@ -60,13 +60,13 @@ public interface FoliagePlacerTypeRegistrationProvider
         }
 
         @Override
-        protected FoliagePlacerType<T> getReg(@Nullable Identifier id) {
+        protected MapCodec<T> getReg(@Nullable Identifier id) {
             return supplier;
         }
 
         @Override
-        protected Registry<FoliagePlacerType<?>> registry() {
-            return Registries.FOLIAGE_PLACER_TYPE;
+        protected Registry<MapCodec<? extends ChunkGenerator>> registry() {
+            return Registries.CHUNK_GENERATOR;
         }
     }
 }

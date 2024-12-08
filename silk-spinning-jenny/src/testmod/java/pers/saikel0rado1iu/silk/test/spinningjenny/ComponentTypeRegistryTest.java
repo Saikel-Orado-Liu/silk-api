@@ -14,15 +14,23 @@ package pers.saikel0rado1iu.silk.test.spinningjenny;
 import net.minecraft.component.ComponentType;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.dynamic.Codecs;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.ComponentTypeRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link ComponentType}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface ComponentTypeRegistryTest extends ComponentTypeRegistry {
-	/**
-	 * test_data_component_type
-	 */
-	ComponentType<Integer> TEST_DATA_COMPONENT_TYPE = ComponentTypeRegistry.registrar(() ->
-			ComponentType.<Integer>builder().codec(Codecs.rangedInt(1, 99)).packetCodec(PacketCodecs.VAR_INT).build()).register("test_data_component_type");
+    /**
+     * test_data_component_type
+     */
+    ComponentType<Integer> TEST_DATA_COMPONENT_TYPE = ComponentTypeRegistry
+            .registrar(() -> ComponentType
+                    .<Integer>builder()
+                    .codec(Codecs.rangedInt(1, 99))
+                    .packetCodec(PacketCodecs.VAR_INT)
+                    .build())
+            .register("test_data_component_type");
 }

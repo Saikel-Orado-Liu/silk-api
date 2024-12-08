@@ -13,16 +13,20 @@ package pers.saikel0rado1iu.silk.test.spinningjenny.world.gen;
 
 import net.minecraft.world.gen.foliage.BlobFoliagePlacer;
 import net.minecraft.world.gen.foliage.FoliagePlacerType;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.world.gen.FoliagePlacerTypeRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link FoliagePlacerTypeRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface FoliagePlacerTypeRegistryTest extends FoliagePlacerTypeRegistry {
-	/**
-	 * test_foliage_placer_type
-	 */
-	@SuppressWarnings("unused")
-	FoliagePlacerType<BlobFoliagePlacer> TEST_FOLIAGE_PLACER_TYPE = FoliagePlacerTypeRegistry.registrar(() -> new FoliagePlacerType<>(BlobFoliagePlacer.CODEC))
-			.register("test_foliage_placer_type");
+    /**
+     * test_foliage_placer_type
+     */
+    @SuppressWarnings("unused")
+    FoliagePlacerType<BlobFoliagePlacer> TEST_FOLIAGE_PLACER_TYPE = FoliagePlacerTypeRegistry
+            .registrar(() -> new FoliagePlacerType<>(BlobFoliagePlacer.CODEC))
+            .register("test_foliage_placer_type");
 }

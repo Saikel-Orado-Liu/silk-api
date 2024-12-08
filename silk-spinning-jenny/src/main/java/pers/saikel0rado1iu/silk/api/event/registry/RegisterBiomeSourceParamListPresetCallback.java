@@ -18,24 +18,27 @@ import net.minecraft.world.biome.source.MultiNoiseBiomeSourceParameterList;
 import java.util.List;
 
 /**
- * <h2 style="color:FFC800">注册生物群系源参数列表预设回调</h2>
+ * <h2>注册生物群系源参数列表预设回调</h2>
  * 用于注册多重噪声生物群系源参数列表预设的回调
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 public interface RegisterBiomeSourceParamListPresetCallback {
-	/**
-	 * 事件
-	 */
-	Event<RegisterBiomeSourceParamListPresetCallback> EVENT = EventFactory.createArrayBacked(RegisterBiomeSourceParamListPresetCallback.class, listeners -> list -> {
-		for (RegisterBiomeSourceParamListPresetCallback event : listeners) event.add(list);
-	});
-	
-	/**
-	 * 添加方法
-	 *
-	 * @param list 需要添加到的列表
-	 */
-	void add(List<MultiNoiseBiomeSourceParameterList.Preset> list);
+    /** 事件 */
+    Event<RegisterBiomeSourceParamListPresetCallback> EVENT = EventFactory.createArrayBacked(
+            RegisterBiomeSourceParamListPresetCallback.class, listeners -> list -> {
+                for (RegisterBiomeSourceParamListPresetCallback event : listeners) {
+                    event.add(list);
+                }
+            });
+
+    /**
+     * 添加方法
+     *
+     * @param list 需要添加到的列表
+     */
+    void add(List<MultiNoiseBiomeSourceParameterList.Preset> list);
 }

@@ -13,23 +13,28 @@ package pers.saikel0rado1iu.silk.test.spinningjenny;
 
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
 import pers.saikel0rado1iu.silk.api.spinningjenny.SoundEventRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 import pers.saikel0rado1iu.silk.impl.SilkSpinningJenny;
 
 /**
  * Test {@link SoundEventRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface SoundEventRegistryTest extends SoundEventRegistry {
-	/**
-	 * test_sound_event
-	 */
-	@SuppressWarnings("unused")
-	SoundEvent TEST_SOUND_EVENT = SoundEventRegistry.registrar(() -> SoundEvent.of(
-			SilkSpinningJenny.getInstance().ofId("test"))).register();
-	/**
-	 * test_sound_event_entry
-	 */
-	@SuppressWarnings("unused")
-	RegistryEntry<SoundEvent> TEST_SOUND_EVENT_ENTRY = SoundEventRegistry.registrar(() -> SoundEvent.of(
-			SilkSpinningJenny.getInstance().ofId("test_entry"))).registerReference();
+    /**
+     * test_sound_event
+     */
+    @SuppressWarnings("unused")
+    SoundEvent TEST_SOUND_EVENT = SoundEventRegistry
+            .registrar(() -> SoundEvent.of(SilkSpinningJenny.INSTANCE.ofId("test")))
+            .register();
+    /**
+     * test_sound_event_entry
+     */
+    @SuppressWarnings("unused")
+    RegistryEntry<SoundEvent> TEST_SOUND_EVENT_ENTRY = SoundEventRegistry
+            .registrar(() -> SoundEvent.of(SilkSpinningJenny.INSTANCE.ofId("test_entry")))
+            .registerReference();
 }

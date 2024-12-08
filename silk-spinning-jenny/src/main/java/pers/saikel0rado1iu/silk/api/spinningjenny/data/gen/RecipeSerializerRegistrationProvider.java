@@ -11,44 +11,62 @@
 
 package pers.saikel0rado1iu.silk.api.spinningjenny.data.gen;
 
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import pers.saikel0rado1iu.silk.api.annotation.ServerRegistration;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * <h2 style="color:FFC800">配方序列化器注册提供器</h2>
+ * <h2>配方序列化器注册提供器</h2>
  * 用于整合配方序列化器并注册配方序列化器以供使用
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @ApiStatus.OverrideOnly
-@ServerRegistration(registrar = RecipeSerializerRegistrationProvider.MainRegistrar.class, type = RecipeSerializer.class)
-public interface RecipeSerializerRegistrationProvider extends MainRegistrationProvider<RecipeSerializer<?>> {
-	/**
-	 * 配方序列化器主注册器
-	 *
-	 * @param <T> 配方序列化器
-	 */
-	final class MainRegistrar<T extends RecipeSerializer<?>> extends Registrar<T, MainRegistrar<T>> {
-		MainRegistrar(Supplier<T> type) {
-			super(type);
-		}
-		
-		@Override
-		protected MainRegistrar<T> self() {
-			return this;
-		}
-		
-		@Override
-		protected Optional<Registry<?>> registry() {
-			return Optional.of(Registries.RECIPE_SERIALIZER);
-		}
-	}
+@ServerRegistration(registrar = RecipeSerializerRegistrationProvider.MainRegistrar.class,
+                    type = RecipeSerializer.class, generics = Recipe.class)
+public interface RecipeSerializerRegistrationProvider
+        extends MainRegistrationProvider<RecipeSerializer<?>> {
+    /**
+     * <h2>配方序列化器主注册器</h2>
+     * 请使用 {@link RecipeSerializerRegistry#registrar(Supplier)} 注册
+     *
+     * @param <T> 配方
+     * @author <a href="https://github.com/Saikel-Orado-Liu">
+     *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+     *         </a>
+     * @since 1.0.0
+     */
+    final class MainRegistrar<T extends Recipe<?>>
+            extends Registrar<RecipeSerializer<T>, RecipeSerializer<?>,
+            RecipeSerializer<T>, MainRegistrar<T>> {
+        MainRegistrar(Supplier<RecipeSerializer<T>> type) {
+            super(type);
+        }
+
+        @Override
+        protected MainRegistrar<T> self() {
+            return this;
+        }
+
+        @Override
+        protected RecipeSerializer<T> getReg(@Nullable Identifier id) {
+            return supplier;
+        }
+
+        @Override
+        protected Registry<RecipeSerializer<?>> registry() {
+            return Registries.RECIPE_SERIALIZER;
+        }
+    }
 }

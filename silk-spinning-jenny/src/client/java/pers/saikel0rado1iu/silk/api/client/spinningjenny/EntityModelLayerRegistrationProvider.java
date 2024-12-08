@@ -18,28 +18,33 @@ import pers.saikel0rado1iu.silk.api.annotation.ClientRegistration;
 import pers.saikel0rado1iu.silk.api.modpass.registry.ClientRegistrationProvider;
 
 /**
- * <h2 style="color:FFC800">实体模型图层注册提供器</h2>
+ * <h2>实体模型图层注册提供器</h2>
  * 用于整合实体模型图层并注册实体模型图层以供使用
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.0.0
  */
 @ApiStatus.OverrideOnly
-@ClientRegistration(registrar = EntityModelLayerRegistrationProvider.ClientRegistrar.class, type = EntityModelLayer.class)
-public interface EntityModelLayerRegistrationProvider extends ClientRegistrationProvider<EntityModelLayer> {
-	/**
-	 * 实体模型图层客户端注册器
-	 *
-	 * @param <T> 实体模型图层类型
-	 */
-	final class ClientRegistrar<T extends EntityModelLayer> extends ClientRegistrationProvider.Registrar<T> {
-		ClientRegistrar(Runnable run) {
-			super(run);
-		}
-		
-		@Override
-		protected Identifier getIdentifier(T t) {
-			return t.getId();
-		}
-	}
+@ClientRegistration(registrar = EntityModelLayerRegistrationProvider.ClientRegistrar.class,
+                    type = EntityModelLayer.class)
+public interface EntityModelLayerRegistrationProvider
+        extends ClientRegistrationProvider<EntityModelLayer> {
+    /**
+     * 实体模型图层客户端注册器
+     *
+     * @param <T> 实体模型图层类型
+     */
+    final class ClientRegistrar<T extends EntityModelLayer>
+            extends ClientRegistrationProvider.Registrar<T> {
+        ClientRegistrar(Runnable run) {
+            super(run);
+        }
+
+        @Override
+        protected Identifier getId(T t) {
+            return t.id();
+        }
+    }
 }

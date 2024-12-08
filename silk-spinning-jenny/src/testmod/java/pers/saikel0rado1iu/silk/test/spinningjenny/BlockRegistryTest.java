@@ -11,16 +11,21 @@
 
 package pers.saikel0rado1iu.silk.test.spinningjenny;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
+import pers.saikel0rado1iu.silk.api.annotation.RegistryNamespace;
+import pers.saikel0rado1iu.silk.api.spinningjenny.BlockRegistrationProvider;
 import pers.saikel0rado1iu.silk.api.spinningjenny.BlockRegistry;
+import pers.saikel0rado1iu.silk.impl.SilkId;
 
 /**
  * Test {@link BlockRegistry}
  */
+@RegistryNamespace(SilkId.SILK_SPINNING_JENNY)
 public interface BlockRegistryTest extends BlockRegistry {
-	/**
-	 * test_block
-	 */
-	Block TEST_BLOCK = BlockRegistry.registrar(() -> new Block(FabricBlockSettings.create())).register("test_block");
+    /**
+     * test_block
+     */
+    Block TEST_BLOCK = BlockRegistry
+            .registrar(() -> BlockRegistrationProvider.builder("test_block"))
+            .register();
 }
