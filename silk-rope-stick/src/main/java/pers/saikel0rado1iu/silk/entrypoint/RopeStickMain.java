@@ -12,7 +12,7 @@
 package pers.saikel0rado1iu.silk.entrypoint;
 
 import com.google.common.collect.ImmutableSet;
-import pers.saikel0rado1iu.silk.api.modpass.ModData;
+import pers.saikel0rado1iu.silk.api.modpass.ModBasicData;
 import pers.saikel0rado1iu.silk.api.modpass.ModMain;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 import pers.saikel0rado1iu.silk.api.modpass.registry.MainRegistrationProvider;
@@ -22,24 +22,26 @@ import pers.saikel0rado1iu.silk.impl.SilkRopeStick;
 import java.util.Set;
 
 /**
- * <h2 style="color:FFC800">主类</h2>
+ * <h2>主类</h2>
  * Silk API: Rope& Stick 的主类
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.1.2
  */
 public final class RopeStickMain implements ModMain {
-	@Override
-	public void main(ModPass mod) {
-	}
-	
-	@Override
-	public Set<Class<? extends MainRegistrationProvider<?>>> registry() {
-		return ImmutableSet.of(ComponentTypes.class);
-	}
-	
-	@Override
-	public ModData modData() {
-		return SilkRopeStick.getInstance();
-	}
+    @Override
+    public void main(ModPass mod) {
+    }
+
+    @Override
+    public Set<Class<? extends MainRegistrationProvider<?>>> registries() {
+        return ImmutableSet.of(ComponentTypes.class);
+    }
+
+    @Override
+    public ModBasicData modData() {
+        return SilkRopeStick.INSTANCE;
+    }
 }
