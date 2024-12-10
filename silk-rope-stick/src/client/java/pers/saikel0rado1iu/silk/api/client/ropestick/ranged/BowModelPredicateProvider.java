@@ -18,30 +18,51 @@ import pers.saikel0rado1iu.silk.api.ropestick.component.type.RangedWeaponCompone
 import pers.saikel0rado1iu.silk.api.ropestick.ranged.BowLikeItem;
 
 /**
- * <h2 style="color:FFC800">弓模型谓词提供器</h2>
+ * <h2>弓模型谓词提供器</h2>
  * 用于弓的模型谓词提供器
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface BowModelPredicateProvider {
-	/**
-	 * 注册模型谓词
-	 *
-	 * @param bow 弓
-	 */
-	static void register(BowLikeItem bow) {
-		ModelPredicateProviderRegistry.register(bow, Identifier.of(RangedWeaponComponent.PULLING_KEY), (stack, world, entity, seed) -> {
-			if (entity == null) return 0;
-			return entity.isUsingItem() && entity.getActiveItem() == stack ? 1 : 0;
-		});
-		ModelPredicateProviderRegistry.register(bow, Identifier.of(RangedWeaponComponent.PULL_KEY), (stack, world, entity, seed) -> {
-			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : ((BowLikeItem) stack.getItem()).getUsingProgress(stack, entity, stack.getMaxUseTime(entity) - entity.getItemUseTimeLeft());
-		});
-		ModelPredicateProviderRegistry.register(bow, Identifier.of(RangedWeaponComponent.PROJECTILE_INDEX_KEY), (stack, world, entity, seed) -> {
-			if (entity == null) return 0;
-			return entity.getActiveItem() != stack ? 0 : stack.getOrDefault(ComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW).getProjectileIndex(entity, stack);
-		});
-	}
+    /**
+     * 注册模型谓词
+     *
+     * @param bow 弓
+     */
+    static void register(BowLikeItem bow) {
+        ModelPredicateProviderRegistry.register(bow,
+                Identifier.of(RangedWeaponComponent.PULLING_KEY),
+                (stack, world, entity, seed) -> {
+                    if (entity == null) {
+                        return 0;
+                    }
+                    return entity.isUsingItem() && entity.getActiveItem() == stack ? 1 : 0;
+                });
+        ModelPredicateProviderRegistry.register(bow,
+                Identifier.of(RangedWeaponComponent.PULL_KEY),
+                (stack, world, entity, seed) -> {
+                    if (entity == null) {
+                        return 0;
+                    }
+                    return entity.getActiveItem() != stack
+                            ? 0
+                            : ((BowLikeItem) stack.getItem()).getUsingProgress(stack, entity,
+                            stack.getMaxUseTime(entity) - entity.getItemUseTimeLeft());
+                });
+        ModelPredicateProviderRegistry.register(bow,
+                Identifier.of(RangedWeaponComponent.PROJECTILE_INDEX_KEY),
+                (stack, world, entity, seed) -> {
+                    if (entity == null) {
+                        return 0;
+                    }
+                    return entity.getActiveItem() != stack
+                            ? 0
+                            : stack
+                            .getOrDefault(ComponentTypes.RANGED_WEAPON, RangedWeaponComponent.BOW)
+                            .getProjectileIndex(entity, stack);
+                });
+    }
 }
