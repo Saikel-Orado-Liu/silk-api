@@ -24,63 +24,74 @@ import net.minecraft.text.Text;
 import pers.saikel0rado1iu.silk.api.modpass.ModPass;
 
 /**
- * <h2 style="color:FFC800">物品组创建器</h2>
- * 用于方便快速的构建物品组
+ * <h2>物品组创建器</h2>
+ * 用于方便快速地构建物品组
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 public interface ItemGroupCreator {
-	/**
-	 * 使用自定义的物品作为标志生成物品组<br>
-	 * 物品组 ID 为 {@code itemGroup.modPass.id}
-	 *
-	 * @param icon    图标物品
-	 * @param modPass 模组通
-	 * @param id      物品组 ID
-	 * @return 物品组注册表
-	 */
-	static RegistryKey<ItemGroup> create(ItemConvertible icon, ModPass modPass, String id) {
-		Registry.register(Registries.ITEM_GROUP, modPass.modData().ofId(id),
-				FabricItemGroup.builder().icon(() -> new ItemStack(icon)).displayName(getText(modPass, id)).build());
-		return RegistryKey.of(RegistryKeys.ITEM_GROUP, modPass.modData().ofId(id));
-	}
-	
-	/**
-	 * 自动创建一个新的物品作为标志生成物品组<br>
-	 * 标志 ID 为 {@code modPass:group_icon_id}<br>
-	 * 物品组 ID 为 {@code itemGroup.modPass.id}
-	 *
-	 * @param modPass 模组通
-	 * @param id      物品组 ID
-	 * @return 物品组注册表
-	 */
-	static RegistryKey<ItemGroup> create(ModPass modPass, String id) {
-		Item icon = new Item(new Item.Settings());
-		Registry.register(Registries.ITEM, modPass.modData().ofId(getIconId(id)), icon);
-		Registry.register(Registries.ITEM_GROUP, modPass.modData().ofId(id),
-				FabricItemGroup.builder().icon(() -> new ItemStack(icon)).displayName(getText(modPass, id)).build());
-		return RegistryKey.of(RegistryKeys.ITEM_GROUP, modPass.modData().ofId(id));
-	}
-	
-	/**
-	 * 获取物品组文本
-	 *
-	 * @param modPass 模组通
-	 * @param id      物品组 ID
-	 * @return 物品组文本
-	 */
-	static Text getText(ModPass modPass, String id) {
-		return Text.translatable("itemGroup." + modPass.modData().id() + "." + id);
-	}
-	
-	/**
-	 * 获取图标 ID
-	 *
-	 * @param id 图标的基础 ID
-	 * @return 图标的完整 ID
-	 */
-	static String getIconId(String id) {
-		return "group_icon_" + id;
-	}
+    /**
+     * 使用自定义的物品作为标志生成物品组
+     * <p>
+     * 物品组 ID 为 {@code itemGroup.modPass.id}
+     *
+     * @param icon    图标物品
+     * @param modPass 模组通
+     * @param id      物品组 ID
+     * @return 物品组注册表
+     */
+    static RegistryKey<ItemGroup> create(ItemConvertible icon, ModPass modPass, String id) {
+        Registry.register(Registries.ITEM_GROUP, modPass.modData().ofId(id), FabricItemGroup
+                .builder()
+                .icon(() -> new ItemStack(icon))
+                .displayName(getText(modPass, id))
+                .build());
+        return RegistryKey.of(RegistryKeys.ITEM_GROUP, modPass.modData().ofId(id));
+    }
+
+    /**
+     * 自动创建一个新的物品作为标志生成物品组
+     * <p>
+     * 标志 ID 为 {@code modPass:group_icon_id}
+     * <p>
+     * 物品组 ID 为 {@code itemGroup.modPass.id}
+     *
+     * @param modPass 模组通
+     * @param id      物品组 ID
+     * @return 物品组注册表
+     */
+    static RegistryKey<ItemGroup> create(ModPass modPass, String id) {
+        Item icon = new Item(new Item.Settings());
+        Registry.register(Registries.ITEM, modPass.modData().ofId(getIconId(id)), icon);
+        Registry.register(Registries.ITEM_GROUP, modPass.modData().ofId(id), FabricItemGroup
+                .builder()
+                .icon(() -> new ItemStack(icon))
+                .displayName(getText(modPass, id))
+                .build());
+        return RegistryKey.of(RegistryKeys.ITEM_GROUP, modPass.modData().ofId(id));
+    }
+
+    /**
+     * 获取物品组文本
+     *
+     * @param modPass 模组通
+     * @param id      物品组 ID
+     * @return 物品组文本
+     */
+    static Text getText(ModPass modPass, String id) {
+        return Text.translatable("itemGroup." + modPass.modData().id() + "." + id);
+    }
+
+    /**
+     * 获取图标 ID
+     *
+     * @param id 图标的基础 ID
+     * @return 图标的完整 ID
+     */
+    static String getIconId(String id) {
+        return "group_icon_" + id;
+    }
 }
