@@ -27,49 +27,59 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import pers.saikel0rado1iu.silk.api.ropestick.weapon.BreakingShield;
 
 /**
- * <h2 style="color:FFC800">{@link BreakingShield} 混入</h2>
+ * <h2>{@link BreakingShield} 混入</h2>
  * 设置可以破盾
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 0.1.0
  */
 @Mixin(LivingEntity.class)
 abstract class BreakingShieldMixin {
-	@Unique
-	private DamageSource damageSource;
-	
-	@Shadow
-	public abstract void damageShield(float amount);
-	
-	@Shadow
-	protected abstract void takeShieldHit(LivingEntity attacker);
-	
-	@Shadow
-	public abstract ItemStack getActiveItem();
-	
-	@ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private DamageSource getSource(DamageSource source) {
-		return damageSource = source;
-	}
-	
-	@Inject(method = "blockedByShield", at = @At("RETURN"), cancellable = true)
-	private void setBreak(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
-		if (cir.getReturnValue() && source.getAttacker() instanceof LivingEntity living
-				&& living.getEquippedStack(EquipmentSlot.MAINHAND).getItem() instanceof BreakingShield breakingShield)
-			cir.setReturnValue(breakingShield.canCooling());
-	}
-	
-	@ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private float setDamage(float amount) {
-		if (!(getActiveItem().isOf(Items.SHIELD) && damageSource.getAttacker() instanceof LivingEntity living
-				&& living.getEquippedStack(EquipmentSlot.MAINHAND).getItem() instanceof BreakingShield breakingShield
-				&& breakingShield.canBreaking(damageSource))) return amount;
-		damageShield(breakingShield.shieldDamage(amount));
-		if (breakingShield.canCooling()) {
-			takeShieldHit((LivingEntity) damageSource.getAttacker());
-			if (((LivingEntity) (Object) this) instanceof PlayerEntity player) player.disableShield();
-		}
-		
-		return breakingShield.entityDamage(amount);
-	}
+    @Unique
+    private DamageSource damageSource;
+
+    @ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private DamageSource getSource(DamageSource source) {
+        return damageSource = source;
+    }
+
+    @Inject(method = "blockedByShield", at = @At("RETURN"), cancellable = true)
+    private void setBreak(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+        if (cir.getReturnValue() && source.getAttacker() instanceof LivingEntity living
+                && living.getEquippedStack(EquipmentSlot.MAINHAND)
+                         .getItem() instanceof BreakingShield breakingShield) {
+            cir.setReturnValue(breakingShield.canCooling());
+        }
+    }
+
+    @ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private float setDamage(float amount) {
+        if (!(getActiveItem().isOf(Items.SHIELD)
+                && damageSource.getAttacker() instanceof LivingEntity living
+                && living.getEquippedStack(EquipmentSlot.MAINHAND).getItem()
+                instanceof BreakingShield breakingShield
+                && breakingShield.canBreaking(damageSource))) {
+            return amount;
+        }
+        damageShield(breakingShield.shieldDamage(amount));
+        if (breakingShield.canCooling()) {
+            takeShieldHit((LivingEntity) damageSource.getAttacker());
+            if (((LivingEntity) (Object) this) instanceof PlayerEntity player) {
+                player.disableShield(getActiveItem());
+            }
+        }
+
+        return breakingShield.entityDamage(amount);
+    }
+
+    @Shadow
+    public abstract void damageShield(float amount);
+
+    @Shadow
+    protected abstract void takeShieldHit(LivingEntity attacker);
+
+    @Shadow
+    public abstract ItemStack getActiveItem();
 }
