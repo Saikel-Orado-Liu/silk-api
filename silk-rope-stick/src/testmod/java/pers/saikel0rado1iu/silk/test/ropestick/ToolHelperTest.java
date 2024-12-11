@@ -16,8 +16,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
-import net.minecraft.recipe.Ingredient;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
@@ -31,65 +32,79 @@ import java.util.function.Supplier;
  * Test {@link ToolHelper}
  */
 public enum ToolHelperTest implements ToolHelper {
-	MATERIAL(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 15, 15, 2, 15, () -> Ingredient.ofItems(Items.TEST_ITEM));
-	
-	private final TagKey<Block> inverseTag;
-	private final int durability;
-	private final float miningSpeed;
-	private final float materialDamage;
-	private final int enchantability;
-	private final Supplier<Ingredient> repairIngredient;
-	
-	ToolHelperTest(final TagKey<Block> inverseTag, final int durability, final float miningSpeed, final float materialDamage, final int enchantability, final Supplier<Ingredient> repairIngredient) {
-		this.inverseTag = inverseTag;
-		this.durability = durability;
-		this.miningSpeed = miningSpeed;
-		this.materialDamage = materialDamage;
-		this.enchantability = enchantability;
-		this.repairIngredient = Suppliers.memoize(repairIngredient::get);
-	}
-	
-	public static Item.Settings createToolSettings() {
-		return new Item.Settings().component(ComponentTypes.INHERENT_STATUS_EFFECTS,
-				InherentStatusEffectsComponent.of(
-						InherentStatusEffectData.create(
-								StatusEffects.HEALTH_BOOST,
-								10,
-								5,
-								1,
-								() -> ImmutableList.of(Items.TEST_SHOVEL, Items.TEST_PICKAXE, Items.TEST_AXE, Items.TEST_HOE, Items.TEST_SWORD),
-								1,
-								EffectiveItemSlotData.HAND)
-				));
-	}
-	
-	@Override
-	public float getMaterialDamage() {
-		return materialDamage;
-	}
-	
-	@Override
-	public int getDurability() {
-		return durability;
-	}
-	
-	@Override
-	public float getMiningSpeedMultiplier() {
-		return miningSpeed;
-	}
-	
-	@Override
-	public TagKey<Block> getInverseTag() {
-		return inverseTag;
-	}
-	
-	@Override
-	public int getEnchantability() {
-		return enchantability;
-	}
-	
-	@Override
-	public Ingredient getRepairIngredient() {
-		return repairIngredient.get();
-	}
+    /** 材料 */
+    MATERIAL(BlockTags.INCORRECT_FOR_DIAMOND_TOOL, 15, 15, 2, 15, ItemTags.IRON_TOOL_MATERIALS);
+
+    private final TagKey<Block> incorrectBlocksForDrops;
+    private final int durability;
+    private final float speed;
+    private final float attackDamageBonus;
+    private final int enchantability;
+    private final TagKey<Item> repairItems;
+    private final Supplier<ToolMaterial> material;
+
+    ToolHelperTest(TagKey<Block> incorrectBlocksForDrops, int durability, float speed,
+                   float attackDamageBonus, int enchantability, TagKey<Item> repairItems) {
+        this.incorrectBlocksForDrops = incorrectBlocksForDrops;
+        this.durability = durability;
+        this.speed = speed;
+        this.attackDamageBonus = attackDamageBonus;
+        this.enchantability = enchantability;
+        this.repairItems = repairItems;
+        this.material = Suppliers.memoize(() -> ToolHelper.createMaterial(this));
+    }
+
+    /**
+     * 创建工具设置
+     *
+     * @return 物品设置
+     */
+    public static Item.Settings createToolSettings() {
+        return new Item.Settings().component(ComponentTypes.INHERENT_STATUS_EFFECTS,
+                InherentStatusEffectsComponent.of(
+                        InherentStatusEffectData.create(
+                                StatusEffects.HEALTH_BOOST,
+                                10,
+                                5,
+                                1,
+                                () -> ImmutableList.of(Items.TEST_SHOVEL, Items.TEST_PICKAXE, Items.TEST_AXE, Items.TEST_HOE, Items.TEST_SWORD),
+                                1,
+                                EffectiveItemSlotData.HAND)
+                ));
+    }
+
+    @Override
+    public TagKey<Block> incorrectBlocksForDrops() {
+        return incorrectBlocksForDrops;
+    }
+
+    @Override
+    public int durability() {
+        return durability;
+    }
+
+    @Override
+    public float speed() {
+        return speed;
+    }
+
+    @Override
+    public float attackDamageBonus() {
+        return attackDamageBonus;
+    }
+
+    @Override
+    public int enchantability() {
+        return enchantability;
+    }
+
+    @Override
+    public TagKey<Item> repairItems() {
+        return repairItems;
+    }
+
+    @Override
+    public Supplier<ToolMaterial> material() {
+        return material;
+    }
 }
