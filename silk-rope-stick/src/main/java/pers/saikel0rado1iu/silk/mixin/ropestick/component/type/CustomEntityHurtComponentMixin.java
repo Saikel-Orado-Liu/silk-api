@@ -20,41 +20,45 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.CustomEntityHurtComponent;
 
 /**
- * <h2 style="color:FFC800">{@link CustomEntityHurtComponent} 混入</h2>
+ * <h2>{@link CustomEntityHurtComponent} 混入</h2>
  * 设置需要自定义盔甲物品所阻挡的伤害
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.1.2
  */
 @Mixin(LivingEntity.class)
 abstract class CustomEntityHurtComponentMixin {
-	@Unique
-	private DamageSource damageSource;
-	
-	@Shadow
-	public abstract ItemStack getEquippedStack(EquipmentSlot slot);
-	
-	@Shadow
-	public abstract boolean damage(DamageSource source, float amount);
-	
-	@ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private DamageSource getSource(DamageSource source) {
-		return damageSource = source;
-	}
-	
-	@ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private float setDamage(float amount) {
-		for (EquipmentSlot slot : EquipmentSlot.values()) {
-			ItemStack stack = getEquippedStack(slot);
-			CustomEntityHurtComponent component = stack.get(ComponentTypes.CUSTOM_ENTITY_HURT);
-			if (component == null) continue;
-			if (!component.damageTypes().contains(damageSource.getTypeRegistryEntry().getKey().orElseThrow())) continue;
-			return component.evaluateExpression(stack, amount);
-		}
-		return amount;
-	}
+    @Unique
+    private DamageSource damageSource;
+
+    @ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private DamageSource getSource(DamageSource source) {
+        return damageSource = source;
+    }
+
+    @ModifyVariable(method = "damage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private float setDamage(float amount) {
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            ItemStack stack = getEquippedStack(slot);
+            CustomEntityHurtComponent component = stack.get(DataComponentTypes.CUSTOM_ENTITY_HURT);
+            if (component == null) {
+                continue;
+            }
+            if (!component.damageTypes().contains(
+                    damageSource.getTypeRegistryEntry().getKey().orElseThrow())) {
+                continue;
+            }
+            return component.evaluateExpression(stack, amount);
+        }
+        return amount;
+    }
+
+    @Shadow
+    public abstract ItemStack getEquippedStack(EquipmentSlot slot);
 }

@@ -16,20 +16,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 /**
- * <h2 style="color:FFC800">动态组件</h2>
- * 此接口应在 {@link Item} 上实现。<br>
- * 会在每次玩家更改物品栏时，对此物品栏中的 {@link ItemStack} 进行数据组件修改。<br>
+ * <h2>动态组件</h2>
+ * 此接口应在 {@link Item} 上实现。<p> 会在每次玩家更改物品栏时，对此物品栏中的 {@link ItemStack} 进行数据组件修改。<p>
  * 目前此动态组件的赋予对非玩家实体无效。
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.1.2
  */
 public interface DynamicComponent {
-	/**
-	 * 动态数据组件图表
-	 *
-	 * @param stack 物品堆栈
-	 * @return 组件图表
-	 */
-	ComponentMap dynamicComponents(ItemStack stack);
+    /**
+     * 动态数据组件图表
+     *
+     * @param stack 物品堆栈
+     * @return 组件图表
+     */
+    ComponentMap dynamicComponents(ItemStack stack);
 }

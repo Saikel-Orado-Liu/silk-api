@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.EffectiveItemSlotData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectData;
 import pers.saikel0rado1iu.silk.api.ropestick.component.type.InherentStatusEffectsComponent;
@@ -47,96 +47,112 @@ import java.util.Set;
 import static net.minecraft.entity.effect.StatusEffectInstance.INFINITE;
 
 /**
- * <h2 style="color:FFC800">{@link InherentStatusEffectsComponent} 混入</h2>
+ * <h2>{@link InherentStatusEffectsComponent} 混入</h2>
  * 设置自带状态效果的物品
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"><se>
+ * @author <a href="https://github.com/Saikel-Orado-Liu"><img
+ *         src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"><se>
  * @since 1.1.2
  */
 @Mixin(LivingEntity.class)
 abstract class InherentStatusEffectsComponentMixin extends Entity implements Attackable {
-	@Unique
-	private final Set<StatusEffectInstance> instances = Sets.newHashSetWithExpectedSize(5);
-	
-	public InherentStatusEffectsComponentMixin(EntityType<?> type, World world) {
-		super(type, world);
-	}
-	
-	@Shadow
-	@Nullable
-	public abstract StatusEffectInstance getStatusEffect(RegistryEntry<StatusEffect> effect);
-	
-	@Shadow
-	public abstract Iterable<ItemStack> getArmorItems();
-	
-	@Shadow
-	public abstract boolean removeStatusEffect(RegistryEntry<StatusEffect> effect);
-	
-	@Inject(method = "tick", at = @At("RETURN"))
-	private void setStatusEffects(CallbackInfo ci) {
-		// 清除所有物品自带状态效果
-		instances.forEach(statusEffectInstance -> removeStatusEffect(statusEffectInstance.getEffectType()));
-		instances.clear();
-		// 获取实体全部物品堆栈
-		ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
-		if (((LivingEntity) (Object) this) instanceof PlayerEntity player) {
-			stackBuilder.addAll(player.getInventory().main)
-					.addAll(player.getInventory().armor)
-					.addAll(player.getInventory().offHand);
-		} else {
-			stackBuilder.addAll(getArmorItems());
-		}
-		ImmutableList.Builder<ItemStack> stackCobyBuilder = ImmutableList.builder();
-		stackBuilder.build().forEach(stack -> stackCobyBuilder.add(stack.copy()));
-		List<ItemStack> stacks = stackCobyBuilder.build();
-		// 将物品堆栈转换为物品与物品数量图表
-		HashMap<Item, Integer> itemsBuilder = new HashMap<>();
-		for (ItemStack stack : stacks) {
-			Item item = stack.getItem();
-			int count = stack.getCount();
-			itemsBuilder.put(item, itemsBuilder.getOrDefault(item, 0) + count);
-		}
-		ImmutableMap<Item, Integer> items = ImmutableMap.copyOf(itemsBuilder);
-		// 获取物品中所有的自带状态效果组件
-		HashMap<InherentStatusEffectData, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
-		for (ItemStack stack : stacks) {
-			Optional<InherentStatusEffectsComponent> component = Optional.ofNullable(stack.get(ComponentTypes.INHERENT_STATUS_EFFECTS));
-			component.ifPresent(p -> p.inherentStatusEffects().forEach(effect -> effectItemsBuilder.put(effect, stack.getItem())));
-		}
-		ImmutableMap<InherentStatusEffectData, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
-		if (effectItems.isEmpty()) return;
-		// 设置自带状态效果
-		for (InherentStatusEffectData property : effectItems.keySet()) {
-			RegistryEntry<StatusEffect> effect = property.effect();
-			int baseLevel = Math.max(1, property.baseLevel());
-			int maxLevel = Math.max(1, property.maxLevel());
-			float stackingLevel = property.stackingLevel();
-			List<Item> kit = property.statusEffectKit().get();
-			int threshold = Math.max(1, property.kitTriggerThreshold());
-			EffectiveItemSlotData slot = property.effectiveItemSlot();
-			Integer itemCount = 0;
-			if (kit.isEmpty()) {
-				Item item = Optional.ofNullable(effectItems.get(property)).orElse(Items.AIR);
-				itemCount = slot.isEffective(LivingEntity.class.cast(this), item)
-						? (slot.slots().isEmpty() ? Optional.ofNullable(items.get(item)).orElse(0) : 1)
-						: 0;
-			} else {
-				for (Item item : kit) {
-					itemCount += slot.isEffective(LivingEntity.class.cast(this), item)
-							? (slot.slots().isEmpty() ? Optional.ofNullable(items.get(item)).orElse(0) : 1)
-							: 0;
-				}
-			}
-			if (itemCount == null || itemCount < threshold) continue;
-			int level = Math.min(maxLevel - 1, Math.round(Math.max(baseLevel - 1, stackingLevel * (itemCount - threshold))));
-			StatusEffectInstance instance = new StatusEffectInstance(effect, INFINITE, level);
-			StatusEffectInstance oldInstance = getStatusEffect(effect);
-			if (oldInstance != null && (oldInstance.getAmplifier() > level || oldInstance.getDuration() != INFINITE)) continue;
-			instances.add(instance);
-		}
-		instances.forEach(this::addStatusEffect);
-	}
-	
-	@Shadow
-	public abstract boolean addStatusEffect(StatusEffectInstance effect);
+    @Unique
+    private final Set<StatusEffectInstance> instances = Sets.newHashSetWithExpectedSize(5);
+
+    public InherentStatusEffectsComponentMixin(EntityType<?> type, World world) {
+        super(type, world);
+    }
+
+    @Inject(method = "tick", at = @At("RETURN"))
+    private void setStatusEffects(CallbackInfo ci) {
+        // 清除所有物品自带状态效果
+        instances.forEach(statusEffectInstance ->
+                removeStatusEffect(statusEffectInstance.getEffectType()));
+        instances.clear();
+        // 获取实体全部物品堆栈
+        ImmutableList.Builder<ItemStack> stackBuilder = ImmutableList.builder();
+        if (((LivingEntity) (Object) this) instanceof PlayerEntity player) {
+            stackBuilder.addAll(player.getInventory().main)
+                        .addAll(player.getInventory().armor)
+                        .addAll(player.getInventory().offHand);
+        } else {
+            stackBuilder.addAll(getArmorItems());
+        }
+        ImmutableList.Builder<ItemStack> stackCobyBuilder = ImmutableList.builder();
+        stackBuilder.build().forEach(stack -> stackCobyBuilder.add(stack.copy()));
+        List<ItemStack> stacks = stackCobyBuilder.build();
+        // 将物品堆栈转换为物品与物品数量图表
+        HashMap<Item, Integer> itemsBuilder = new HashMap<>();
+        for (ItemStack stack : stacks) {
+            Item item = stack.getItem();
+            int count = stack.getCount();
+            itemsBuilder.put(item, itemsBuilder.getOrDefault(item, 0) + count);
+        }
+        ImmutableMap<Item, Integer> items = ImmutableMap.copyOf(itemsBuilder);
+        // 获取物品中所有的自带状态效果组件
+        HashMap<InherentStatusEffectData, Item> effectItemsBuilder = Maps.newHashMapWithExpectedSize(5);
+        for (ItemStack stack : stacks) {
+            Optional<InherentStatusEffectsComponent> component = Optional.ofNullable(
+                    stack.get(DataComponentTypes.INHERENT_STATUS_EFFECTS));
+            component.ifPresent(p ->
+                    p.inherentStatusEffects().forEach(effect ->
+                            effectItemsBuilder.put(effect, stack.getItem())));
+        }
+        ImmutableMap<InherentStatusEffectData, Item> effectItems = ImmutableMap.copyOf(effectItemsBuilder);
+        if (effectItems.isEmpty()) {
+            return;
+        }
+        // 设置自带状态效果
+        for (InherentStatusEffectData property : effectItems.keySet()) {
+            RegistryEntry<StatusEffect> effect = property.effect();
+            int baseLevel = Math.max(1, property.baseLevel());
+            int maxLevel = Math.max(1, property.maxLevel());
+            float stackingLevel = property.stackingLevel();
+            List<Item> kit = property.statusEffectKit().get();
+            int threshold = Math.max(1, property.kitTriggerThreshold());
+            EffectiveItemSlotData slot = property.effectiveItemSlot();
+            Integer itemCount = 0;
+            if (kit.isEmpty()) {
+                Item item = Optional.ofNullable(effectItems.get(property)).orElse(Items.AIR);
+                itemCount = slot.isEffective(LivingEntity.class.cast(this), item)
+                        ? (slot.slots().isEmpty() ? Optional.ofNullable(items.get(item))
+                                                            .orElse(0) : 1)
+                        : 0;
+            } else {
+                for (Item item : kit) {
+                    itemCount += slot.isEffective(LivingEntity.class.cast(this), item)
+                            ? (slot.slots().isEmpty()
+                            ? Optional.ofNullable(items.get(item)).orElse(0)
+                            : 1)
+                            : 0;
+                }
+            }
+            if (itemCount == null || itemCount < threshold) {
+                continue;
+            }
+            int level = Math.min(maxLevel - 1, Math.round(
+                    Math.max(baseLevel - 1, stackingLevel * (itemCount - threshold))));
+            StatusEffectInstance instance = new StatusEffectInstance(effect, INFINITE, level);
+            StatusEffectInstance oldInstance = getStatusEffect(effect);
+            if (oldInstance != null && (oldInstance.getAmplifier() > level
+                    || oldInstance.getDuration() != INFINITE)) {
+                continue;
+            }
+            instances.add(instance);
+        }
+        instances.forEach(this::addStatusEffect);
+    }
+
+    @Shadow
+    @Nullable
+    public abstract StatusEffectInstance getStatusEffect(RegistryEntry<StatusEffect> effect);
+
+    @Shadow
+    public abstract Iterable<ItemStack> getArmorItems();
+
+    @Shadow
+    public abstract boolean removeStatusEffect(RegistryEntry<StatusEffect> effect);
+
+    @Shadow
+    public abstract boolean addStatusEffect(StatusEffectInstance effect);
 }

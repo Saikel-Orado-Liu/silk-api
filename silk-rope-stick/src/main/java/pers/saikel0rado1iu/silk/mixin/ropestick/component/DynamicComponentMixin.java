@@ -20,18 +20,22 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import pers.saikel0rado1iu.silk.api.ropestick.component.DynamicComponent;
 
 /**
- * <h2 style="color:FFC800">{@link DynamicComponent} 混入</h2>
+ * <h2>{@link DynamicComponent} 混入</h2>
  * 设置动态数据组件
  *
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.1.2
  */
 @Mixin(PlayerInventory.class)
 abstract class DynamicComponentMixin {
-	@ModifyVariable(method = "setStack", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-	private ItemStack setStack(ItemStack stack, @Local(argsOnly = true) int slot) {
-		if (!(stack.getItem() instanceof DynamicComponent dynamicComponent)) return stack;
-		stack.applyComponentsFrom(dynamicComponent.dynamicComponents(stack));
-		return stack;
-	}
+    @ModifyVariable(method = "setStack", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private ItemStack setStack(ItemStack stack, @Local(argsOnly = true) int slot) {
+        if (!(stack.getItem() instanceof DynamicComponent dynamicComponent)) {
+            return stack;
+        }
+        stack.applyComponentsFrom(dynamicComponent.dynamicComponents(stack));
+        return stack;
+    }
 }

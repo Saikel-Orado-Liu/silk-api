@@ -18,57 +18,70 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.Identifier;
-import pers.saikel0rado1iu.silk.api.ropestick.component.ComponentTypes;
-
-import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
+import pers.saikel0rado1iu.silk.api.ropestick.component.DataComponentTypes;
 
 /**
- * <h2 style="color:FFC800">在持有时调整视场角组件</h2>
+ * <h2>在持有时调整视场角组件</h2>
  * 持有物品时的视场角缩放组件
  *
  * @param adjustFov 调整视场角数据
  * @param canAdjust 是否能够调整视场角方法
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.1.2
  */
 public record AdjustFovWhileHoldComponent(AdjustFovData adjustFov, boolean canAdjust) {
-	public static final AdjustFovWhileHoldComponent DEFAULT = new AdjustFovWhileHoldComponent(AdjustFovData.DEFAULT, true);
-	public static final Codec<AdjustFovWhileHoldComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					AdjustFovData.CODEC.optionalFieldOf("adjust_fov", AdjustFovData.DEFAULT).forGetter(AdjustFovWhileHoldComponent::adjustFov),
-					Codec.BOOL.optionalFieldOf("can_adjust", true).forGetter(AdjustFovWhileHoldComponent::canAdjust))
-			.apply(builder, AdjustFovWhileHoldComponent::new));
-	public static final PacketCodec<RegistryByteBuf, AdjustFovWhileHoldComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
-	
-	/**
-	 * 在持有时调整视场角组件创建方法
-	 *
-	 * @param onlyFirstPerson 是否只在第一人称进行缩放
-	 * @param hudOverlay      抬头显示叠加层，如果为 {@link Optional#empty()} 则不显示叠加层
-	 * @param canStretchHud   是否可以拉伸抬头显示
-	 * @param fovScaling      视场角缩放倍数，视场角缩放倍数，&gt; 1 则为放大，0 &lt; x &lt; 1 则为缩小
-	 * @return 在持有时调整视场角组件
-	 */
-	public static AdjustFovWhileHoldComponent create(boolean onlyFirstPerson, Optional<Identifier> hudOverlay, boolean canStretchHud, float fovScaling) {
-		return new AdjustFovWhileHoldComponent(AdjustFovData.create(onlyFirstPerson, hudOverlay, canStretchHud, fovScaling), true);
-	}
-	
-	/**
-	 * 设置是否可调整
-	 *
-	 * @param canAdjust 是否可调整
-	 * @return 在持有时调整视场角组件
-	 */
-	public AdjustFovWhileHoldComponent setCanAdjust(boolean canAdjust) {
-		return new AdjustFovWhileHoldComponent(adjustFov, canAdjust);
-	}
-	
-	/**
-	 * 判断是否为冲突物品
-	 *
-	 * @param checkItem 检查物品
-	 * @return 是否冲突
-	 */
-	public boolean isConflictItem(ItemStack checkItem) {
-		return checkItem.contains(ComponentTypes.ADJUST_FOV_WHILE_HOLD);
-	}
+    /** 在持有时调整视场角的默认值 */
+    public static final AdjustFovWhileHoldComponent DEFAULT =
+            new AdjustFovWhileHoldComponent(AdjustFovData.DEFAULT, true);
+    /** 在持有时调整视场角组件的编解码器 */
+    public static final Codec<AdjustFovWhileHoldComponent> CODEC = RecordCodecBuilder
+            .create(builder -> builder
+                    .group(AdjustFovData.CODEC
+                                    .optionalFieldOf("adjust_fov", AdjustFovData.DEFAULT)
+                                    .forGetter(AdjustFovWhileHoldComponent::adjustFov),
+                            Codec.BOOL.optionalFieldOf("can_adjust", true)
+                                      .forGetter(AdjustFovWhileHoldComponent::canAdjust))
+                    .apply(builder, AdjustFovWhileHoldComponent::new));
+    /** 在持有时调整视场角组件的数据包编解码器 */
+    public static final PacketCodec<RegistryByteBuf, AdjustFovWhileHoldComponent> PACKET_CODEC =
+            PacketCodecs.registryCodec(CODEC);
+
+    /**
+     * 在持有时调整视场角组件创建方法
+     *
+     * @param onlyFirstPerson 是否只在第一人称进行缩放
+     * @param hudOverlay      抬头显示叠加层，如果为 {@code null} 则不显示叠加层
+     * @param canStretchHud   是否可以拉伸抬头显示
+     * @param fovScaling      视场角缩放倍数，视场角缩放倍数，&gt; 1 则为放大，0 &lt; x &lt; 1 则为缩小
+     * @return 在持有时调整视场角组件
+     */
+    public static AdjustFovWhileHoldComponent create(boolean onlyFirstPerson,
+                                                     @Nullable Identifier hudOverlay,
+                                                     boolean canStretchHud, float fovScaling) {
+        return new AdjustFovWhileHoldComponent(AdjustFovData.create(
+                onlyFirstPerson, hudOverlay, canStretchHud, fovScaling), true);
+    }
+
+    /**
+     * 设置是否可调整
+     *
+     * @param canAdjust 是否可调整
+     * @return 在持有时调整视场角组件
+     */
+    public AdjustFovWhileHoldComponent setCanAdjust(boolean canAdjust) {
+        return new AdjustFovWhileHoldComponent(adjustFov, canAdjust);
+    }
+
+    /**
+     * 判断是否为冲突物品
+     *
+     * @param checkItem 检查物品
+     * @return 是否冲突
+     */
+    public boolean isConflictItem(ItemStack checkItem) {
+        return checkItem.contains(DataComponentTypes.ADJUST_FOV_WHILE_HOLD);
+    }
 }

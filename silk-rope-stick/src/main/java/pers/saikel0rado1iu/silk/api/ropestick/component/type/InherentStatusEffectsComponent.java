@@ -21,26 +21,36 @@ import net.minecraft.network.codec.PacketCodecs;
 import java.util.List;
 
 /**
- * <h2 style="color:FFC800">自带多个状态效果组件</h2>
+ * <h2>自带多状态效果组件</h2>
  * 用于说明自带状态效果的物品的状态效果属性
  *
  * @param inherentStatusEffects 自带状态效果列表
- * @author <a href="https://github.com/Saikel-Orado-Liu"><img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4"></a>
+ * @author <a href="https://github.com/Saikel-Orado-Liu">
+ *         <img alt="author" src="https://avatars.githubusercontent.com/u/88531138?s=64&v=4">
+ *         </a>
  * @since 1.1.2
  */
 public record InherentStatusEffectsComponent(List<InherentStatusEffectData> inherentStatusEffects) {
-	public static final Codec<InherentStatusEffectsComponent> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					InherentStatusEffectData.CODEC.listOf().fieldOf("inherent_status_effect").forGetter(InherentStatusEffectsComponent::inherentStatusEffects))
-			.apply(builder, InherentStatusEffectsComponent::new));
-	public static final PacketCodec<RegistryByteBuf, InherentStatusEffectsComponent> PACKET_CODEC = PacketCodecs.registryCodec(CODEC);
-	
-	/**
-	 * 自带多个状态效果组件创建方法
-	 *
-	 * @param inherentStatusEffects 自带状态效果列表
-	 * @return 自带多个状态效果组件
-	 */
-	public static InherentStatusEffectsComponent of(InherentStatusEffectData... inherentStatusEffects) {
-		return new InherentStatusEffectsComponent(ImmutableList.copyOf(inherentStatusEffects));
-	}
+    /** 自带多状态效果组件的编解码器 */
+    public static final Codec<InherentStatusEffectsComponent> CODEC = RecordCodecBuilder
+            .create(builder -> builder
+                    .group(InherentStatusEffectData.CODEC
+                            .listOf()
+                            .fieldOf("inherent_status_effect")
+                            .forGetter(InherentStatusEffectsComponent::inherentStatusEffects))
+                    .apply(builder, InherentStatusEffectsComponent::new));
+    /** 自带多状态效果组件的数据包编解码器 */
+    public static final PacketCodec<RegistryByteBuf, InherentStatusEffectsComponent> PACKET_CODEC =
+            PacketCodecs.registryCodec(CODEC);
+
+    /**
+     * 自带多个状态效果组件创建方法
+     *
+     * @param inherentStatusEffects 自带状态效果列表
+     * @return 自带多个状态效果组件
+     */
+    public static InherentStatusEffectsComponent of(
+            InherentStatusEffectData... inherentStatusEffects) {
+        return new InherentStatusEffectsComponent(ImmutableList.copyOf(inherentStatusEffects));
+    }
 }
